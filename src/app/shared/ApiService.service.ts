@@ -9,15 +9,21 @@ import { environment } from '../../environments/environment';
 })
 export class ApiService {
 
- //private baseUrl = environment.apiUrl
- private baseUrl = "/api"
+  //private baseUrl = environment.apiUrl
+  // private baseUrl = "/api"
+ // https://express-proxy-app.cfapps.us10-001.hana.ondemand.com/
+  private baseUrl = "https://express-proxy-app.cfapps.us10-001.hana.ondemand.com/api"
+  // private baseUrl = environment.production
+  //   ? environment.apiUrl // Production URL
+  //   : '/api';  // Development URL
+
   constructor(private http: HttpClient) { }
 
   get<T>(url: string, queryParam?: string, headers?: HttpHeaders): Observable<T> {
     let params = new HttpParams();
 
     // headers =new HttpHeaders().set('Authorization',`Bearer ${ localStorage.getItem('token')}`)
-    
+
     if (queryParam) {
       params = params.set('keyword', queryParam);
       console.log(params);
@@ -25,17 +31,17 @@ export class ApiService {
     console.log(this.http.get<T>(`${this.baseUrl}/${url}`, { params }));
     return this.http.get<T>(`${this.baseUrl}/${url}`);
   }
-  
+
   getID<T>(url: string, id: number, params?: HttpParams, headers?: HttpHeaders): Observable<T> {
     //const options = { params, headers };
-    
+
     //headers =new HttpHeaders().set('Authorization',`Bearer ${ localStorage.getItem('token')}`)
     console.log(this.http.get<T>(`${this.baseUrl}/${url}/${id}`));
     return this.http.get<T>(`${this.baseUrl}/${url}/${id}`);
   }
 
   post<T>(url: string, body: any, headers?: HttpHeaders): Observable<T> {
-   
+
     return this.http.post<T>(`${this.baseUrl}/${url}`, body);
   }
 
@@ -43,7 +49,7 @@ export class ApiService {
     return this.http.put<T>(`${this.baseUrl}/${url}/${id}`, body);
   }
 
-  patch<T>(url: string, id: number,body: any, headers?: HttpHeaders): Observable<T> {
+  patch<T>(url: string, id: number, body: any, headers?: HttpHeaders): Observable<T> {
     return this.http.patch<T>(`${this.baseUrl}/${url}/${id}`, body);
   }
 

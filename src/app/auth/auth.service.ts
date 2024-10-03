@@ -21,7 +21,11 @@ export class AuthService {
   private clientSecret = environment.clientSecret
 
   private  proxyurl = "https://cors-anywhere.herokuapp.com/";
-  private authUrl = "/auth"
+  //private authUrl = environment.authUrl
+  private authUrl = "https://express-proxy-app.cfapps.us10-001.hana.ondemand.com/auth"
+  // private authUrl = environment.production
+  // ? environment.authUrl // Production URL
+  // : '/auth';  // Development URL
 
   loggedInUser = new BehaviorSubject<AuthUser | null>(null);
   private tokenExpirationTimer: any;

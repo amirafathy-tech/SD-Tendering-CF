@@ -10,9 +10,7 @@ import { InvoiceComponent } from './invoice/invoice.component';
 const routes: Routes = [
   { path: '', component: AppComponent },
   { path: 'login', component: AuthComponent },
-  { path: 'tendering', component: InvoiceComponent },
-
-
+  { path: 'tendering',canActivate:[AuthGuard],  component: InvoiceComponent },
 ];
 
 @NgModule({
