@@ -23,6 +23,8 @@ export class AuthService {
   private  proxyurl = "https://cors-anywhere.herokuapp.com/";
   //private authUrl = environment.authUrl
   private authUrl = "https://express-proxy-app.cfapps.us10-001.hana.ondemand.com/auth"
+
+    private registerUrl = "https://express-proxy-app.cfapps.us10-001.hana.ondemand.com/api/iasusers"
   // private authUrl = environment.production
   // ? environment.authUrl // Production URL
   // : '/auth';  // Development URL
@@ -51,7 +53,7 @@ export class AuthService {
     console.log(data)
    return this.http
       .post<any>(
-        'https://security.c-878bd9e.kyma.ondemand.com/iasusers',
+        this.registerUrl,
         data, { headers }
       )
       // .pipe(
@@ -65,7 +67,7 @@ export class AuthService {
       //     console.log(response);
       //     if (response) {
       //       console.log(response);
-      //       this.router.navigate(['/servicetype']);
+      //       this.router.navigate(['/tendering']);
 
       //     } else if (response.error_description === "User authentication failed.") {
       //       console.log("40000000");

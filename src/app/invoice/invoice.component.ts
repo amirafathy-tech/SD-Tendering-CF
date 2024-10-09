@@ -707,14 +707,28 @@ export class InvoiceComponent {
         accept: () => {
           for (const record of this.selectedMainItems) {
             console.log(record);
-            this._ApiService.delete<MainItem>('mainitems', record.invoiceMainItemCode).subscribe(response => {
-              console.log('mainitem deleted :', response);
-              this.totalValue = 0;
-              this.ngOnInit();
-            });
+
+            this._ApiService.delete<MainItem>('mainitems', record.invoiceMainItemCode).subscribe({
+              next: (res) => {
+                console.log('mainitem deleted :', res);
+                this.totalValue = 0;
+                this.ngOnInit()
+              }, error: (err) => {
+                console.log(err);
+              },
+              complete: () => {
+                this.messageService.add({ severity: 'success', summary: 'Successfully', detail: 'Deleted', life: 3000 });
+                this.selectedMainItems=[]
+              }
+            })
+            // this._ApiService.delete<MainItem>('mainitems', record.invoiceMainItemCode).subscribe(response => {
+            //   console.log('mainitem deleted :', response);
+            //   this.totalValue = 0;
+            //   this.ngOnInit();
+            // });
           }
-          this.messageService.add({ severity: 'success', summary: 'Successfully', detail: 'Deleted', life: 3000 });
-          this.selectedMainItems = []; // Clear the selectedRecords array after deleting all records
+          //this.messageService.add({ severity: 'success', summary: 'Successfully', detail: 'Deleted', life: 3000 });
+         // this.selectedMainItems = []; // Clear the selectedRecords array after deleting all records
         }
       });
     }

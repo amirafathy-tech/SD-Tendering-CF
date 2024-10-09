@@ -2,7 +2,7 @@ export const environment = {
   production: false,
   // apiUrl: 'https://sd-dev.c-878bd9e.kyma.ondemand.com',
   apiUrl: 'https://sd-cf.cfapps.us10-001.hana.ondemand.com',
-  authUrl:"https://anjbwp8zl.trial-accounts.ondemand.com/oauth2/token",
-  clientID: "fcc89d1a-0926-48dc-9d3e-a6c9a8bca309",
-  clientSecret: "oN.mTf40hQfpboBPW?Lfv4-2jcUWLcka"
+  authUrl:"https://ajwgvqm4q.trial-accounts.ondemand.com/oauth2/token",
+  clientID: "e018f6f3-eae5-4bdd-a200-91980c0e7b47",
+  clientSecret: "a1V[mVJn3RbPViHyegDicPAyjwQ:s:i"
 };

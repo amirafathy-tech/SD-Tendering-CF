@@ -1,29 +1,49 @@
-<!-- <app-alert></app-alert> -->
 <div class="d-flex justify-content-center align-items-center vh-100">
     <div class="card card-style">
-
         <h4 class="card-header login-header" style="text-align: center;">Login</h4>
         <div class="card-body">
-            <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit(loginForm)">
                 <div class="mb-3">
-                    <label class="form-label">Username</label>
-                    <input type="text" formControlName="username" class="form-control"
-                        [ngClass]="{ 'is-invalid': submitted && f['username'].errors }" />
-                    <div *ngIf="submitted && f['username'].errors" class="invalid-feedback">
-                        <div *ngIf="f['username'].errors['required']">Username is required</div>
-                    </div>
+                    <label class="form-label">Email</label>
+                    <input type="text" formControlName="username" class="form-control" />
+                    <!--error -->
+                    <span *ngIf="loginForm.controls['username'].invalid && (loginForm.controls['username'].dirty || 
+                       loginForm.controls['username'].touched)" class="error">
+                        <span class="text-danger" *ngIf="loginForm.controls['username'].errors?.['required']">
+                            Email is required.
+                        </span>
+                    </span>
+                    <span *ngIf="loginForm.controls['username'].invalid && (loginForm.controls['username'].dirty || 
+                       loginForm.controls['username'].touched)" class="error">
+                        <span class="text-danger" *ngIf="loginForm.controls['username'].errors?.['username']">
+                            Please Enter Valid Email.
+                        </span>
+                    </span>
+
                 </div>
-                <div class="mb-3">
+                <div class=" mb-3">
                     <label class="form-label">Password</label>
-                    <input type="password" formControlName="password" class="form-control"
-                        [ngClass]="{ 'is-invalid': submitted && f['password'].errors }" />
-                    <div *ngIf="submitted && f['password'].errors" class="invalid-feedback">
-                        <div *ngIf="f['password'].errors['required']">Password is required</div>
-                        <div *ngIf="f['password'].errors['minlength']">Password must be at least 6 characters</div>
+                    <div class="input-group">
+                        <!-- <span class="input-group-text" id="basic-addon1">
+
+                            <i class="fa fa-lock" aria-hidden="true"></i>
+                        </span> -->
+                        <input [type]="isShown?'password' :'text'" formControlName="password" class="form-control" />
+                        <span class="input-group-text " (click)="isShown=!isShown">
+                            <i class="fa " [class]="isShown? 'fa-eye-slash':'fa-eye'" aria-hidden="true"></i>
+                        </span>
                     </div>
                 </div>
+
+                <!--error  for password-->
+                <span *ngIf="loginForm.controls['password'].invalid && (loginForm.controls['password'].dirty || 
+                           loginForm.controls['password'].touched)" class="error">
+                    <span class="text-danger" *ngIf="loginForm.controls['password'].errors?.['required']">
+                        Password is required.
+                    </span>
+                </span>
                 <div class="d-flex justify-content-center my-3">
-                    <button [disabled]="loading" class="btn btn-primary">
+                    <button [disabled]="loginForm.invalid" type="submit" class="btn btn-primary">
                         <span *ngIf="loading" class="spinner-border spinner-border-sm me-1"></span>
                         Login
                     </button>

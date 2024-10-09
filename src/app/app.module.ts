@@ -44,6 +44,7 @@ import { LoadingSpinnerComponent } from './shared/loading-spinner/loading-spinne
 import { InvoiceComponent } from './invoice/invoice.component';
 import { TruncateWordsPipe } from './pipes/truncate-words.pipe';
 import { SearchPipe } from './pipes/search.pipe';
+import { HomePageComponent } from './home-page/home-page.component';
 
 @NgModule({
   declarations: [
@@ -53,6 +54,7 @@ import { SearchPipe } from './pipes/search.pipe';
     InvoiceComponent,
     TruncateWordsPipe,
     SearchPipe,
+    HomePageComponent,
 
   ],
   imports: [
