@@ -800,7 +800,7 @@
                         <td style="min-width: 15.2rem;">
                         </td>
                         <td style="min-width: 10.2rem;">
-                            <button pButton type="button" icon="pi pi-plus" class="ui-button-info" label="Save SubItem"
+                            <button pButton type="button" icon="pi pi-plus" class="ui-button-info" style=" border-radius: 8px; " label="Save SubItem"
                                 (click)="addSubItem(mainItem)">
                             </button>
                         </td>
@@ -976,7 +976,7 @@
                         [(ngModel)]="newMainItem.totalWithProfit"> -->
             </td>
             <td style="min-width: 10rem;">
-                <button pButton type="button" icon="pi pi-plus" class="ui-button-info" label="Save MainItem"
+                <button pButton type="button" icon="pi pi-plus" class="ui-button-info" style=" border-radius: 8px; " label="Save MainItem"
                     (click)="addMainItem()">
                 </button>
             </td>
@@ -994,7 +994,7 @@
             <input class="form-input rounded-input p-2 m-2 " pInputNumber type="number" [min]="0"
                 [(ngModel)]="parameterValues[parameterId]">
         </div>
-        <button class="form-button save-params-button" (click)="saveParameters()">Save</button>
+        <button class="form-button save-params-button" style=" border-radius: 8px; " (click)="saveParameters()">Save</button>
     </div>
 </div>
 <div class="popup-container" *ngIf="showPopupUpdate && updatedFormulaRecord">
@@ -1006,7 +1006,7 @@
             <input pInputNumber class="form-input rounded-input p-2 m-2" type="number" [min]="0"
                 [(ngModel)]="parameterValuesUpdate[parameterId]">
         </div>
-        <button class="form-button save-params-button" (click)="saveParameters()">Save</button>
+        <button class="form-button save-params-button" style=" border-radius: 8px; " (click)="saveParameters()">Save</button>
     </div>
 </div>
 
@@ -1020,7 +1020,7 @@
             <input class="form-input rounded-input p-2 m-2" pInputNumber type="number" [min]="0"
                 [(ngModel)]="parameterValues[parameterId]">
         </div>
-        <button class="form-button save-params-button" (click)="saveParameters()">Save</button>
+        <button class="form-button save-params-button" style=" border-radius: 8px; " (click)="saveParameters()">Save</button>
     </div>
 </div>
 
@@ -1034,7 +1034,7 @@
             <input pInputNumber class="form-input rounded-input p-2 m-2" type="number" [min]="0"
                 [(ngModel)]="parameterValuesUpdate[parameterId]">
         </div>
-        <button class="form-button save-params-button" (click)="saveParameters()">Save</button>
+        <button class="form-button save-params-button" style=" border-radius: 8px; " (click)="saveParameters()">Save</button>
     </div>
 </div>
 

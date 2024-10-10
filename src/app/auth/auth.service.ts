@@ -84,16 +84,7 @@ export class AuthService {
 
     const headers = new HttpHeaders({
       'Authorization': 'Basic ' + btoa(`${this.clientID}:${this.clientSecret}`),
-      //'Authorization': `${this.clientID}:${this.clientSecret}`,
       'Content-Type': 'application/x-www-form-urlencoded',
-      //'Origin': 'http://localhost:4200'
-      //'Content-Type': 'application/scim+json',
-      //'Content-Type': 'application/json',
-      //'Access-Control-Allow-Origin': '*',
-      //'Access-Control-Allow-Credentials': 'true'
-      //'Accept': 'application/json',
-     // 'Access-Control-Allow-Origin':'http://localhost:4200'
-      //'Access-Control-Allow-Origin': '*'
     });
 
     console.log(headers)
@@ -107,9 +98,6 @@ export class AuthService {
 
     return this.http
       .post<AuthResponseBackend>(this.authUrl,
-        //${this.proxyurl}
-       // `https://anjbwp8zl.trial-accounts.ondemand.com/oauth2/token`,
-        //, withCredentials: true
         data.toString(), { headers }
       ).pipe(tap(resData => {
         console.log(resData.id_token)

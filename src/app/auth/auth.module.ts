@@ -9,9 +9,10 @@ import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 // import { AlertComponent } from '../shared/alert/alert.component';
 import { provideClientHydration } from '@angular/platform-browser';
+import { HeaderComponent } from '../header/header.component';
 
 @NgModule({
-    declarations: [AuthComponent, LoginComponent, RegisterComponent,],
+    declarations: [AuthComponent, LoginComponent, RegisterComponent],
     imports:[
         CommonModule,
         FormsModule,
