@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
 // import { AlertService } from 'src/app/shared/alert.service';
@@ -11,49 +11,48 @@ import { AuthService } from 'src/app/auth/auth.service';
     styleUrls: ['./register.component.css']
 })
 export class RegisterComponent implements OnInit {
-    form!: FormGroup;
+    registerForm: FormGroup = new FormGroup({
+        firstName: new FormControl('', [Validators.required]),
+        lastName: new FormControl('', [Validators.required]),
+        username: new FormControl('', [Validators.required]),
+        email: new FormControl('', [Validators.required, Validators.email])
+    });
+
     loading = false;
     submitted = false;
 
     constructor(
-        private formBuilder: FormBuilder,
         private route: ActivatedRoute,
         private router: Router,
         private authService: AuthService,
-       // private alertService: AlertService
+        // private alertService: AlertService
     ) { }
 
     ngOnInit() {
-        this.form = this.formBuilder.group({
-            firstName: ['', Validators.required],
-            lastName: ['', Validators.required],
-            username: ['', Validators.required],
-            email: ['', [Validators.required]]
-        });
     }
-    
-    get f() { return this.form.controls; }
 
-    onSubmit() {
+
+    onSubmit(userData: FormGroup) {
+        console.log(userData);
+        
         this.submitted = true;
-       // this.alertService.clear();
-        if (this.form.invalid) {
-            return;
-        }
-
+        // this.alertService.clear();
         this.loading = true;
-        this.authService.signUp(this.f['email'].value, this.f['lastName'].value, this.f['firstName'].value, this.f['username'].value)
+        this.authService.signUp(userData.value.email,userData.value.lastName,userData.value.firstName,userData.value.username)
             .pipe(first())
             .subscribe({
                 next: (response) => {
                     console.log(response);
-                    this.router.navigate(['/tendering']);
-                   // this.alertService.success('Registration Successful', { keepAfterRouteChange: true });
+                    this.showPopup=true;
+                    this.router.navigate(['/login']);
+                    // this.alertService.success('Registration Successful', { keepAfterRouteChange: true });
                     //this.router.navigate(['/login'], { relativeTo: this.route });
                     this.loading = false;
                 },
                 error: error => {
-                   // this.alertService.error(error);
+                    console.log(error);
+                    
+                    // this.alertService.error(error);
                     this.loading = false;
                 }
             });
@@ -68,5 +67,10 @@ export class RegisterComponent implements OnInit {
         //         this.loading = false;
         //     }
         // });
+    }
+
+    showPopup: boolean = false;
+      closePopup() {
+        this.showPopup = false;
     }
 }

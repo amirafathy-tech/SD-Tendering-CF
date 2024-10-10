@@ -12,7 +12,8 @@
     box-shadow: 0 0 0 3px rgba(38, 143, 255, 0.25);
 }
 
-.popup-container {
+/* Style the popup box */
+/* .popup-container {
     position: fixed;
     top: 0;
     left: 0;
@@ -25,14 +26,13 @@
     z-index: 1000;
 }
 
-/* Style the popup box */
 .popup {
     position: relative;
     background: white;
     border: 1px solid #ccc;
     padding: 2rem;
-    max-width: 90vw;
-    max-height: 90vh;
+    width: 30vw;
+    height: 30vh;
     overflow: auto;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     display: flex;
@@ -54,6 +54,56 @@
     background-color: #007bff;
     color: white;
     border: none;
+} */
+
+
+/* Style the popup box */
+.popup-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.popup {
+    position: relative;
+    background: white;
+    border: 1px solid #ccc;
+    width: 30vw;
+    height: 30vh; 
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    justify-content: center; 
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    overflow: auto; 
+    padding: 1rem; 
+}
+
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #cd1010;
+}
+
+.save-params-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem; 
+    border-radius: 4px;
+    cursor: pointer;
 }
 
 .profit-margin {
