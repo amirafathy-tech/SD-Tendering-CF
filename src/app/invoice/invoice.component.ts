@@ -1,7 +1,5 @@
-
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { Component } from '@angular/core';
 import * as FileSaver from 'file-saver';
-
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { InvoiceService } from './invoice.service';
 import { MainItem, SubItem } from './invoice.model';
@@ -117,7 +115,7 @@ export class InvoiceComponent {
     }
   }
 
-  constructor(private cdr: ChangeDetectorRef, private _ApiService: ApiService, private _InvoiceService: InvoiceService, private messageService: MessageService, private confirmationService: ConfirmationService) { }
+  constructor(private _ApiService: ApiService, private _InvoiceService: InvoiceService, private messageService: MessageService, private confirmationService: ConfirmationService) { }
 
   ngOnInit() {
     this._ApiService.get<ServiceMaster[]>('servicenumbers').subscribe(response => {

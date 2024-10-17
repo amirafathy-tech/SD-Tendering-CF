@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
 // import { AlertService } from 'src/app/shared/alert.service';
@@ -11,6 +11,7 @@ import { AuthService } from 'src/app/auth/auth.service';
     styleUrls: ['./register.component.css']
 })
 export class RegisterComponent implements OnInit {
+
     registerForm: FormGroup = new FormGroup({
         firstName: new FormControl('', [Validators.required]),
         lastName: new FormControl('', [Validators.required]),
@@ -34,24 +35,21 @@ export class RegisterComponent implements OnInit {
 
     onSubmit(userData: FormGroup) {
         console.log(userData);
-        
         this.submitted = true;
         // this.alertService.clear();
         this.loading = true;
         this.authService.signUp(userData.value.email,userData.value.lastName,userData.value.firstName,userData.value.username)
-            .pipe(first())
             .subscribe({
                 next: (response) => {
                     console.log(response);
                     this.showPopup=true;
-                    this.router.navigate(['/login']);
+                    this.loading = false;
+                    // this.router.navigate(['/login']);
                     // this.alertService.success('Registration Successful', { keepAfterRouteChange: true });
                     //this.router.navigate(['/login'], { relativeTo: this.route });
-                    this.loading = false;
                 },
                 error: error => {
                     console.log(error);
-                    
                     // this.alertService.error(error);
                     this.loading = false;
                 }
@@ -72,5 +70,6 @@ export class RegisterComponent implements OnInit {
     showPopup: boolean = false;
       closePopup() {
         this.showPopup = false;
+        this.router.navigate(['/login']);
     }
 }

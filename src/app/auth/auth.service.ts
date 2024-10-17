@@ -20,14 +20,9 @@ export class AuthService {
   private clientID = environment.clientID
   private clientSecret = environment.clientSecret
 
-  private  proxyurl = "https://cors-anywhere.herokuapp.com/";
-  //private authUrl = environment.authUrl
   private authUrl = "https://express-proxy-app.cfapps.us10-001.hana.ondemand.com/auth"
+  private registerUrl = "https://express-proxy-app.cfapps.us10-001.hana.ondemand.com/api/iasusers"
 
-    private registerUrl = "https://express-proxy-app.cfapps.us10-001.hana.ondemand.com/api/iasusers"
-  // private authUrl = environment.production
-  // ? environment.authUrl // Production URL
-  // : '/auth';  // Development URL
 
   loggedInUser = new BehaviorSubject<AuthUser | null>(null);
   private tokenExpirationTimer: any;
@@ -56,30 +51,8 @@ export class AuthService {
         this.registerUrl,
         data, { headers }
       )
-      // .pipe(
-      //   catchError(error => {
-      //     console.error(error);
-      //     return of(null);
-      //   })
-      // )
-      // .subscribe(response => {
-      //   if (response) {
-      //     console.log(response);
-      //     if (response) {
-      //       console.log(response);
-      //       this.router.navigate(['/tendering']);
-
-      //     } else if (response.error_description === "User authentication failed.") {
-      //       console.log("40000000");
-      //     } else {
-      //       console.log(response);
-      //     }
-      //   }
-
-      // });
   }
 
-  // will be integrated with SAP Auth idenetity service
   signIn(email: string, password: string) {
 
     const headers = new HttpHeaders({
@@ -106,16 +79,6 @@ export class AuthService {
         this.loggedInUser.next(user);
         return user;
       }));
-    // .pipe(
-    //   catchError(this.handleError),
-    //   tap(resData => {
-    //     console.log(resData);
-    //     console.log(resData.id_token);
-    //     const user = new AuthUser(email, resData.id_token);
-    //     localStorage.setItem('token', resData.id_token);
-    //     this.loggedInUser.next(user);
-    //   })
-    // );
   }
 
   logout() {
