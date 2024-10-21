@@ -56,14 +56,20 @@
                         class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary " />
                 </span>
             </div> -->
-            <div class="border border-primary rounded  ">
-                <div fd-form-item>
+           
+            <div >
+                <div class="p-inputgroup">
+                    <input type="number" min="0" pInputNumber [(ngModel)]="profitMarginValue" placeholder="Profit Margin" />
+                    <button type="button" (click)="updateProfitMargin(profitMarginValue)" pButton label="Apply ProfitMargin"></button>
+                   
+                </div>
+                <!-- <div fd-form-item>
                     <fd-input-group type="number" placement="after" [(ngModel)]="profitMarginValue"
                         addOnText="Apply ProfitMargin" placeholder="Profit Margin" min="0"
                         (click)="updateProfitMargin(profitMarginValue)" [button]="true" [showFocus]="true"
                         style="padding-inline: 4px;">
                     </fd-input-group>
-                </div>
+                </div> -->
 
                 <!-- <div class="p-inputgroup ml-3">
                     <input type="number" [min]="0" pInputNumber placeholder="Profit Margin"
@@ -88,30 +94,27 @@
             <th style="min-width: 10rem;">Print </th>
             <th style="min-width: 10rem;"> MainItem.No </th>
             <th style="min-width: 10rem;"> SubItem.No </th>
-            <th style="min-width: 10rem;" pResizableColumn pSortableColumn="name">ServiceNO. <p-sortIcon field="name" />
+            <th style="min-width: 10rem;" >ServiceNO.
             </th>
-            <th style="min-width: 10rem;" pResizableColumn pSortableColumn="price">Description <p-sortIcon
-                    field="price" /></th>
-            <th style="min-width: 10rem;" pResizableColumn pSortableColumn="category">Quantity <p-sortIcon
-                    field="category" /></th>
-            <th style="min-width: 10rem;" pResizableColumn pSortableColumn="rating">UOM <p-sortIcon field="rating" />
+            <th style="min-width: 10rem;" >Description </th>
+            <th style="min-width: 10rem;" pResizableColumn pSortableColumn="quantity">Quantity <p-sortIcon
+                    field="quantity" /></th>
+            <th style="min-width: 10rem;" pResizableColumn pSortableColumn="unitOfMeasurementCode">UOM <p-sortIcon field="unitOfMeasurementCode" />
             </th>
-            <th style="min-width: 10rem;" pResizableColumn pSortableColumn="rating">Formula <p-sortIcon
-                    field="rating" /> </th>
-            <th style="min-width: 10rem;" pResizableColumn pSortableColumn="rating">Parameters <p-sortIcon
-                    field="rating" /></th>
-            <th style="min-width: 10rem;" pResizableColumn pSortableColumn="rating">AmountPerUnit <p-sortIcon
-                    field="rating" /></th>
-            <th style="min-width: 10rem;" pResizableColumn pSortableColumn="rating">Currency <p-sortIcon
-                    field="rating" /></th>
-            <th style="min-width: 10rem;" pResizableColumn pSortableColumn="rating">Totla <p-sortIcon field="rating" />
+            <th style="min-width: 10rem;" pResizableColumn pSortableColumn="formulaCode">Formula <p-sortIcon
+                    field="formulaCode" /> </th>
+            <th style="min-width: 10rem;" >Parameters</th>
+            <th style="min-width: 10rem;" pResizableColumn pSortableColumn="amountPerUnit">AmountPerUnit <p-sortIcon
+                    field="amountPerUnit" /></th>
+            <th style="min-width: 10rem;" pResizableColumn pSortableColumn="currencyCode">Currency <p-sortIcon
+                    field="currencyCode" /></th>
+            <th style="min-width: 10rem;" pResizableColumn pSortableColumn="total">Total <p-sortIcon field="total" />
             </th>
-            <th style="min-width: 10rem;" pResizableColumn pSortableColumn="rating">ProfitMargin % <p-sortIcon
-                    field="rating" /></th>
-            <th style="min-width: 10rem;" pResizableColumn pSortableColumn="rating">AmountPerUnitWithProfit <p-sortIcon
-                    field="rating" /></th>
-            <th style="min-width: 10rem;" pResizableColumn pSortableColumn="rating">TotalWithProfit <p-sortIcon
-                    field="rating" /></th>
+            <th style="min-width: 10rem;" >ProfitMargin % </th>
+            <th style="min-width: 10rem;" pResizableColumn pSortableColumn="amountPerUnitWithProfit">AmountPerUnitWithProfit <p-sortIcon
+                    field="amountPerUnitWithProfit" /></th>
+            <th style="min-width: 10rem;" pResizableColumn pSortableColumn="totalWithProfit">TotalWithProfit <p-sortIcon
+                    field="totalWithProfit" /></th>
             <th style="min-width: 10rem;">Actions</th>
         </tr>
     </ng-template>
@@ -409,33 +412,28 @@
                         <th style="min-width: 10rem;"> </th>
                         <!-- MainItem.No -->
                         <th style="min-width: 10rem;background-color: #dedede;"> SubItem.No </th>
-                        <th style="min-width: 10rem;background-color: #dedede;" pResizableColumn pSortableColumn="name">
-                            ServiceNO. <p-sortIcon field="name" />
+                        <th style="min-width: 10rem;background-color: #dedede;" >
+                            ServiceNO.
+                        </th>
+                        <th style="min-width: 10rem;background-color: #dedede;" >Description</th>
+                        <th style="min-width: 10rem;background-color: #dedede;" pResizableColumn
+                            pSortableColumn="quantity">Quantity <p-sortIcon field="quantity" /></th>
+                        <th style="min-width: 10rem;background-color: #dedede;" pResizableColumn
+                            pSortableColumn="unitOfMeasurementCode">UOM <p-sortIcon field="unitOfMeasurementCode" />
                         </th>
                         <th style="min-width: 10rem;background-color: #dedede;" pResizableColumn
-                            pSortableColumn="price">Description <p-sortIcon field="price" /></th>
+                            pSortableColumn="formulaCode">Formula <p-sortIcon field="formulaCode" /> </th>
+                        <th style="min-width: 10rem;background-color: #dedede;" >Parameters </th>
                         <th style="min-width: 10rem;background-color: #dedede;" pResizableColumn
-                            pSortableColumn="category">Quantity <p-sortIcon field="category" /></th>
+                            pSortableColumn="amountPerUnit">AmountPerUnit <p-sortIcon field="amountPerUnit" /></th>
                         <th style="min-width: 10rem;background-color: #dedede;" pResizableColumn
-                            pSortableColumn="rating">UOM <p-sortIcon field="rating" />
+                            pSortableColumn="currencyCode">Currency <p-sortIcon field="currencyCode" /></th>
+                        <th style="min-width: 10rem;background-color: #dedede;" pResizableColumn
+                            pSortableColumn="total">Total <p-sortIcon field="total" />
                         </th>
-                        <th style="min-width: 10rem;background-color: #dedede;" pResizableColumn
-                            pSortableColumn="rating">Formula <p-sortIcon field="rating" /> </th>
-                        <th style="min-width: 10rem;background-color: #dedede;" pResizableColumn
-                            pSortableColumn="rating">Parameters <p-sortIcon field="rating" /></th>
-                        <th style="min-width: 10rem;background-color: #dedede;" pResizableColumn
-                            pSortableColumn="rating">AmountPerUnit <p-sortIcon field="rating" /></th>
-                        <th style="min-width: 10rem;background-color: #dedede;" pResizableColumn
-                            pSortableColumn="rating">Currency <p-sortIcon field="rating" /></th>
-                        <th style="min-width: 10rem;background-color: #dedede;" pResizableColumn
-                            pSortableColumn="rating">Totla <p-sortIcon field="rating" />
-                        </th>
-                        <th style="min-width: 10rem;background-color: #dedede;" pResizableColumn
-                            pSortableColumn="rating">ProfitMargin % <p-sortIcon field="rating" /></th>
-                        <th style="min-width: 10rem;background-color: #dedede;" pResizableColumn
-                            pSortableColumn="rating">AmountPerUnitWithProfit <p-sortIcon field="rating" /></th>
-                        <th style="min-width: 10rem;background-color: #dedede;" pResizableColumn
-                            pSortableColumn="rating">TotalWithProfit <p-sortIcon field="rating" /></th>
+                        <th style="min-width: 10rem;background-color: #dedede;" > </th>
+                        <th style="min-width: 10rem;background-color: #dedede;" > </th>
+                        <th style="min-width: 10rem;background-color: #dedede;"> </th>
                         <th style="min-width: 10rem;background-color: #dedede;">Actions</th>
                     </tr>
                 </ng-template>

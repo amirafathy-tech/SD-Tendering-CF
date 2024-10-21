@@ -1,0 +1,43 @@
+<div class="d-flex justify-content-center align-items-center vh-100">
+    <div class="card card-style">
+        <h4 class="card-header login-header" style="text-align: center;">Enter Quotation Details:</h4>
+        <div class="card-body">
+            <form [formGroup]="cloudData" (ngSubmit)="nextPage(cloudData)">
+                <div class="mb-3">
+                    <label class="form-label">Document Number:</label>
+                    <input type="number" formControlName="document" class="form-control" />
+                    <!--error -->
+                    <span *ngIf="cloudData.controls['document'].invalid && (cloudData.controls['document'].dirty || 
+                       cloudData.controls['document'].touched)" class="error">
+                        <span class="text-danger my-3" *ngIf="cloudData.controls['document'].errors?.['required']">
+                            Document Number is required.
+                        </span>
+                    </span>
+                    <span class="text-danger my-3" *ngIf="cloudData.controls['document'].errors?.['negativeValue']">
+                        Document Number cannot be a negative.
+                      </span>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Item Number </label>
+                    <input type="number" formControlName="item" class="form-control" />
+                    <!--error -->
+                    <span *ngIf="cloudData.controls['item'].invalid && (cloudData.controls['item'].dirty || 
+                       cloudData.controls['item'].touched)" class="error">
+                        <span class="text-danger" *ngIf="cloudData.controls['item'].errors?.['required']">
+                            Item Number is required.
+                        </span>
+                    </span>
+
+                    <span class="text-danger my-3" *ngIf="cloudData.controls['item'].errors?.['negativeValue']">
+                        Item Number cannot be negative.
+                      </span>
+                </div>
+
+                <div class="d-flex justify-content-center my-3">
+                    <p-button label="Next " [disabled]="cloudData.invalid" type="submit" icon="pi pi-angle-right"
+                        iconPos="right"></p-button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

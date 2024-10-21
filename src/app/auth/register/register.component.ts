@@ -36,7 +36,6 @@ export class RegisterComponent implements OnInit {
     onSubmit(userData: FormGroup) {
         console.log(userData);
         this.submitted = true;
-        // this.alertService.clear();
         this.loading = true;
         this.authService.signUp(userData.value.email,userData.value.lastName,userData.value.firstName,userData.value.username)
             .subscribe({
@@ -54,17 +53,6 @@ export class RegisterComponent implements OnInit {
                     this.loading = false;
                 }
             });
-        // .pipe(first())
-        // .subscribe({
-        //     next: () => {
-        //         //this.alertService.success('Registration successful', { keepAfterRouteChange: true });
-        //         this.router.navigate(['../login'], { relativeTo: this.route });
-        //     },
-        //     error: error => {
-        //        // this.alertService.error(error);
-        //         this.loading = false;
-        //     }
-        // });
     }
 
     showPopup: boolean = false;

@@ -6,6 +6,7 @@ import { AuthComponent } from './auth/auth.component';
 import { AuthGuard } from './auth/auth.guard';
 import { InvoiceComponent } from './invoice/invoice.component';
 import { HomePageComponent } from './home-page/home-page.component';
+import { CloudDataComponent } from './cloud-data/cloud-data.component';
 
 
 const routes: Routes = [
@@ -14,6 +15,7 @@ const routes: Routes = [
   { path: 'home', component: HomePageComponent },
   { path: 'login', component: AuthComponent },
   { path: 'tendering',canActivate:[AuthGuard],  component: InvoiceComponent },
+  { path: 'tendering-data',canActivate:[AuthGuard], component: CloudDataComponent },
 ];
 
 @NgModule({

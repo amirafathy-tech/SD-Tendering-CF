@@ -32,6 +32,8 @@ import { CardModule } from 'primeng/card';
 import { FieldsetModule } from 'primeng/fieldset';
 import { TreeTableModule } from 'primeng/treetable';
 import { TooltipModule } from 'primeng/tooltip';
+import { InputTextModule } from 'primeng/inputtext';
+import { RadioButtonModule } from 'primeng/radiobutton';
 
 
 import { AppRoutingModule } from './app-routing.module';
@@ -45,6 +47,7 @@ import { InvoiceComponent } from './invoice/invoice.component';
 import { TruncateWordsPipe } from './pipes/truncate-words.pipe';
 import { SearchPipe } from './pipes/search.pipe';
 import { HomePageComponent } from './home-page/home-page.component';
+import { CloudDataComponent } from './cloud-data/cloud-data.component';
 
 @NgModule({
   declarations: [
@@ -55,6 +58,7 @@ import { HomePageComponent } from './home-page/home-page.component';
     TruncateWordsPipe,
     SearchPipe,
     HomePageComponent,
+    CloudDataComponent,
 
   ],
   imports: [
@@ -89,6 +93,7 @@ import { HomePageComponent } from './home-page/home-page.component';
     FieldsetModule,
     TreeTableModule,
     TooltipModule,
+    InputTextModule,
 
     NgHttpLoaderModule.forRoot(),
   ],
