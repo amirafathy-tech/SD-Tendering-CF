@@ -30,7 +30,6 @@ export class InvoiceComponent {
   totalValue: number = 0.0
   //fields for dropdown lists
   recordsServiceNumber!: ServiceMaster[];
-
   selectedServiceNumberRecord?: ServiceMaster
   selectedServiceNumber!: number;
   updateSelectedServiceNumber!: number
@@ -51,7 +50,6 @@ export class InvoiceComponent {
   updateShortTextChangeAllowedSubItem: boolean = false;
 
   recordsFormula!: any[];
-
   selectedFormula!: string;
   selectedFormulaRecord: any
   updatedFormula!: number;
@@ -74,7 +72,7 @@ export class InvoiceComponent {
   // currency for subitem:
   selectedCurrencySubItem!: string;
   //
-  selectedRowsForProfit: MainItem[] = []; // Array to store selected rows
+  selectedRowsForProfit: MainItem[] = []; 
   profitMarginValue: number = 0;
 
   public rowIndex = 0;
@@ -84,21 +82,17 @@ export class InvoiceComponent {
 
   updateProfitMargin(value: number) {
     console.log(value);
-
     if (value !== null && value < 0) {
-      this.profitMarginValue = 0; // Reset to 0 
-     // alert('Negative values are not allowed');
+      this.profitMarginValue = 0; 
      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Negative values are not allowed', life: 4000 });
     } else {
-
       for (const row of this.selectedRowsForProfit) {
         row.profitMargin = value;
         const { invoiceMainItemCode, total, totalWithProfit, ...mainItemWithoutMainItemCode } = row;
         const updatedMainItem = this.removePropertiesFrom(mainItemWithoutMainItemCode, ['invoiceMainItemCode', 'invoiceSubItemCode']);
         console.log(updatedMainItem);
-
         const newRecord: MainItem = {
-          ...updatedMainItem, // Copy all properties from the original record
+          ...updatedMainItem, 
           // Modify specific attributes
           subItems: (row?.subItems ?? []).map(subItem =>
             this.removeProperties(subItem, ['invoiceMainItemCode', 'invoiceSubItemCode'])
@@ -160,191 +154,7 @@ export class InvoiceComponent {
       this.loadingSubItems=false;
     });
   }
-  // Helper Functions:
-  removePropertiesFrom(obj: any, propertiesToRemove: string[]): any {
-    const newObj: any = {};
-
-    for (let key in obj) {
-      if (obj.hasOwnProperty(key)) {
-        if (Array.isArray(obj[key])) {
-          // If the property is an array, recursively remove properties from each element
-          newObj[key] = obj[key].map((item: any) => this.removeProperties(item, propertiesToRemove));
-        } else if (typeof obj[key] === 'object' && obj[key] !== null) {
-          // If the property is an object, recursively remove properties from the object
-          newObj[key] = this.removeProperties(obj[key], propertiesToRemove);
-        } else if (!propertiesToRemove.includes(key)) {
-          // Otherwise, copy the property if it's not in the list to remove
-          newObj[key] = obj[key];
-        }
-      }
-    }
-
-    return newObj;
-  }
-  removeProperties(obj: any, propertiesToRemove: string[]): any {
-    const newObj: any = {};
-    Object.keys(obj).forEach(key => {
-      if (!propertiesToRemove.includes(key)) {
-        newObj[key] = obj[key];
-      }
-    });
-    return newObj;
-  }
-  // to handel checkbox selection:
-  selectedMainItems: MainItem[] = [];
-  selectedSubItems: SubItem[] = [];
-  onMainItemSelection(event: any, mainItem: MainItem) {
-    mainItem.selected = event.checked;
-    this.selectedMainItems = event.checked
-    if (mainItem.selected) {
-      if (mainItem.subItems && mainItem.subItems.length > 0) {
-        mainItem.subItems.forEach(subItem => subItem.selected = !subItem.selected);
-      }
-    }
-    else {
-      // User deselected the record, so we need to deselect all associated subitems
-      if (mainItem.subItems && mainItem.subItems.length > 0) {
-        mainItem.subItems.forEach(subItem => subItem.selected = false)
-        console.log(mainItem.subItems);
-      }
-    }
-    // For Profit Margin:
-    if (event.checked) {
-      this.selectedRowsForProfit.push(mainItem);
-      console.log(this.selectedRowsForProfit);
-
-    } else {
-      const index = this.selectedRowsForProfit.indexOf(mainItem);
-      if (index !== -1) {
-        this.selectedRowsForProfit.splice(index, 1);
-        console.log(this.selectedRowsForProfit);
-      }
-    }
-  }
-  // to handle All Records Selection / Deselection 
-  selectedAllRecords: MainItem[] = [];
-  onSelectAllRecords(event: any): void {
-    if (Array.isArray(event.checked) && event.checked.length > 0) {
-      this.selectedAllRecords = [...this.mainItemsRecords];
-      console.log(this.selectedAllRecords);
-    } else {
-      this.selectedAllRecords = [];
-    }
-  }
-
-  onSubItemSelection(event: any, subItem: SubItem) {
-    console.log(subItem);
-    this.selectedSubItems.push(subItem);
-  }
-  //In Creation to handle shortTextChangeAlowlled Flag 
-  onServiceNumberChange(event: any) {
-    const selectedRecord = this.recordsServiceNumber.find(record => record.serviceNumberCode === this.selectedServiceNumber);
-    if (selectedRecord) {
-      this.selectedServiceNumberRecord = selectedRecord
-      this.shortTextChangeAllowed = this.selectedServiceNumberRecord?.shortTextChangeAllowed || false;
-      this.shortText = ""
-    }
-    else {
-      console.log("no service number");
-      //this.dontSelectServiceNumber = false
-      this.selectedServiceNumberRecord = undefined;
-    }
-  }
-  //In Update to handle shortTextChangeAlowlled Flag 
-  onServiceNumberUpdateChange(event: any) {
-    const updateSelectedRecord = this.recordsServiceNumber.find(record => record.serviceNumberCode === event.value);
-    if (updateSelectedRecord) {
-      this.updateSelectedServiceNumberRecord = updateSelectedRecord
-      this.updateShortTextChangeAllowed = this.updateSelectedServiceNumberRecord?.shortTextChangeAllowed || false;
-      this.updateShortText = ""
-    }
-    else {
-      this.updateSelectedServiceNumberRecord = undefined;
-    }
-  }
-
-  //In Creation SubItem to handle shortTextChangeAlowlled Flag 
-  onServiceNumberChangeSubItem(event: any) {
-    const selectedRecord = this.recordsServiceNumber.find(record => record.serviceNumberCode === this.selectedServiceNumberSubItem);
-    if (selectedRecord) {
-      this.selectedServiceNumberRecordSubItem = selectedRecord
-      this.shortTextChangeAllowedSubItem = this.selectedServiceNumberRecordSubItem?.shortTextChangeAllowed || false;
-      this.shortTextSubItem = ""
-    }
-    else {
-      console.log("no service number");
-      //this.dontSelectServiceNumber = false
-      this.selectedServiceNumberRecordSubItem = undefined;
-    }
-  }
-  //In Update SubItem to handle shortTextChangeAlowlled Flag 
-  onServiceNumberUpdateChangeSubItem(event: any) {
-    const updateSelectedRecord = this.recordsServiceNumber.find(record => record.serviceNumberCode === event.value);
-    if (updateSelectedRecord) {
-      this.updateSelectedServiceNumberRecordSubItem = updateSelectedRecord
-      this.updateShortTextChangeAllowedSubItem = this.updateSelectedServiceNumberRecordSubItem?.shortTextChangeAllowed || false;
-      this.updateShortTextSubItem = ""
-    }
-    else {
-      this.updateSelectedServiceNumberRecordSubItem = undefined;
-    }
-  }
-
-  onFormulaSelect(event: any) {
-    const selectedRecord = this.recordsFormula.find(record => record.formula === this.selectedFormula);
-    if (selectedRecord) {
-      this.selectedFormulaRecord = selectedRecord
-      console.log(this.selectedFormulaRecord);
-
-    }
-    else {
-      console.log("no Formula");
-      this.selectedFormulaRecord = undefined;
-    }
-  }
-  onFormulaUpdateSelect(event: any) {
-    const selectedRecord = this.recordsFormula.find(record => record.formula === event.value);
-    if (selectedRecord) {
-      this.updatedFormulaRecord = selectedRecord
-      console.log(this.updatedFormulaRecord);
-
-    }
-    else {
-      this.updatedFormulaRecord = undefined;
-      console.log(this.updatedFormulaRecord);
-    }
-  }
-
-  onFormulaSelectSubItem(event: any) {
-    const selectedRecord = this.recordsFormula.find(record => record.formula === this.selectedFormulaSubItem);
-    if (selectedRecord) {
-      this.selectedFormulaRecordSubItem = selectedRecord
-      console.log(this.selectedFormulaRecordSubItem);
-
-    }
-    else {
-      console.log("no Formula");
-      this.selectedFormulaRecordSubItem = undefined;
-    }
-  }
-  onFormulaUpdateSelectSubItem(event: any) {
-    const selectedRecord = this.recordsFormula.find(record => record.formula === event.value);
-    if (selectedRecord) {
-      this.updatedFormulaRecordSubItem = selectedRecord
-      console.log(this.updatedFormulaRecordSubItem);
-
-    }
-    else {
-      this.updatedFormulaRecordSubItem = undefined;
-      console.log(this.updatedFormulaRecordSubItem);
-    }
-  }
-  expandAll() {
-    this.mainItemsRecords.forEach(item => this.expandedRows[item.invoiceMainItemCode] = true);
-  }
-  collapseAll() {
-    this.expandedRows = {};
-  }
+ 
 
   // For Edit  MainItem
   clonedMainItem: { [s: number]: MainItem } = {};
@@ -1417,6 +1227,186 @@ export class InvoiceComponent {
       this.selectedUnitOfMeasureSubItem = "";
     this.selectedFormulaSubItem = "";
     this.selectedCurrencySubItem = "";
+  }
+
+
+   // Helper Functions:
+   removePropertiesFrom(obj: any, propertiesToRemove: string[]): any {
+    const newObj: any = {};
+    for (let key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        if (Array.isArray(obj[key])) {
+          // If the property is an array, recursively remove properties from each element
+          newObj[key] = obj[key].map((item: any) => this.removeProperties(item, propertiesToRemove));
+        } else if (typeof obj[key] === 'object' && obj[key] !== null) {
+          // If the property is an object, recursively remove properties from the object
+          newObj[key] = this.removeProperties(obj[key], propertiesToRemove);
+        } else if (!propertiesToRemove.includes(key)) {
+          // Otherwise, copy the property if it's not in the list to remove
+          newObj[key] = obj[key];
+        }
+      }
+    }
+    return newObj;
+  }
+  removeProperties(obj: any, propertiesToRemove: string[]): any {
+    const newObj: any = {};
+    Object.keys(obj).forEach(key => {
+      if (!propertiesToRemove.includes(key)) {
+        newObj[key] = obj[key];
+      }
+    });
+    return newObj;
+  }
+  // to handel checkbox selection:
+  selectedMainItems: MainItem[] = [];
+  selectedSubItems: SubItem[] = [];
+  onMainItemSelection(event: any, mainItem: MainItem) {
+    mainItem.selected = event.checked;
+    this.selectedMainItems = event.checked
+    if (mainItem.selected) {
+      if (mainItem.subItems && mainItem.subItems.length > 0) {
+        mainItem.subItems.forEach(subItem => subItem.selected = !subItem.selected);
+      }
+    }
+    else {
+      // User deselected the record, so we need to deselect all associated subitems
+      if (mainItem.subItems && mainItem.subItems.length > 0) {
+        mainItem.subItems.forEach(subItem => subItem.selected = false)
+        console.log(mainItem.subItems);
+      }
+    }
+    // For Profit Margin:
+    if (event.checked) {
+      this.selectedRowsForProfit.push(mainItem);
+      console.log(this.selectedRowsForProfit);
+    } else {
+      const index = this.selectedRowsForProfit.indexOf(mainItem);
+      if (index !== -1) {
+        this.selectedRowsForProfit.splice(index, 1);
+        console.log(this.selectedRowsForProfit);
+      }
+    }
+  }
+  // to handle All Records Selection / Deselection 
+  selectedAllRecords: MainItem[] = [];
+  onSelectAllRecords(event: any): void {
+    if (Array.isArray(event.checked) && event.checked.length > 0) {
+      this.selectedAllRecords = [...this.mainItemsRecords];
+      console.log(this.selectedAllRecords);
+    } else {
+      this.selectedAllRecords = [];
+    }
+  }
+
+  onSubItemSelection(event: any, subItem: SubItem) {
+    console.log(subItem);
+    this.selectedSubItems.push(subItem);
+  }
+  //In Creation to handle shortTextChangeAlowlled Flag 
+  onServiceNumberChange(event: any) {
+    const selectedRecord = this.recordsServiceNumber.find(record => record.serviceNumberCode === this.selectedServiceNumber);
+    if (selectedRecord) {
+      this.selectedServiceNumberRecord = selectedRecord
+      this.shortTextChangeAllowed = this.selectedServiceNumberRecord?.shortTextChangeAllowed || false;
+      this.shortText = ""
+    }
+    else {
+      console.log("no service number");
+      //this.dontSelectServiceNumber = false
+      this.selectedServiceNumberRecord = undefined;
+    }
+  }
+  //In Update to handle shortTextChangeAlowlled Flag 
+  onServiceNumberUpdateChange(event: any) {
+    const updateSelectedRecord = this.recordsServiceNumber.find(record => record.serviceNumberCode === event.value);
+    if (updateSelectedRecord) {
+      this.updateSelectedServiceNumberRecord = updateSelectedRecord
+      this.updateShortTextChangeAllowed = this.updateSelectedServiceNumberRecord?.shortTextChangeAllowed || false;
+      this.updateShortText = ""
+    }
+    else {
+      this.updateSelectedServiceNumberRecord = undefined;
+    }
+  }
+
+  //In Creation SubItem to handle shortTextChangeAlowlled Flag 
+  onServiceNumberChangeSubItem(event: any) {
+    const selectedRecord = this.recordsServiceNumber.find(record => record.serviceNumberCode === this.selectedServiceNumberSubItem);
+    if (selectedRecord) {
+      this.selectedServiceNumberRecordSubItem = selectedRecord
+      this.shortTextChangeAllowedSubItem = this.selectedServiceNumberRecordSubItem?.shortTextChangeAllowed || false;
+      this.shortTextSubItem = ""
+    }
+    else {
+      console.log("no service number");
+      //this.dontSelectServiceNumber = false
+      this.selectedServiceNumberRecordSubItem = undefined;
+    }
+  }
+  //In Update SubItem to handle shortTextChangeAlowlled Flag 
+  onServiceNumberUpdateChangeSubItem(event: any) {
+    const updateSelectedRecord = this.recordsServiceNumber.find(record => record.serviceNumberCode === event.value);
+    if (updateSelectedRecord) {
+      this.updateSelectedServiceNumberRecordSubItem = updateSelectedRecord
+      this.updateShortTextChangeAllowedSubItem = this.updateSelectedServiceNumberRecordSubItem?.shortTextChangeAllowed || false;
+      this.updateShortTextSubItem = ""
+    }
+    else {
+      this.updateSelectedServiceNumberRecordSubItem = undefined;
+    }
+  }
+
+  onFormulaSelect(event: any) {
+    const selectedRecord = this.recordsFormula.find(record => record.formula === this.selectedFormula);
+    if (selectedRecord) {
+      this.selectedFormulaRecord = selectedRecord
+      console.log(this.selectedFormulaRecord);
+    }
+    else {
+      console.log("no Formula");
+      this.selectedFormulaRecord = undefined;
+    }
+  }
+  onFormulaUpdateSelect(event: any) {
+    const selectedRecord = this.recordsFormula.find(record => record.formula === event.value);
+    if (selectedRecord) {
+      this.updatedFormulaRecord = selectedRecord
+      console.log(this.updatedFormulaRecord);
+    }
+    else {
+      this.updatedFormulaRecord = undefined;
+      console.log(this.updatedFormulaRecord);
+    }
+  }
+
+  onFormulaSelectSubItem(event: any) {
+    const selectedRecord = this.recordsFormula.find(record => record.formula === this.selectedFormulaSubItem);
+    if (selectedRecord) {
+      this.selectedFormulaRecordSubItem = selectedRecord
+      console.log(this.selectedFormulaRecordSubItem);
+    }
+    else {
+      console.log("no Formula");
+      this.selectedFormulaRecordSubItem = undefined;
+    }
+  }
+  onFormulaUpdateSelectSubItem(event: any) {
+    const selectedRecord = this.recordsFormula.find(record => record.formula === event.value);
+    if (selectedRecord) {
+      this.updatedFormulaRecordSubItem = selectedRecord
+      console.log(this.updatedFormulaRecordSubItem);
+    }
+    else {
+      this.updatedFormulaRecordSubItem = undefined;
+      console.log(this.updatedFormulaRecordSubItem);
+    }
+  }
+  expandAll() {
+    this.mainItemsRecords.forEach(item => this.expandedRows[item.invoiceMainItemCode] = true);
+  }
+  collapseAll() {
+    this.expandedRows = {};
   }
 
   // Export to excel sheet:

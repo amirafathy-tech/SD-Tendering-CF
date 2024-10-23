@@ -1,6 +1,6 @@
 <div class="d-flex justify-content-center align-items-center vh-100">
     <div class="card card-style">
-        <h4 class="card-header login-header" style="text-align: center;">Enter Quotation Details:</h4>
+        <h4 class="card-header login-header" style="text-align: center;color: white; background-color: #007bff;">Enter Quotation Details:</h4>
         <div class="card-body">
             <form [formGroup]="cloudData" (ngSubmit)="nextPage(cloudData)">
                 <div class="mb-3">
@@ -33,9 +33,12 @@
                       </span>
                 </div>
 
-                <div class="d-flex justify-content-center my-3">
-                    <p-button label="Next " [disabled]="cloudData.invalid" type="submit" icon="pi pi-angle-right"
-                        iconPos="right"></p-button>
+                <div class="d-flex justify-content-end my-3">
+                    <button [disabled]="cloudData.invalid" type="submit" class="btn btn-primary">
+                        Next<i class="pi pi-angle-right" ></i>
+                    </button>
+                    <!-- <p-button label="Next " [disabled]="cloudData.invalid" type="submit" icon="pi pi-angle-right"
+                        iconPos="right"></p-button> -->
                 </div>
             </form>
         </div>
