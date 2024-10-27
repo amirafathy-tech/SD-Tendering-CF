@@ -20,6 +20,7 @@ export class InvoiceComponent {
   //cloud data:
   documentNumber!:number;
   itemNumber!:number;
+  customerId!:number;
 
   // Pagination:
   loading: boolean = true;
@@ -105,7 +106,7 @@ export class InvoiceComponent {
 
         // this._ApiService.patch<MainItem>(`mainitems`, row.invoiceMainItemCode, updatedRecord).subscribe({
         
-      this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/59100002`, updatedRecord).subscribe({
+      this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, updatedRecord).subscribe({
           next: (res) => {
             console.log('mainitem  updated:', res);
             this.totalValue = 0;
@@ -126,7 +127,8 @@ export class InvoiceComponent {
   constructor(private router:Router,private _ApiService: ApiService, private _InvoiceService: InvoiceService, private messageService: MessageService, private confirmationService: ConfirmationService) {
     this.documentNumber = this.router.getCurrentNavigation()?.extras.state?.['documentNumber'];
     this.itemNumber = this.router.getCurrentNavigation()?.extras.state?.['itemNumber'];
-    console.log(this.documentNumber,this.itemNumber);
+    this.customerId= this.router.getCurrentNavigation()?.extras.state?.['customerId'];
+    console.log(this.documentNumber,this.itemNumber,this.customerId);
    }
 
   ngOnInit() {
@@ -181,7 +183,7 @@ export class InvoiceComponent {
       };
       console.log(newRecord);
       // this._ApiService.patch<MainItem>('mainitems', record.invoiceMainItemCode, newRecord).subscribe({
-      this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/59100002`, newRecord).subscribe({
+      this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, newRecord).subscribe({
         next: (res) => {
           console.log('mainitem  updated:', res);
           this.totalValue = 0;
@@ -210,7 +212,7 @@ export class InvoiceComponent {
       console.log(newRecord);
       // this._ApiService.patch<MainItem>('mainitems', record.invoiceMainItemCode, newRecord).subscribe({
       
-      this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/59100002`, newRecord).subscribe({
+      this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, newRecord).subscribe({
         next: (res) => {
           console.log('mainitem  updated:', res);
           this.totalValue = 0;
@@ -239,7 +241,7 @@ export class InvoiceComponent {
       console.log(newRecord);
       // this._ApiService.patch<MainItem>('mainitems', record.invoiceMainItemCode, newRecord).subscribe({
       
-      this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/59100002`, newRecord).subscribe({
+      this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, newRecord).subscribe({
         next: (res) => {
           console.log('mainitem  updated:', res);
           this.totalValue = 0;
@@ -260,7 +262,7 @@ export class InvoiceComponent {
       console.log({ ...mainItemWithoutMainItemCode });
       // this._ApiService.patch<MainItem>('mainitems', record.invoiceMainItemCode, { ...updatedMainItem }).subscribe({
       
-      this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/59100002`, { ...updatedMainItem }).subscribe({
+      this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, { ...updatedMainItem }).subscribe({
         next: (res) => {
           console.log('mainitem  updated:', res);
           this.totalValue = 0;
@@ -334,7 +336,7 @@ export class InvoiceComponent {
       console.log(filteredRecord);
 
       // this._ApiService.patch<MainItem>('mainitems', mainItem.invoiceMainItemCode, filteredRecord).subscribe({
-        this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/59100002`, filteredRecord).subscribe({
+        this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, filteredRecord).subscribe({
         next: (res) => {
           console.log('mainitem with && subItem updated:', res);
           this.totalValue = 0;
@@ -388,7 +390,7 @@ export class InvoiceComponent {
       console.log(filteredRecord);
 
       // this._ApiService.patch<MainItem>('mainitems', mainItem.invoiceMainItemCode, filteredRecord).subscribe({
-        this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/59100002`, filteredRecord).subscribe({
+        this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, filteredRecord).subscribe({
         next: (res) => {
           console.log('mainitem with && subItem updated:', res);
           this.totalValue = 0;
@@ -439,7 +441,7 @@ export class InvoiceComponent {
       console.log(filteredRecord);
 
       // this._ApiService.patch<MainItem>('mainitems', mainItem.invoiceMainItemCode, filteredRecord).subscribe({
-        this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/59100002`, filteredRecord).subscribe({
+        this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, filteredRecord).subscribe({
         next: (res) => {
           console.log('mainitem with && subItem updated:', res);
           this.totalValue = 0;
@@ -485,7 +487,7 @@ export class InvoiceComponent {
       console.log(filteredRecord);
 
       // this._ApiService.patch<MainItem>('mainitems', mainItem.invoiceMainItemCode, filteredRecord).subscribe({
-        this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/59100002`, filteredRecord).subscribe({
+        this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, filteredRecord).subscribe({
         next: (res) => {
           console.log('mainitem with && subItem updated:', res);
           this.totalValue = 0;
@@ -640,7 +642,7 @@ export class InvoiceComponent {
         );
         console.log(filteredRecord);
 
-        this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/59100002`, filteredRecord).subscribe({
+        this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, filteredRecord).subscribe({
           next: (res) => {
             console.log('mainitem created:', res);
             this.totalValue = 0;
@@ -702,7 +704,7 @@ export class InvoiceComponent {
         );
         console.log(filteredRecord);
    
-        this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/59100002`, filteredRecord).subscribe({
+        this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, filteredRecord).subscribe({
           next: (res) => {
             console.log('mainitem created:', res);
             this.totalValue = 0;
@@ -768,7 +770,7 @@ export class InvoiceComponent {
         );
         console.log(filteredRecord);
 
-        this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/59100002`, filteredRecord).subscribe({
+        this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, filteredRecord).subscribe({
           next: (res) => {
             console.log('mainitem created:', res);
             this.totalValue = 0;
@@ -835,7 +837,7 @@ export class InvoiceComponent {
         );
         console.log(filteredRecord);
 
-        this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/59100002`, filteredRecord).subscribe({
+        this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, filteredRecord).subscribe({
           next: (res) => {
             console.log('mainitem created:', res);
             this.totalValue = 0;
@@ -967,7 +969,7 @@ export class InvoiceComponent {
         console.log(filteredRecord);
 
         // this._ApiService.patch<MainItem>('mainitems', mainItem.invoiceMainItemCode, filteredRecord).subscribe({
-          this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/59100002`, filteredRecord).subscribe({
+          this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, filteredRecord).subscribe({
           next: (res) => {
             console.log('mainitem updated && subItem created:', res);
             this.totalValue = 0;
@@ -1035,7 +1037,7 @@ export class InvoiceComponent {
         console.log(filteredRecord);
         // this._ApiService.patch<MainItem>('mainitems', mainItem.invoiceMainItemCode, filteredRecord).subscribe({
         
-        this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/59100002`, filteredRecord).subscribe({
+        this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, filteredRecord).subscribe({
           next: (res) => {
             console.log('mainitem updated && subItem created:', res);
             this.totalValue = 0;
@@ -1114,7 +1116,7 @@ export class InvoiceComponent {
 
         // this._ApiService.patch<MainItem>('mainitems', mainItem.invoiceMainItemCode, filteredRecord).subscribe({
         
-        this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/59100002`, filteredRecord).subscribe({
+        this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, filteredRecord).subscribe({
           next: (res) => {
             console.log('mainitem updated && subItem created:', res);
             this.totalValue = 0;
@@ -1188,7 +1190,7 @@ export class InvoiceComponent {
         console.log(filteredRecord);
        // this._ApiService.patch<MainItem>('mainitems', mainItem.invoiceMainItemCode, filteredRecord).subscribe({
        
-       this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/59100002`, filteredRecord).subscribe({
+       this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, filteredRecord).subscribe({
           next: (res) => {
             console.log('mainitem updated && subItem created:', res);
             this.totalValue = 0;

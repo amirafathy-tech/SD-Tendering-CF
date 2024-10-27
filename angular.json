@@ -40,6 +40,14 @@
           },
           "configurations": {
             "production": {
+              
+              "buildOptimizer": true,
+              "optimization": true,
+              "aot": true,
+              "vendorChunk": true,
+              "extractLicenses": true,
+              "sourceMap": true,
+              
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",

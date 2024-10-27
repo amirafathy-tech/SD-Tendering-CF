@@ -12,7 +12,9 @@ export class ApiService {
   //private baseUrl = environment.apiUrl
   // private baseUrl = "/api"
  // https://express-proxy-app.cfapps.us10-001.hana.ondemand.com/
-  private baseUrl = "https://express-proxy-app.cfapps.us10-001.hana.ondemand.com/api"
+ 
+  // private baseUrl = "https://express-proxy-app.cfapps.us10-001.hana.ondemand.com/api"
+  private baseUrl = "https://proxy-app.cfapps.us10-001.hana.ondemand.com/api"
   // private baseUrl = environment.production
   //   ? environment.apiUrl // Production URL
   //   : '/api';  // Development URL
