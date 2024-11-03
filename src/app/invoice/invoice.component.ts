@@ -18,9 +18,9 @@ import { Router } from '@angular/router';
 export class InvoiceComponent {
 
   //cloud data:
-  documentNumber!:number;
-  itemNumber!:number;
-  customerId!:number;
+  documentNumber!: number;
+  itemNumber!: number;
+  customerId!: number;
 
   // Pagination:
   loading: boolean = true;
@@ -73,7 +73,7 @@ export class InvoiceComponent {
   // currency for subitem:
   selectedCurrencySubItem!: string;
   //
-  selectedRowsForProfit: MainItem[] = []; 
+  selectedRowsForProfit: MainItem[] = [];
   profitMarginValue: number = 0;
 
   public rowIndex = 0;
@@ -84,8 +84,8 @@ export class InvoiceComponent {
   updateProfitMargin(value: number) {
     console.log(value);
     if (value !== null && value < 0) {
-      this.profitMarginValue = 0; 
-     this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Negative values are not allowed', life: 4000 });
+      this.profitMarginValue = 0;
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Negative values are not allowed', life: 4000 });
     } else {
       for (const row of this.selectedRowsForProfit) {
         row.profitMargin = value;
@@ -93,7 +93,7 @@ export class InvoiceComponent {
         const updatedMainItem = this.removePropertiesFrom(mainItemWithoutMainItemCode, ['invoiceMainItemCode', 'invoiceSubItemCode']);
         console.log(updatedMainItem);
         const newRecord: MainItem = {
-          ...updatedMainItem, 
+          ...updatedMainItem,
           // Modify specific attributes
           subItems: (row?.subItems ?? []).map(subItem =>
             this.removeProperties(subItem, ['invoiceMainItemCode', 'invoiceSubItemCode'])
@@ -105,8 +105,8 @@ export class InvoiceComponent {
         const updatedRecord = this.removeProperties(newRecord, ['selected'])
 
         // this._ApiService.patch<MainItem>(`mainitems`, row.invoiceMainItemCode, updatedRecord).subscribe({
-        
-      this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, updatedRecord).subscribe({
+
+        this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, updatedRecord).subscribe({
           next: (res) => {
             console.log('mainitem  updated:', res);
             this.totalValue = 0;
@@ -117,23 +117,23 @@ export class InvoiceComponent {
           },
           complete: () => {
             this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Profit Margin applied successfully ' });
-            this.selectedRowsForProfit=[];
+            this.selectedRowsForProfit = [];
           }
         });
       }
     }
   }
 
-  constructor(private router:Router,private _ApiService: ApiService, private _InvoiceService: InvoiceService, private messageService: MessageService, private confirmationService: ConfirmationService) {
+  constructor(private router: Router, private _ApiService: ApiService, private _InvoiceService: InvoiceService, private messageService: MessageService, private confirmationService: ConfirmationService) {
     this.documentNumber = this.router.getCurrentNavigation()?.extras.state?.['documentNumber'];
     this.itemNumber = this.router.getCurrentNavigation()?.extras.state?.['itemNumber'];
-    this.customerId= this.router.getCurrentNavigation()?.extras.state?.['customerId'];
-    console.log(this.documentNumber,this.itemNumber,this.customerId);
-   }
+    this.customerId = this.router.getCurrentNavigation()?.extras.state?.['customerId'];
+    console.log(this.documentNumber, this.itemNumber, this.customerId);
+  }
 
   ngOnInit() {
     this._ApiService.get<ServiceMaster[]>('servicenumbers').subscribe(response => {
-      this.recordsServiceNumber = response
+      this.recordsServiceNumber = response;
       //.filter(record => record.deletionIndicator === false);
     });
     this._ApiService.get<any[]>('formulas').subscribe(response => {
@@ -142,21 +142,40 @@ export class InvoiceComponent {
     this._ApiService.get<any[]>('currencies').subscribe(response => {
       this.recordsCurrency = response;
     });
-    this._ApiService.get<MainItem[]>('mainitems').subscribe(response => {
-      this.mainItemsRecords = response.sort((a, b) => a.invoiceMainItemCode - b.invoiceMainItemCode);
-      //response.sort((a, b) => b.invoiceMainItemCode - a.invoiceMainItemCode);
-      console.log(this.mainItemsRecords);
-      this.loading = false;
+    this._ApiService.get<MainItem[]>(`mainitems/${this.documentNumber}`).subscribe({
+      next: (res) => {
+        this.mainItemsRecords = res.sort((a, b) => a.invoiceMainItemCode - b.invoiceMainItemCode);
+        console.log(this.mainItemsRecords);
+        this.loading = false;
+        this.totalValue = this.mainItemsRecords.reduce((sum, record) => sum + record.totalWithProfit, 0);
+        console.log('Total Value:', this.totalValue);
+      }, error: (err) => {
+        console.log(err);
+        console.log(err.status);
+        if(err.status == 404){
+          this.mainItemsRecords=[];
+          this.loading = false;
+          this.totalValue = this.mainItemsRecords.reduce((sum, record) => sum + record.totalWithProfit, 0);
+          console.log('Total Value:', this.totalValue);
 
-      this.totalValue = this.mainItemsRecords.reduce((sum, record) => sum + record.totalWithProfit, 0);
-      console.log('Total Value:', this.totalValue);
+        }
+      },
+      complete: () => {
+      }
+      //.subscribe(response => {
+      // this.mainItemsRecords = response.sort((a, b) => a.invoiceMainItemCode - b.invoiceMainItemCode);
+      // console.log(this.mainItemsRecords);
+      // this.loading = false;
+
+      // this.totalValue = this.mainItemsRecords.reduce((sum, record) => sum + record.totalWithProfit, 0);
+      // console.log('Total Value:', this.totalValue);
     });
     this._ApiService.get<SubItem[]>('subitems').subscribe(response => {
       this.subItemsRecords = response;
-      this.loadingSubItems=false;
+      this.loadingSubItems = false;
     });
   }
- 
+
 
   // For Edit  MainItem
   clonedMainItem: { [s: number]: MainItem } = {};
@@ -211,7 +230,7 @@ export class InvoiceComponent {
       };
       console.log(newRecord);
       // this._ApiService.patch<MainItem>('mainitems', record.invoiceMainItemCode, newRecord).subscribe({
-      
+
       this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, newRecord).subscribe({
         next: (res) => {
           console.log('mainitem  updated:', res);
@@ -222,8 +241,8 @@ export class InvoiceComponent {
           this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid Data' });
         },
         complete: () => {
-          this.updatedFormulaRecord=undefined;
-          this.resultAfterTestUpdate=undefined
+          this.updatedFormulaRecord = undefined;
+          this.resultAfterTestUpdate = undefined
 
           this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Record updated successfully ' });
           // this.ngOnInit()
@@ -240,7 +259,7 @@ export class InvoiceComponent {
       };
       console.log(newRecord);
       // this._ApiService.patch<MainItem>('mainitems', record.invoiceMainItemCode, newRecord).subscribe({
-      
+
       this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, newRecord).subscribe({
         next: (res) => {
           console.log('mainitem  updated:', res);
@@ -251,8 +270,8 @@ export class InvoiceComponent {
           this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid Data' });
         },
         complete: () => {
-          this.updatedFormulaRecord=undefined;
-          this.resultAfterTestUpdate=undefined
+          this.updatedFormulaRecord = undefined;
+          this.resultAfterTestUpdate = undefined
           this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Record updated successfully ' });
           // this.ngOnInit()
         }
@@ -261,7 +280,7 @@ export class InvoiceComponent {
     if (!this.updateSelectedServiceNumberRecord && !this.updatedFormulaRecord && !this.resultAfterTestUpdate) {
       console.log({ ...mainItemWithoutMainItemCode });
       // this._ApiService.patch<MainItem>('mainitems', record.invoiceMainItemCode, { ...updatedMainItem }).subscribe({
-      
+
       this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, { ...updatedMainItem }).subscribe({
         next: (res) => {
           console.log('mainitem  updated:', res);
@@ -336,7 +355,7 @@ export class InvoiceComponent {
       console.log(filteredRecord);
 
       // this._ApiService.patch<MainItem>('mainitems', mainItem.invoiceMainItemCode, filteredRecord).subscribe({
-        this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, filteredRecord).subscribe({
+      this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, filteredRecord).subscribe({
         next: (res) => {
           console.log('mainitem with && subItem updated:', res);
           this.totalValue = 0;
@@ -390,7 +409,7 @@ export class InvoiceComponent {
       console.log(filteredRecord);
 
       // this._ApiService.patch<MainItem>('mainitems', mainItem.invoiceMainItemCode, filteredRecord).subscribe({
-        this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, filteredRecord).subscribe({
+      this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, filteredRecord).subscribe({
         next: (res) => {
           console.log('mainitem with && subItem updated:', res);
           this.totalValue = 0;
@@ -400,8 +419,8 @@ export class InvoiceComponent {
           this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid Data' });
         },
         complete: () => {
-          this.updatedFormulaRecordSubItem=undefined;
-          this.resultAfterTestUpdate=undefined
+          this.updatedFormulaRecordSubItem = undefined;
+          this.resultAfterTestUpdate = undefined
           this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Record updated successfully ' });
           // this.ngOnInit()
         }
@@ -441,7 +460,7 @@ export class InvoiceComponent {
       console.log(filteredRecord);
 
       // this._ApiService.patch<MainItem>('mainitems', mainItem.invoiceMainItemCode, filteredRecord).subscribe({
-        this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, filteredRecord).subscribe({
+      this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, filteredRecord).subscribe({
         next: (res) => {
           console.log('mainitem with && subItem updated:', res);
           this.totalValue = 0;
@@ -451,8 +470,8 @@ export class InvoiceComponent {
           this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid Data' });
         },
         complete: () => {
-          this.updatedFormulaRecordSubItem=undefined;
-          this.resultAfterTestUpdate=undefined
+          this.updatedFormulaRecordSubItem = undefined;
+          this.resultAfterTestUpdate = undefined
           this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Record updated successfully ' });
           // this.ngOnInit()
         }
@@ -487,7 +506,7 @@ export class InvoiceComponent {
       console.log(filteredRecord);
 
       // this._ApiService.patch<MainItem>('mainitems', mainItem.invoiceMainItemCode, filteredRecord).subscribe({
-        this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, filteredRecord).subscribe({
+      this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, filteredRecord).subscribe({
         next: (res) => {
           console.log('mainitem with && subItem updated:', res);
           this.totalValue = 0;
@@ -555,7 +574,7 @@ export class InvoiceComponent {
               },
               complete: () => {
                 this.messageService.add({ severity: 'success', summary: 'Successfully', detail: 'Deleted', life: 3000 });
-                this.selectedMainItems=[]
+                this.selectedMainItems = []
               }
             })
             // this._ApiService.delete<MainItem>('mainitems', record.invoiceMainItemCode).subscribe(response => {
@@ -565,7 +584,7 @@ export class InvoiceComponent {
             // });
           }
           //this.messageService.add({ severity: 'success', summary: 'Successfully', detail: 'Deleted', life: 3000 });
-         // this.selectedMainItems = []; // Clear the selectedRecords array after deleting all records
+          // this.selectedMainItems = []; // Clear the selectedRecords array after deleting all records
         }
       });
     }
@@ -633,44 +652,44 @@ export class InvoiceComponent {
       //   });
       // }
       // else {
-        console.log(newRecord);
-        // Remove properties with empty or default values
-        const filteredRecord = Object.fromEntries(
-          Object.entries(newRecord).filter(([_, value]) => {
-            return value !== '' && value !== 0 && value !== undefined && value !== null;
-          })
-        );
-        console.log(filteredRecord);
+      console.log(newRecord);
+      // Remove properties with empty or default values
+      const filteredRecord = Object.fromEntries(
+        Object.entries(newRecord).filter(([_, value]) => {
+          return value !== '' && value !== 0 && value !== undefined && value !== null;
+        })
+      );
+      console.log(filteredRecord);
 
-        this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, filteredRecord).subscribe({
-          next: (res) => {
-            console.log('mainitem created:', res);
-            this.totalValue = 0;
-            this.ngOnInit()
-          }, error: (err) => {
-            console.log(err);
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid Data' });
-          },
-          complete: () => {
-            this.resetNewMainItem();
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Record added successfully ' });
-          }
-        });
+      this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, filteredRecord).subscribe({
+        next: (res) => {
+          console.log('mainitem created:', res);
+          this.totalValue = 0;
+          this.ngOnInit()
+        }, error: (err) => {
+          console.log(err);
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid Data' });
+        },
+        complete: () => {
+          this.resetNewMainItem();
+          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Record added successfully ' });
+        }
+      });
 
-        // this._ApiService.post<MainItem>('mainitems', filteredRecord).subscribe({
-        //   next: (res) => {
-        //     console.log('mainitem created:', res);
-        //     this.totalValue = 0;
-        //     this.ngOnInit()
-        //   }, error: (err) => {
-        //     console.log(err);
-        //     this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid Data' });
-        //   },
-        //   complete: () => {
-        //     this.resetNewMainItem();
-        //     this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Record added successfully ' });
-        //   }
-        // });
+      // this._ApiService.post<MainItem>('mainitems', filteredRecord).subscribe({
+      //   next: (res) => {
+      //     console.log('mainitem created:', res);
+      //     this.totalValue = 0;
+      //     this.ngOnInit()
+      //   }, error: (err) => {
+      //     console.log(err);
+      //     this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid Data' });
+      //   },
+      //   complete: () => {
+      //     this.resetNewMainItem();
+      //     this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Record added successfully ' });
+      //   }
+      // });
 
       //} // else close
     }
@@ -696,49 +715,49 @@ export class InvoiceComponent {
       //   });
       // }
       // else {
-        console.log(newRecord);
-        const filteredRecord = Object.fromEntries(
-          Object.entries(newRecord).filter(([_, value]) => {
-            return value !== '' && value !== 0 && value !== undefined && value !== null;
-          })
-        );
-        console.log(filteredRecord);
-   
-        this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, filteredRecord).subscribe({
-          next: (res) => {
-            console.log('mainitem created:', res);
-            this.totalValue = 0;
-            this.ngOnInit()
-          }, error: (err) => {
-            console.log(err);
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid Data' });
-          },
-          complete: () => {
-            this.resetNewMainItem();
-            this.selectedFormulaRecord = undefined
-            this.resultAfterTest=undefined;
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Record added successfully ' });
-          }
-        });
+      console.log(newRecord);
+      const filteredRecord = Object.fromEntries(
+        Object.entries(newRecord).filter(([_, value]) => {
+          return value !== '' && value !== 0 && value !== undefined && value !== null;
+        })
+      );
+      console.log(filteredRecord);
 
-        // this._ApiService.post<MainItem>('mainitems', filteredRecord).subscribe({
-        //   next: (res) => {
-        //     console.log('mainitem created:', res);
-        //     this.totalValue = 0;
-        //     this.ngOnInit()
-        //   }, error: (err) => {
-        //     console.log(err);
-        //     this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid Data' });
-        //   },
-        //   complete: () => {
-        //     this.resetNewMainItem();
-        //     this.selectedFormulaRecord = undefined
-        //     this.resultAfterTest=undefined;
-        //     this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Record added successfully ' });
-        //   }
+      this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, filteredRecord).subscribe({
+        next: (res) => {
+          console.log('mainitem created:', res);
+          this.totalValue = 0;
+          this.ngOnInit()
+        }, error: (err) => {
+          console.log(err);
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid Data' });
+        },
+        complete: () => {
+          this.resetNewMainItem();
+          this.selectedFormulaRecord = undefined
+          this.resultAfterTest = undefined;
+          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Record added successfully ' });
+        }
+      });
 
-        // });
-     // }// else close
+      // this._ApiService.post<MainItem>('mainitems', filteredRecord).subscribe({
+      //   next: (res) => {
+      //     console.log('mainitem created:', res);
+      //     this.totalValue = 0;
+      //     this.ngOnInit()
+      //   }, error: (err) => {
+      //     console.log(err);
+      //     this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid Data' });
+      //   },
+      //   complete: () => {
+      //     this.resetNewMainItem();
+      //     this.selectedFormulaRecord = undefined
+      //     this.resultAfterTest=undefined;
+      //     this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Record added successfully ' });
+      //   }
+
+      // });
+      // }// else close
     }
     else if (this.selectedServiceNumberRecord && !this.selectedFormulaRecord && !this.resultAfterTest) { // if user select serviceNumber && didn't select formula
       const newRecord = {
@@ -762,49 +781,49 @@ export class InvoiceComponent {
       //   });
       // }
       // else {
-        console.log(newRecord);
-        const filteredRecord = Object.fromEntries(
-          Object.entries(newRecord).filter(([_, value]) => {
-            return value !== '' && value !== 0 && value !== undefined && value !== null;
-          })
-        );
-        console.log(filteredRecord);
+      console.log(newRecord);
+      const filteredRecord = Object.fromEntries(
+        Object.entries(newRecord).filter(([_, value]) => {
+          return value !== '' && value !== 0 && value !== undefined && value !== null;
+        })
+      );
+      console.log(filteredRecord);
 
-        this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, filteredRecord).subscribe({
-          next: (res) => {
-            console.log('mainitem created:', res);
-            this.totalValue = 0;
-            this.ngOnInit()
-          }, error: (err) => {
-            console.log(err);
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid Data' });
-          },
-          complete: () => {
-            this.resetNewMainItem();
-            this.selectedFormulaRecord = undefined;
-             this.selectedServiceNumberRecord = undefined;
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Record added successfully ' });
-          }
-        });
+      this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, filteredRecord).subscribe({
+        next: (res) => {
+          console.log('mainitem created:', res);
+          this.totalValue = 0;
+          this.ngOnInit()
+        }, error: (err) => {
+          console.log(err);
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid Data' });
+        },
+        complete: () => {
+          this.resetNewMainItem();
+          this.selectedFormulaRecord = undefined;
+          this.selectedServiceNumberRecord = undefined;
+          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Record added successfully ' });
+        }
+      });
 
-        // this._ApiService.post<MainItem>('mainitems', filteredRecord).subscribe({
-        //   next: (res) => {
-        //     console.log('mainitem created:', res);
-        //     this.totalValue = 0;
-        //     this.ngOnInit()
-        //   }, error: (err) => {
-        //     console.log(err);
-        //     this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid Data' });
-        //   },
-        //   complete: () => {
-        //     this.resetNewMainItem();
-        //     this.selectedFormulaRecord = undefined;
-        //     this.selectedServiceNumberRecord = undefined;
-        //     this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Record added successfully ' });
-        //   }
+      // this._ApiService.post<MainItem>('mainitems', filteredRecord).subscribe({
+      //   next: (res) => {
+      //     console.log('mainitem created:', res);
+      //     this.totalValue = 0;
+      //     this.ngOnInit()
+      //   }, error: (err) => {
+      //     console.log(err);
+      //     this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid Data' });
+      //   },
+      //   complete: () => {
+      //     this.resetNewMainItem();
+      //     this.selectedFormulaRecord = undefined;
+      //     this.selectedServiceNumberRecord = undefined;
+      //     this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Record added successfully ' });
+      //   }
 
-        // });
-     // } // else close
+      // });
+      // } // else close
     }
     else if (this.selectedServiceNumberRecord && this.selectedFormulaRecord && this.resultAfterTest) { // if user select serviceNumber && select formula
       const newRecord = {
@@ -829,51 +848,51 @@ export class InvoiceComponent {
       //   });
       // }
       // else {
-        console.log(newRecord);
-        const filteredRecord = Object.fromEntries(
-          Object.entries(newRecord).filter(([_, value]) => {
-            return value !== '' && value !== 0 && value !== undefined && value !== null;
-          })
-        );
-        console.log(filteredRecord);
+      console.log(newRecord);
+      const filteredRecord = Object.fromEntries(
+        Object.entries(newRecord).filter(([_, value]) => {
+          return value !== '' && value !== 0 && value !== undefined && value !== null;
+        })
+      );
+      console.log(filteredRecord);
 
-        this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, filteredRecord).subscribe({
-          next: (res) => {
-            console.log('mainitem created:', res);
-            this.totalValue = 0;
-            this.ngOnInit()
-          }, error: (err) => {
-            console.log(err);
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid Data' });
-          },
-          complete: () => {
-            this.resetNewMainItem();
-            this.selectedFormulaRecord = undefined;
-            this.resultAfterTest=undefined;
-             this.selectedServiceNumberRecord = undefined;
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Record added successfully ' });
-          }
-        });
+      this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, filteredRecord).subscribe({
+        next: (res) => {
+          console.log('mainitem created:', res);
+          this.totalValue = 0;
+          this.ngOnInit()
+        }, error: (err) => {
+          console.log(err);
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid Data' });
+        },
+        complete: () => {
+          this.resetNewMainItem();
+          this.selectedFormulaRecord = undefined;
+          this.resultAfterTest = undefined;
+          this.selectedServiceNumberRecord = undefined;
+          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Record added successfully ' });
+        }
+      });
 
-        // this._ApiService.post<MainItem>('mainitems', filteredRecord).subscribe({
-        //   next: (res) => {
-        //     console.log('mainitem created:', res);
-        //     this.totalValue = 0;
-        //     this.ngOnInit()
-        //   }, error: (err) => {
-        //     console.log(err);
-        //     this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid Data' });
-        //   },
-        //   complete: () => {
-        //     this.resetNewMainItem();
-        //     this.selectedFormulaRecord = undefined
-        //     this.resultAfterTest=undefined;
-        //     this.selectedServiceNumberRecord = undefined;
-        //     this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Record added successfully ' });
-        //   }
-        // });
+      // this._ApiService.post<MainItem>('mainitems', filteredRecord).subscribe({
+      //   next: (res) => {
+      //     console.log('mainitem created:', res);
+      //     this.totalValue = 0;
+      //     this.ngOnInit()
+      //   }, error: (err) => {
+      //     console.log(err);
+      //     this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid Data' });
+      //   },
+      //   complete: () => {
+      //     this.resetNewMainItem();
+      //     this.selectedFormulaRecord = undefined
+      //     this.resultAfterTest=undefined;
+      //     this.selectedServiceNumberRecord = undefined;
+      //     this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Record added successfully ' });
+      //   }
+      // });
 
-     // } // else close
+      // } // else close
     }
 
   }
@@ -969,7 +988,7 @@ export class InvoiceComponent {
         console.log(filteredRecord);
 
         // this._ApiService.patch<MainItem>('mainitems', mainItem.invoiceMainItemCode, filteredRecord).subscribe({
-          this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, filteredRecord).subscribe({
+        this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, filteredRecord).subscribe({
           next: (res) => {
             console.log('mainitem updated && subItem created:', res);
             this.totalValue = 0;
@@ -1036,7 +1055,7 @@ export class InvoiceComponent {
         );
         console.log(filteredRecord);
         // this._ApiService.patch<MainItem>('mainitems', mainItem.invoiceMainItemCode, filteredRecord).subscribe({
-        
+
         this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, filteredRecord).subscribe({
           next: (res) => {
             console.log('mainitem updated && subItem created:', res);
@@ -1049,7 +1068,7 @@ export class InvoiceComponent {
           complete: () => {
             this.resetNewSubItem();
             this.selectedFormulaRecordSubItem = undefined
-            this.resultAfterTest=undefined;
+            this.resultAfterTest = undefined;
             this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Record added successfully ' });
             // this.ngOnInit()
           }
@@ -1115,7 +1134,7 @@ export class InvoiceComponent {
         console.log(filteredRecord);
 
         // this._ApiService.patch<MainItem>('mainitems', mainItem.invoiceMainItemCode, filteredRecord).subscribe({
-        
+
         this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, filteredRecord).subscribe({
           next: (res) => {
             console.log('mainitem updated && subItem created:', res);
@@ -1188,9 +1207,9 @@ export class InvoiceComponent {
           })
         );
         console.log(filteredRecord);
-       // this._ApiService.patch<MainItem>('mainitems', mainItem.invoiceMainItemCode, filteredRecord).subscribe({
-       
-       this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, filteredRecord).subscribe({
+        // this._ApiService.patch<MainItem>('mainitems', mainItem.invoiceMainItemCode, filteredRecord).subscribe({
+
+        this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, filteredRecord).subscribe({
           next: (res) => {
             console.log('mainitem updated && subItem created:', res);
             this.totalValue = 0;
@@ -1202,7 +1221,7 @@ export class InvoiceComponent {
           complete: () => {
             this.resetNewSubItem();
             this.selectedFormulaRecordSubItem = undefined
-            this.resultAfterTest=undefined;
+            this.resultAfterTest = undefined;
             this.selectedServiceNumberRecordSubItem = undefined
             this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Record added successfully ' });
             // this.ngOnInit()
@@ -1232,8 +1251,8 @@ export class InvoiceComponent {
   }
 
 
-   // Helper Functions:
-   removePropertiesFrom(obj: any, propertiesToRemove: string[]): any {
+  // Helper Functions:
+  removePropertiesFrom(obj: any, propertiesToRemove: string[]): any {
     const newObj: any = {};
     for (let key in obj) {
       if (obj.hasOwnProperty(key)) {
@@ -1653,7 +1672,7 @@ export class InvoiceComponent {
   closePopup() {
     this.showPopupUpdate = false;
     this.showPopup = false;
-}
+  }
 }
 
 

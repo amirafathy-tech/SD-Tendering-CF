@@ -22,7 +22,7 @@ export class AuthInterceptorService implements HttpInterceptor {
         if (!user) {
           return next.handle(req);
         }
-        console.log('User found, adding token:', user.token);
+       // console.log('User found, adding token:', user.token);
         const modifiedReq = req.clone({
           //params: new HttpParams().set('token', user.token)
           headers:new HttpHeaders().set('Authorization',`Bearer ${user.token}`)

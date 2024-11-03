@@ -35,18 +35,18 @@ export class CloudDataComponent {
     this._ApiService.get<any>(`mainitems/${cloudData.value.document}/${cloudData.value.item}`).subscribe(response => {
       console.log(response);
       console.log(response.d.SoldToParty);    
-      this.customerId=response.d.SoldToParty
+      this.customerId=response.d.SoldToParty;
+      if (this.customerId) {
+        const navigationExtras: NavigationExtras = {
+          state: {
+            documentNumber: cloudData.value.document,
+            itemNumber: cloudData.value.item,
+            customerId: this.customerId
+          }
+        };
+        console.log(navigationExtras);
+        this.router.navigate(['tendering'], navigationExtras);
+      }
     });
-
-       const navigationExtras: NavigationExtras = {
-        state: {
-         documentNumber:cloudData.value.document,
-         itemNumber:cloudData.value.item,
-         customerId:this.customerId
-        }
-      };
-      console.log(navigationExtras);
-    this.router.navigate(['tendering'],navigationExtras);
-  
   }
 }
