@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import * as FileSaver from 'file-saver';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { InvoiceService } from './invoice.service';
@@ -13,7 +13,8 @@ import { Router } from '@angular/router';
   selector: 'app-invoice-test',
   templateUrl: './invoice.component.html',
   styleUrls: ['./invoice.component.css'],
-  providers: [MessageService, InvoiceService, ConfirmationService]
+  providers: [MessageService, InvoiceService, ConfirmationService],
+  changeDetection: ChangeDetectionStrategy.Default
 })
 export class InvoiceComponent {
 
@@ -21,6 +22,7 @@ export class InvoiceComponent {
   documentNumber!: number;
   itemNumber!: number;
   customerId!: number;
+  savedDBApp: boolean = false;
 
   // Pagination:
   loading: boolean = true;
@@ -105,8 +107,8 @@ export class InvoiceComponent {
         const updatedRecord = this.removeProperties(newRecord, ['selected'])
 
         // this._ApiService.patch<MainItem>(`mainitems`, row.invoiceMainItemCode, updatedRecord).subscribe({
-
-        this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, updatedRecord).subscribe({
+        // update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`
+        this._ApiService.patch<MainItem>(`mainitems`, row.invoiceMainItemCode, updatedRecord).subscribe({
           next: (res) => {
             console.log('mainitem  updated:', res);
             this.totalValue = 0;
@@ -124,7 +126,7 @@ export class InvoiceComponent {
     }
   }
 
-  constructor(private router: Router, private _ApiService: ApiService, private _InvoiceService: InvoiceService, private messageService: MessageService, private confirmationService: ConfirmationService) {
+  constructor(private cdr: ChangeDetectorRef, private router: Router, private _ApiService: ApiService, private _InvoiceService: InvoiceService, private messageService: MessageService, private confirmationService: ConfirmationService) {
     this.documentNumber = this.router.getCurrentNavigation()?.extras.state?.['documentNumber'];
     this.itemNumber = this.router.getCurrentNavigation()?.extras.state?.['itemNumber'];
     this.customerId = this.router.getCurrentNavigation()?.extras.state?.['customerId'];
@@ -142,6 +144,65 @@ export class InvoiceComponent {
     this._ApiService.get<any[]>('currencies').subscribe(response => {
       this.recordsCurrency = response;
     });
+    // if (this.savedDBApp) {
+    this._ApiService.get<MainItem[]>(`mainitems`).subscribe({
+      next: (res) => {
+        this.mainItemsRecords = res.sort((a, b) => a.invoiceMainItemCode - b.invoiceMainItemCode);
+        console.log(this.mainItemsRecords);
+        this.loading = false;
+        this.totalValue = this.mainItemsRecords.reduce((sum, record) => sum + record.totalWithProfit, 0);
+        console.log('Total Value:', this.totalValue);
+        //this.cdr.markForCheck();
+        this.cdr.detectChanges();
+      }, error: (err) => {
+        console.log(err);
+        console.log(err.status);
+        if (err.status == 404) {
+          this.mainItemsRecords = [];
+          this.loading = false;
+          this.totalValue = this.mainItemsRecords.reduce((sum, record) => sum + record.totalWithProfit, 0);
+          console.log('Total Value:', this.totalValue);
+          //this.cdr.markForCheck();
+          this.cdr.detectChanges();
+        }
+      },
+      complete: () => {
+      }
+    });
+    // }else {
+    // this._ApiService.get<MainItem[]>(`mainitems/${this.documentNumber}`).subscribe({
+    //   next: (res) => {
+    //     this.mainItemsRecords = res.sort((a, b) => a.invoiceMainItemCode - b.invoiceMainItemCode);
+    //     console.log(this.mainItemsRecords);
+    //     this.loading = false;
+    //     this.totalValue = this.mainItemsRecords.reduce((sum, record) => sum + record.totalWithProfit, 0);
+    //     console.log('Total Value:', this.totalValue);
+    //     // this.cdr.markForCheck();
+    //     this.cdr.detectChanges();
+    //   }, error: (err) => {
+    //     console.log(err);
+    //     console.log(err.status);
+    //     if (err.status == 404) {
+    //       this.mainItemsRecords = [];
+    //       this.loading = false;
+    //       this.totalValue = this.mainItemsRecords.reduce((sum, record) => sum + record.totalWithProfit, 0);
+    //       console.log('Total Value:', this.totalValue);
+    //       //this.cdr.markForCheck();
+    //       this.cdr.detectChanges();
+    //     }
+    //   },
+    //   complete: () => {
+    //   }
+    // });
+    // }
+
+    this._ApiService.get<SubItem[]>('subitems').subscribe(response => {
+      this.subItemsRecords = response;
+      this.loadingSubItems = false;
+    });
+  }
+
+  getCloudDocument(){
     this._ApiService.get<MainItem[]>(`mainitems/${this.documentNumber}`).subscribe({
       next: (res) => {
         this.mainItemsRecords = res.sort((a, b) => a.invoiceMainItemCode - b.invoiceMainItemCode);
@@ -149,30 +210,22 @@ export class InvoiceComponent {
         this.loading = false;
         this.totalValue = this.mainItemsRecords.reduce((sum, record) => sum + record.totalWithProfit, 0);
         console.log('Total Value:', this.totalValue);
+        // this.cdr.markForCheck();
+        this.cdr.detectChanges();
       }, error: (err) => {
         console.log(err);
         console.log(err.status);
-        if(err.status == 404){
-          this.mainItemsRecords=[];
+        if (err.status == 404) {
+          this.mainItemsRecords = [];
           this.loading = false;
           this.totalValue = this.mainItemsRecords.reduce((sum, record) => sum + record.totalWithProfit, 0);
           console.log('Total Value:', this.totalValue);
-
+          //this.cdr.markForCheck();
+          this.cdr.detectChanges();
         }
       },
       complete: () => {
       }
-      //.subscribe(response => {
-      // this.mainItemsRecords = response.sort((a, b) => a.invoiceMainItemCode - b.invoiceMainItemCode);
-      // console.log(this.mainItemsRecords);
-      // this.loading = false;
-
-      // this.totalValue = this.mainItemsRecords.reduce((sum, record) => sum + record.totalWithProfit, 0);
-      // console.log('Total Value:', this.totalValue);
-    });
-    this._ApiService.get<SubItem[]>('subitems').subscribe(response => {
-      this.subItemsRecords = response;
-      this.loadingSubItems = false;
     });
   }
 
@@ -202,10 +255,14 @@ export class InvoiceComponent {
       };
       console.log(newRecord);
       // this._ApiService.patch<MainItem>('mainitems', record.invoiceMainItemCode, newRecord).subscribe({
-      this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, newRecord).subscribe({
+      // update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}
+      this._ApiService.patch<MainItem>(`mainitems`, record.invoiceMainItemCode, newRecord).subscribe({
         next: (res) => {
           console.log('mainitem  updated:', res);
           this.totalValue = 0;
+
+          this.savedDBApp = true;
+
           this.ngOnInit()
         }, error: (err) => {
           console.log(err);
@@ -231,10 +288,13 @@ export class InvoiceComponent {
       console.log(newRecord);
       // this._ApiService.patch<MainItem>('mainitems', record.invoiceMainItemCode, newRecord).subscribe({
 
-      this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, newRecord).subscribe({
+      this._ApiService.patch<MainItem>(`mainitems`, record.invoiceMainItemCode, newRecord).subscribe({
         next: (res) => {
           console.log('mainitem  updated:', res);
           this.totalValue = 0;
+
+          this.savedDBApp = true;
+
           this.ngOnInit()
         }, error: (err) => {
           console.log(err);
@@ -260,10 +320,13 @@ export class InvoiceComponent {
       console.log(newRecord);
       // this._ApiService.patch<MainItem>('mainitems', record.invoiceMainItemCode, newRecord).subscribe({
 
-      this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, newRecord).subscribe({
+      this._ApiService.patch<MainItem>(`mainitems`, record.invoiceMainItemCode, newRecord).subscribe({
         next: (res) => {
           console.log('mainitem  updated:', res);
           this.totalValue = 0;
+
+          this.savedDBApp = true;
+
           this.ngOnInit()
         }, error: (err) => {
           console.log(err);
@@ -281,10 +344,13 @@ export class InvoiceComponent {
       console.log({ ...mainItemWithoutMainItemCode });
       // this._ApiService.patch<MainItem>('mainitems', record.invoiceMainItemCode, { ...updatedMainItem }).subscribe({
 
-      this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, { ...updatedMainItem }).subscribe({
+      this._ApiService.patch<MainItem>(`mainitems`, record.invoiceMainItemCode, { ...updatedMainItem }).subscribe({
         next: (res) => {
           console.log('mainitem  updated:', res);
           this.totalValue = 0;
+
+          this.savedDBApp = true;
+
           this.ngOnInit()
         }, error: (err) => {
           console.log(err);
@@ -355,10 +421,13 @@ export class InvoiceComponent {
       console.log(filteredRecord);
 
       // this._ApiService.patch<MainItem>('mainitems', mainItem.invoiceMainItemCode, filteredRecord).subscribe({
-      this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, filteredRecord).subscribe({
+      this._ApiService.patch<MainItem>(`mainitems`, mainItem.invoiceMainItemCode, filteredRecord).subscribe({
         next: (res) => {
           console.log('mainitem with && subItem updated:', res);
           this.totalValue = 0;
+
+          this.savedDBApp = true;
+
           this.ngOnInit()
         }, error: (err) => {
           console.log(err);
@@ -409,10 +478,13 @@ export class InvoiceComponent {
       console.log(filteredRecord);
 
       // this._ApiService.patch<MainItem>('mainitems', mainItem.invoiceMainItemCode, filteredRecord).subscribe({
-      this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, filteredRecord).subscribe({
+      this._ApiService.patch<MainItem>(`mainitems`, mainItem.invoiceMainItemCode, filteredRecord).subscribe({
         next: (res) => {
           console.log('mainitem with && subItem updated:', res);
           this.totalValue = 0;
+
+          this.savedDBApp = true;
+
           this.ngOnInit()
         }, error: (err) => {
           console.log(err);
@@ -460,10 +532,13 @@ export class InvoiceComponent {
       console.log(filteredRecord);
 
       // this._ApiService.patch<MainItem>('mainitems', mainItem.invoiceMainItemCode, filteredRecord).subscribe({
-      this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, filteredRecord).subscribe({
+      this._ApiService.patch<MainItem>(`mainitems`, mainItem.invoiceMainItemCode, filteredRecord).subscribe({
         next: (res) => {
           console.log('mainitem with && subItem updated:', res);
           this.totalValue = 0;
+
+          this.savedDBApp = true;
+
           this.ngOnInit()
         }, error: (err) => {
           console.log(err);
@@ -506,10 +581,13 @@ export class InvoiceComponent {
       console.log(filteredRecord);
 
       // this._ApiService.patch<MainItem>('mainitems', mainItem.invoiceMainItemCode, filteredRecord).subscribe({
-      this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, filteredRecord).subscribe({
+      this._ApiService.patch<MainItem>(`mainitems`, mainItem.invoiceMainItemCode, filteredRecord).subscribe({
         next: (res) => {
           console.log('mainitem with && subItem updated:', res);
           this.totalValue = 0;
+
+          this.savedDBApp = true;
+
           this.ngOnInit()
         }, error: (err) => {
           console.log(err);
@@ -521,18 +599,6 @@ export class InvoiceComponent {
           // this.ngOnInit()
         }
       });
-      // this._ApiService.patch<SubItem>('subitems', index, { ...subItemWithoutSubItemCode }).subscribe(response => {
-      //   console.log('subitem updated:', response);
-      //   if (response) {
-      //     this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Record is updated' });
-      //   }
-      //   else {
-      //     this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid Data' });
-      //   }
-      //   //this.totalValue = 0;
-      //   //this.modelSpecDetailsService.getRecords();
-      //   this.ngOnInit()
-      // });
     }
   }
   onSubItemEditCancel(subItem: any, index: number) {
@@ -640,7 +706,8 @@ export class InvoiceComponent {
         amountPerUnit: this.newMainItem.amountPerUnit,
         total: this.newMainItem.total,
         profitMargin: this.newMainItem.profitMargin,
-        totalWithProfit: this.newMainItem.totalWithProfit
+        totalWithProfit: this.newMainItem.totalWithProfit,
+        temporaryDeletion:"temporary",
       }
       // if (this.newMainItem.quantity === 0 || this.newMainItem.description === "" || this.selectedCurrency === "") {
       //   // || this.newMainItem.unitOfMeasurementCode === ""  // till retrieved from cloud correctly
@@ -660,18 +727,21 @@ export class InvoiceComponent {
         })
       );
       console.log(filteredRecord);
-
-      this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, filteredRecord).subscribe({
+      // update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}
+      this._ApiService.post<MainItem>(`mainitems`, filteredRecord).subscribe({
         next: (res) => {
           console.log('mainitem created:', res);
           this.totalValue = 0;
-          this.ngOnInit()
+          this.savedDBApp = true;
+
+          // this.ngOnInit();
         }, error: (err) => {
           console.log(err);
           this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid Data' });
         },
         complete: () => {
           this.resetNewMainItem();
+          this.ngOnInit();
           this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Record added successfully ' });
         }
       });
@@ -703,7 +773,8 @@ export class InvoiceComponent {
         amountPerUnit: this.newMainItem.amountPerUnit,
         total: this.newMainItem.total,
         profitMargin: this.newMainItem.profitMargin,
-        totalWithProfit: this.newMainItem.totalWithProfit
+        totalWithProfit: this.newMainItem.totalWithProfit,
+        temporaryDeletion:"temporary",
       }
       // if (this.resultAfterTest === 0 || this.newMainItem.description === "" || this.selectedCurrency === "") {
       //   // || this.newMainItem.unitOfMeasurementCode === ""  // till retrieved from cloud correctly
@@ -723,10 +794,11 @@ export class InvoiceComponent {
       );
       console.log(filteredRecord);
 
-      this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, filteredRecord).subscribe({
+      this._ApiService.post<MainItem>(`mainitems`, filteredRecord).subscribe({
         next: (res) => {
           console.log('mainitem created:', res);
           this.totalValue = 0;
+          this.savedDBApp = true;
           this.ngOnInit()
         }, error: (err) => {
           console.log(err);
@@ -769,7 +841,8 @@ export class InvoiceComponent {
         amountPerUnit: this.newMainItem.amountPerUnit,
         total: this.newMainItem.total,
         profitMargin: this.newMainItem.profitMargin,
-        totalWithProfit: this.newMainItem.totalWithProfit
+        totalWithProfit: this.newMainItem.totalWithProfit,
+        temporaryDeletion:"temporary",
       }
       // if (this.newMainItem.quantity === 0 || this.selectedServiceNumberRecord.description === "" || this.selectedCurrency === "") {
       //   // || this.newMainItem.unitOfMeasurementCode === ""  // till retrieved from cloud correctly
@@ -789,10 +862,11 @@ export class InvoiceComponent {
       );
       console.log(filteredRecord);
 
-      this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, filteredRecord).subscribe({
+      this._ApiService.post<MainItem>(`mainitems`, filteredRecord).subscribe({
         next: (res) => {
           console.log('mainitem created:', res);
           this.totalValue = 0;
+          this.savedDBApp = true;
           this.ngOnInit()
         }, error: (err) => {
           console.log(err);
@@ -836,7 +910,8 @@ export class InvoiceComponent {
         amountPerUnit: this.newMainItem.amountPerUnit,
         total: this.newMainItem.total,
         profitMargin: this.newMainItem.profitMargin,
-        totalWithProfit: this.newMainItem.totalWithProfit
+        totalWithProfit: this.newMainItem.totalWithProfit,
+        temporaryDeletion:"temporary",
       }
       // if (this.resultAfterTest === 0 || this.selectedServiceNumberRecord.description === "" || this.selectedCurrency === "") {
       //   // || this.newMainItem.unitOfMeasurementCode === ""  // till retrieved from cloud correctly
@@ -856,10 +931,11 @@ export class InvoiceComponent {
       );
       console.log(filteredRecord);
 
-      this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, filteredRecord).subscribe({
+      this._ApiService.post<MainItem>(`mainitems`, filteredRecord).subscribe({
         next: (res) => {
           console.log('mainitem created:', res);
           this.totalValue = 0;
+          this.savedDBApp = true;
           this.ngOnInit()
         }, error: (err) => {
           console.log(err);
@@ -916,6 +992,87 @@ export class InvoiceComponent {
       this.selectedUnitOfMeasure = "";
     this.selectedFormula = "";
     this.selectedCurrency = "";
+  }
+
+  saveDocument() {
+    this.confirmationService.confirm({
+      message: 'Are you sure you want to save the document?',
+      header: 'Confirm Saving ',
+      // icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+
+        // get the last object of mainItemsRecords and post its total header to the cloud
+        console.log(this.mainItemsRecords[this.mainItemsRecords.length - 1]);
+        const lastRecord = this.mainItemsRecords[this.mainItemsRecords.length - 1];
+        //const bodyRequest=  this.removePropertiesFrom(lastRecord, ['serviceInvoiceCode']);
+
+
+        const totalHeader = this.totalValue;
+        //this.serviceInvoiceRecords[this.serviceInvoiceRecords.length -1].totalHeader;
+        console.log(totalHeader);
+        const bodyRequest = {
+          totalHeader: totalHeader, refrenceId: this.documentNumber, quantity: this.mainItemsRecords[this.mainItemsRecords.length - 1].quantity,
+          amountPerUnit: this.mainItemsRecords[this.mainItemsRecords.length - 1].amountPerUnit
+        }
+        console.log(bodyRequest);
+
+
+
+        this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, bodyRequest).subscribe({
+          next: (res) => {
+            console.log('mainitem created in s4:', res);
+            this.totalValue = 0;
+            this.savedDBApp = false;
+
+            this.getCloudDocument();
+
+            //this.ngOnInit();
+
+
+            this._ApiService.updateApp<MainItem>(`mainitems`).subscribe({
+              next: (res) => {
+                console.log('mainitem Updated with permanent:', res);
+                this.totalValue = 0;
+                this.savedDBApp = false;
+              }, error: (err) => {
+                console.log(err);
+              },
+              complete: () => {
+              }
+            });
+
+
+          }, error: (err) => {
+            console.log(err);
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid Data for Document' });
+          },
+          complete: () => {
+            this.resetNewMainItem();
+           // this.ngOnInit();
+            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Document saved successfully ' });
+          }
+        });
+      }, reject: () => {
+        // delete the added records and get the last object of mainItemsRecords and post its total header to the cloud:
+
+        this._ApiService.deleteFromApp<MainItem>(`mainitems`).subscribe({
+          next: (res) => {
+            console.log('mainitem deleted with temporary:', res);
+            this.totalValue = 0;
+            this.savedDBApp = false;
+
+            this.getCloudDocument();
+            this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
+
+          }, error: (err) => {
+            console.log(err);
+          },
+          complete: () => {
+          }
+        });
+        
+      }
+    });
   }
 
   // For Add new  Sub Item
@@ -988,7 +1145,8 @@ export class InvoiceComponent {
         console.log(filteredRecord);
 
         // this._ApiService.patch<MainItem>('mainitems', mainItem.invoiceMainItemCode, filteredRecord).subscribe({
-        this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, filteredRecord).subscribe({
+        // update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`
+        this._ApiService.patch<MainItem>('mainitems', mainItem.invoiceMainItemCode, filteredRecord).subscribe({
           next: (res) => {
             console.log('mainitem updated && subItem created:', res);
             this.totalValue = 0;
@@ -1056,7 +1214,7 @@ export class InvoiceComponent {
         console.log(filteredRecord);
         // this._ApiService.patch<MainItem>('mainitems', mainItem.invoiceMainItemCode, filteredRecord).subscribe({
 
-        this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, filteredRecord).subscribe({
+        this._ApiService.patch<MainItem>('mainitems', mainItem.invoiceMainItemCode, filteredRecord).subscribe({
           next: (res) => {
             console.log('mainitem updated && subItem created:', res);
             this.totalValue = 0;
@@ -1135,7 +1293,7 @@ export class InvoiceComponent {
 
         // this._ApiService.patch<MainItem>('mainitems', mainItem.invoiceMainItemCode, filteredRecord).subscribe({
 
-        this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, filteredRecord).subscribe({
+        this._ApiService.patch<MainItem>('mainitems', mainItem.invoiceMainItemCode, filteredRecord).subscribe({
           next: (res) => {
             console.log('mainitem updated && subItem created:', res);
             this.totalValue = 0;
@@ -1209,7 +1367,7 @@ export class InvoiceComponent {
         console.log(filteredRecord);
         // this._ApiService.patch<MainItem>('mainitems', mainItem.invoiceMainItemCode, filteredRecord).subscribe({
 
-        this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, filteredRecord).subscribe({
+        this._ApiService.patch<MainItem>('mainitems', mainItem.invoiceMainItemCode, filteredRecord).subscribe({
           next: (res) => {
             console.log('mainitem updated && subItem created:', res);
             this.totalValue = 0;

@@ -21,6 +21,8 @@ export class SubItem {
 export class MainItem {
     Type:string='';
 
+    temporaryDeletion?:string;
+
     invoiceMainItemCode: number=0;
     serviceNumberCode?: number;
     description?: string;
