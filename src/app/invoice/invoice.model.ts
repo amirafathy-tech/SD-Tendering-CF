@@ -4,7 +4,9 @@ export class SubItem {
     Type:string='';
 
     invoiceSubItemCode?: number=0;
-   // invoiceMainItemCode?: number;
+    
+    invoiceMainItemCode?: number;
+
     serviceNumberCode?: number;
     description?: string;
     quantity?: number;
@@ -19,9 +21,11 @@ export class SubItem {
 }
 
 export class MainItem {
+
     Type:string='';
 
     temporaryDeletion?:string;
+    referenceId?:number;
 
     invoiceMainItemCode: number=0;
     serviceNumberCode?: number;
@@ -35,7 +39,8 @@ export class MainItem {
     profitMargin?: number;
     totalWithProfit: number=0;
     selected?: boolean;
-    subItems?:SubItem[];
+    // subItems?:SubItem[];
+    subItems: SubItem[] = []
     
     doNotPrint?:boolean;
     amountPerUnitWithProfit?: number;

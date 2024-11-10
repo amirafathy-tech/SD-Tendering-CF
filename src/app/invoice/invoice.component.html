@@ -37,8 +37,8 @@
 </div>
 
 <p-toast></p-toast>
-
-<p-table [value]="mainItemsRecords |search:searchKey" dataKey="invoiceMainItemCode" [resizableColumns]="true"
+<!-- // |search:searchKey -->
+<p-table [value]="mainItemsRecords" dataKey="invoiceMainItemCode" [resizableColumns]="true"
     [expandedRowKeys]="expandedRows" editMode="row" [rowHover]="true" [rows]="10" [showCurrentPageReport]="true"
     [rowsPerPageOptions]="[10, 25, 50]" [loading]="loading" [paginator]="true"
     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [filterDelay]="0">
@@ -801,7 +801,7 @@
                         </td>
                         <td style="min-width: 10.2rem;">
                             <button pButton type="button" icon="pi pi-plus" class="ui-button-info" style=" border-radius: 8px; " label="Save SubItem"
-                                (click)="addSubItem(mainItem)">
+                                (click)="addSubItemInMemory(mainItem)">
                             </button>
                         </td>
                     </tr>
@@ -977,7 +977,7 @@
             </td>
             <td style="min-width: 10rem;">
                 <button pButton type="button" icon="pi pi-plus" class="ui-button-info" style=" border-radius: 8px; " label="Save MainItem"
-                    (click)="addMainItem()">
+                    (click)="addMainItemInMemory()">
                 </button>
             </td>
         </tr>

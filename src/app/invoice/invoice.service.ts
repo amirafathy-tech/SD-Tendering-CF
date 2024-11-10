@@ -1,10 +1,41 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { ApiService } from '../shared/ApiService.service';
-import { MainItem } from './invoice.model';
+import { MainItem, SubItem } from './invoice.model';
     
 @Injectable()
 export class InvoiceService {
+
+  private mainItems: MainItem[] = [];
+
+  // Add a new MainItem
+  addMainItem(item: MainItem) {
+    item.invoiceMainItemCode = this.mainItems.length + 1;
+    this.mainItems.push(item);
+    console.log(this.mainItems);
+  }
+
+  // Add a SubItem to a specific MainItem by id
+  addSubItemToMainItem(mainItemId: number, subItem: SubItem) {
+    const mainItem = this.mainItems.find(item => item.invoiceMainItemCode === mainItemId);
+    if (mainItem) {
+      // subItem.invoiceSubItemCode = Date.now();
+      subItem.invoiceMainItemCode=mainItemId
+      mainItem.subItems.push(subItem);
+      console.log(`SubItem added to MainItem with ID: ${mainItemId}`, mainItem);
+      return true;  // Indicate success
+    } else {
+      console.error(`MainItem with ID: ${mainItemId} not found.`);
+      return false;  // Indicate failure
+    }
+  }
+
+  // Retrieve all MainItems
+  getMainItems(): MainItem[] {
+    return this.mainItems;
+  }
+
+
 
     recordsChanged = new Subject<MainItem[]>();
     startedEditing = new Subject<number>();
