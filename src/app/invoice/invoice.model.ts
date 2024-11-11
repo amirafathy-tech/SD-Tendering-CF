@@ -4,7 +4,7 @@ export class SubItem {
     Type:string='';
 
     invoiceSubItemCode?: number=0;
-    
+
     invoiceMainItemCode?: number;
 
     serviceNumberCode?: number;
@@ -24,6 +24,8 @@ export class MainItem {
 
     Type:string='';
 
+    isPersisted: boolean=false;
+
     temporaryDeletion?:string;
     referenceId?:number;
 
@@ -35,7 +37,7 @@ export class MainItem {
     formulaCode?:string;
     amountPerUnit?: number;
     currencyCode?: string;
-    total?: number;
+    total: number=0;
     profitMargin?: number;
     totalWithProfit: number=0;
     selected?: boolean;
