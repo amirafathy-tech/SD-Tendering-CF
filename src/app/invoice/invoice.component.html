@@ -8,8 +8,7 @@
 
         <div class="p-toolbar-group-end">
             <!-- <button pButton pRipple icon="pi pi-copy" class="p-button-rounded m-2"></button> -->
-            <button pButton size="small" (click)="saveDocument()" severity="danger"
-            class="m-2">Save Document</button>
+            <button pButton size="small" (click)="saveDocument()" severity="danger" class="m-2">Save Document</button>
             <button pButton size="small" icon="pi pi-trash" (click)="deleteRecord()" severity="danger"
                 class="m-2"></button>
             <button pButton icon="pi pi-print" size="small" class="m-2 "></button>
@@ -58,12 +57,14 @@
                         class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary " />
                 </span>
             </div> -->
-           
-            <div >
+
+            <div>
                 <div class="p-inputgroup">
-                    <input type="number" min="0" pInputNumber [(ngModel)]="profitMarginValue" placeholder="Profit Margin" />
-                    <button type="button" (click)="updateProfitMargin(profitMarginValue)" pButton label="Apply ProfitMargin"></button>
-                   
+                    <input type="number" min="0" pInputNumber [(ngModel)]="profitMarginValue"
+                        placeholder="Profit Margin" />
+                    <button type="button" (click)="updateProfitMargin(profitMarginValue)" pButton
+                        label="Apply ProfitMargin"></button>
+
                 </div>
                 <!-- <div fd-form-item>
                     <fd-input-group type="number" placement="after" [(ngModel)]="profitMarginValue"
@@ -96,25 +97,26 @@
             <th style="min-width: 10rem;">Print </th>
             <th style="min-width: 10rem;"> MainItem.No </th>
             <th style="min-width: 10rem;"> SubItem.No </th>
-            <th style="min-width: 10rem;" >ServiceNO.
+            <th style="min-width: 10rem;">ServiceNO.
             </th>
-            <th style="min-width: 10rem;" >Description </th>
+            <th style="min-width: 10rem;">Description </th>
             <th style="min-width: 10rem;" pResizableColumn pSortableColumn="quantity">Quantity <p-sortIcon
                     field="quantity" /></th>
-            <th style="min-width: 10rem;" pResizableColumn pSortableColumn="unitOfMeasurementCode">UOM <p-sortIcon field="unitOfMeasurementCode" />
+            <th style="min-width: 10rem;" pResizableColumn pSortableColumn="unitOfMeasurementCode">UOM <p-sortIcon
+                    field="unitOfMeasurementCode" />
             </th>
             <th style="min-width: 10rem;" pResizableColumn pSortableColumn="formulaCode">Formula <p-sortIcon
                     field="formulaCode" /> </th>
-            <th style="min-width: 10rem;" >Parameters</th>
+            <th style="min-width: 10rem;">Parameters</th>
             <th style="min-width: 10rem;" pResizableColumn pSortableColumn="amountPerUnit">AmountPerUnit <p-sortIcon
                     field="amountPerUnit" /></th>
             <th style="min-width: 10rem;" pResizableColumn pSortableColumn="currencyCode">Currency <p-sortIcon
                     field="currencyCode" /></th>
             <th style="min-width: 10rem;" pResizableColumn pSortableColumn="total">Total <p-sortIcon field="total" />
             </th>
-            <th style="min-width: 10rem;" >ProfitMargin % </th>
-            <th style="min-width: 10rem;" pResizableColumn pSortableColumn="amountPerUnitWithProfit">AmountPerUnitWithProfit <p-sortIcon
-                    field="amountPerUnitWithProfit" /></th>
+            <th style="min-width: 10rem;">ProfitMargin % </th>
+            <th style="min-width: 10rem;" pResizableColumn pSortableColumn="amountPerUnitWithProfit">
+                AmountPerUnitWithProfit <p-sortIcon field="amountPerUnitWithProfit" /></th>
             <th style="min-width: 10rem;" pResizableColumn pSortableColumn="totalWithProfit">TotalWithProfit <p-sortIcon
                     field="totalWithProfit" /></th>
             <th style="min-width: 10rem;">Actions</th>
@@ -414,10 +416,10 @@
                         <th style="min-width: 10rem;"> </th>
                         <!-- MainItem.No -->
                         <th style="min-width: 10rem;background-color: #dedede;"> SubItem.No </th>
-                        <th style="min-width: 10rem;background-color: #dedede;" >
+                        <th style="min-width: 10rem;background-color: #dedede;">
                             ServiceNO.
                         </th>
-                        <th style="min-width: 10rem;background-color: #dedede;" >Description</th>
+                        <th style="min-width: 10rem;background-color: #dedede;">Description</th>
                         <th style="min-width: 10rem;background-color: #dedede;" pResizableColumn
                             pSortableColumn="quantity">Quantity <p-sortIcon field="quantity" /></th>
                         <th style="min-width: 10rem;background-color: #dedede;" pResizableColumn
@@ -425,7 +427,7 @@
                         </th>
                         <th style="min-width: 10rem;background-color: #dedede;" pResizableColumn
                             pSortableColumn="formulaCode">Formula <p-sortIcon field="formulaCode" /> </th>
-                        <th style="min-width: 10rem;background-color: #dedede;" >Parameters </th>
+                        <th style="min-width: 10rem;background-color: #dedede;">Parameters </th>
                         <th style="min-width: 10rem;background-color: #dedede;" pResizableColumn
                             pSortableColumn="amountPerUnit">AmountPerUnit <p-sortIcon field="amountPerUnit" /></th>
                         <th style="min-width: 10rem;background-color: #dedede;" pResizableColumn
@@ -433,8 +435,8 @@
                         <th style="min-width: 10rem;background-color: #dedede;" pResizableColumn
                             pSortableColumn="total">Total <p-sortIcon field="total" />
                         </th>
-                        <th style="min-width: 10rem;background-color: #dedede;" > </th>
-                        <th style="min-width: 10rem;background-color: #dedede;" > </th>
+                        <th style="min-width: 10rem;background-color: #dedede;"> </th>
+                        <th style="min-width: 10rem;background-color: #dedede;"> </th>
                         <th style="min-width: 10rem;background-color: #dedede;"> </th>
                         <th style="min-width: 10rem;background-color: #dedede;">Actions</th>
                     </tr>
@@ -800,7 +802,8 @@
                         <td style="min-width: 15.2rem;">
                         </td>
                         <td style="min-width: 10.2rem;">
-                            <button pButton type="button" icon="pi pi-plus" class="ui-button-info" style=" border-radius: 8px; " label="Add SubItem"
+                            <button pButton type="button" icon="pi pi-plus" class="ui-button-info"
+                                style=" border-radius: 8px; " label="Add SubItem"
                                 (click)="addSubItemInMemory(mainItem)">
                             </button>
                         </td>
@@ -976,8 +979,8 @@
                         [(ngModel)]="newMainItem.totalWithProfit"> -->
             </td>
             <td style="min-width: 10rem;">
-                <button pButton type="button" icon="pi pi-plus" class="ui-button-info" style=" border-radius: 8px; " label="Add MainItem"
-                    (click)="addMainItemInMemory()">
+                <button pButton type="button" icon="pi pi-plus" class="ui-button-info" style=" border-radius: 8px; "
+                    label="Add MainItem" (click)="addMainItemInMemory()">
                 </button>
             </td>
         </tr>
@@ -988,39 +991,49 @@
 <div class="popup-container" *ngIf="showPopup && selectedFormulaRecord">
     <div class="popup">
         <button class="close-button" (click)="closePopup()">×</button>
-        <h3>Enter Parameters</h3>
-        <div *ngFor="let parameterId of selectedFormulaRecord.parameterIds">
-            <label class="form-label">{{ parameterId }}:</label>
-            <input class="form-input rounded-input p-2 m-2 " pInputNumber type="number" [min]="0"
-                [(ngModel)]="parameterValues[parameterId]">
+        <h3>Enter Formula Parameters:</h3>
+        <div class="parameter-inputs">
+            <div *ngFor="let parameterId of selectedFormulaRecord.parameterIds">
+                <label class="form-label">{{ parameterId }}:</label>
+                <input class="form-input rounded-input p-2 m-2 " pInputNumber type="number" [min]="0"
+                    [(ngModel)]="parameterValues[parameterId]">
+            </div>
         </div>
-        <button class="form-button save-params-button" style=" border-radius: 8px; " (click)="saveParameters()">Save</button>
+        <button class="form-button save-params-button" style=" border-radius: 8px; "
+            (click)="saveParameters()">Save</button>
+
     </div>
 </div>
 <div class="popup-container" *ngIf="showPopupUpdate && updatedFormulaRecord">
     <div class="popup">
         <button class="close-button" (click)="closePopup()">×</button>
-        <h3>Enter Parameters</h3>
-        <div *ngFor="let parameterId of updatedFormulaRecord.parameterIds">
-            <label class="form-label">{{ parameterId }}:</label>
-            <input pInputNumber class="form-input rounded-input p-2 m-2" type="number" [min]="0"
-                [(ngModel)]="parameterValuesUpdate[parameterId]">
+        <h3>Enter Formula Parameters:</h3>
+        <div class="parameter-inputs">
+            <div *ngFor="let parameterId of updatedFormulaRecord.parameterIds">
+                <label class="form-label">{{ parameterId }}:</label>
+                <input pInputNumber class="form-input rounded-input p-2 m-2" type="number" [min]="0"
+                    [(ngModel)]="parameterValuesUpdate[parameterId]">
+            </div>
         </div>
-        <button class="form-button save-params-button" style=" border-radius: 8px; " (click)="saveParameters()">Save</button>
+        <button class="form-button save-params-button" style=" border-radius: 8px; "
+            (click)="saveParameters()">Save</button>
     </div>
 </div>
 
 <div class="popup-container" *ngIf="showPopup && selectedFormulaRecordSubItem ">
     <div class="popup">
         <button class="close-button" (click)="closePopup()">×</button>
-        <h3>Enter Parameters</h3>
-        <div *ngFor="let parameterId of selectedFormulaRecordSubItem.parameterIds">
+        <h3>Enter Formula Parameters:</h3>
+        <div class="parameter-inputs">
+            <div *ngFor="let parameterId of selectedFormulaRecordSubItem.parameterIds">
 
-            <label class="form-label">{{ parameterId }}:</label>
-            <input class="form-input rounded-input p-2 m-2" pInputNumber type="number" [min]="0"
-                [(ngModel)]="parameterValues[parameterId]">
+                <label class="form-label">{{ parameterId }}:</label>
+                <input class="form-input rounded-input p-2 m-2" pInputNumber type="number" [min]="0"
+                    [(ngModel)]="parameterValues[parameterId]">
+            </div>
         </div>
-        <button class="form-button save-params-button" style=" border-radius: 8px; " (click)="saveParameters()">Save</button>
+        <button class="form-button save-params-button" style=" border-radius: 8px; "
+            (click)="saveParameters()">Save</button>
     </div>
 </div>
 
@@ -1028,13 +1041,16 @@
     <div class="popup">
         <button class="close-button" (click)="closePopup()">×</button>
 
-        <h3>Enter Parameters</h3>
-        <div *ngFor="let parameterId of updatedFormulaRecordSubItem.parameterIds">
-            <label class="form-label">{{ parameterId }}:</label>
-            <input pInputNumber class="form-input rounded-input p-2 m-2" type="number" [min]="0"
-                [(ngModel)]="parameterValuesUpdate[parameterId]">
+        <h3>Enter Formula Parameters:</h3>
+        <div class="parameter-inputs">
+            <div *ngFor="let parameterId of updatedFormulaRecordSubItem.parameterIds">
+                <label class="form-label">{{ parameterId }}:</label>
+                <input pInputNumber class="form-input rounded-input p-2 m-2" type="number" [min]="0"
+                    [(ngModel)]="parameterValuesUpdate[parameterId]">
+            </div>
         </div>
-        <button class="form-button save-params-button" style=" border-radius: 8px; " (click)="saveParameters()">Save</button>
+        <button class="form-button save-params-button" style=" border-radius: 8px; "
+            (click)="saveParameters()">Save</button>
     </div>
 </div>
 

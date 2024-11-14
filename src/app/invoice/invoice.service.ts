@@ -6,6 +6,21 @@ import { MainItem, SubItem } from './invoice.model';
 @Injectable()
 export class InvoiceService {
 
+  private documentNumber: string | null = null;
+
+  setDocumentNumber(value: string): void {
+    console.log("Document number before set:", value);
+    this.documentNumber = value;
+    console.log("Document number in set:", this.documentNumber);
+    
+  }
+
+  getDocumentNumber(): string | null {
+    return this.documentNumber;
+  }
+
+
+
   private mainItems: MainItem[] = [];
 
   // private mergeMainItems(): void {
@@ -32,10 +47,13 @@ export class InvoiceService {
   //   }
   // }
 
-  async mergeMainItems(): Promise<void> {
+  async mergeMainItems(documentNumber:number): Promise<void> {
     try {
       // Fetch database items
-      const response = await this.apiService.get<MainItem[]>(`mainitems/referenceid?referenceId=20000017`).toPromise();
+      console.log(documentNumber);
+      if ( documentNumber !== 0) {
+        console.log(documentNumber);
+      const response = await this.apiService.get<MainItem[]>(`mainitems/referenceid?referenceId=${documentNumber}`).toPromise();
       const databaseItems = response || [];
       const databaseItemsWithFlag = databaseItems.map(item => ({ ...item, isPersisted: true }));
       
@@ -48,29 +66,26 @@ export class InvoiceService {
       
       this.mainItems = allItems;
       console.log("Merged MainItems:", this.mainItems);
+    }
+
     } catch (error) {
       console.error("Failed to merge main items:", error);
     }
   }
   
-  
-
-  
- 
   addMainItem(item: MainItem) {
-    // item.invoiceMainItemCode = this.mainItems.length + 1;
     item.invoiceMainItemCode = Date.now();
     this.mainItems.push(item);
     console.log(this.mainItems);
   }
 
-  // Add a SubItem to a specific MainItem by id
 
   // Add a SubItem to a specific MainItem by ID
-async addSubItemToMainItem(mainItemId: number, subItem: SubItem): Promise<boolean> {
+async addSubItemToMainItem(mainItemId: number, subItem: SubItem,documentNumber:number): Promise<boolean> {
   try {
+    console.log("Calling mergeMainItems...");
     // First, ensure the main items are merged before proceeding
-    await this.mergeMainItems();  // This will wait until mergeMainItems is complete
+    await this.mergeMainItems(documentNumber);  // This will wait until mergeMainItems is complete
 
     // Now find the MainItem that matches the provided ID
     let mainItem = this.mainItems.find(item => item.invoiceMainItemCode === mainItemId);
@@ -96,65 +111,9 @@ async addSubItemToMainItem(mainItemId: number, subItem: SubItem): Promise<boolea
 
 
   //...................................
-  //  async addSubItemToMainItem(mainItemId: number, subItem: SubItem):Promise<boolean> {
-
-  //   ///..............
-
-  //   // this.apiService.get<MainItem[]>(`mainitems/20000017`).subscribe({
-  //   //   next: (response) => {
-  //   //     const databaseItems = response || [];
-  //   //     const databaseItemsWithFlag = databaseItems.map(item => ({ ...item, isPersisted: true }));
-  //   //     const allItems = [
-  //   //       ...this.mainItems, 
-  //   //       ...databaseItemsWithFlag.filter(dbItem => 
-  //   //         !this.mainItems.some(memItem => memItem.invoiceMainItemCode === dbItem.invoiceMainItemCode))
-  //   //     ];
-  //   //     this.mainItems = allItems;
-  //   //     console.log("Merged MainItems:", this.mainItems);
-
-  //   //     let mainItem = this.mainItems.find(item => item.invoiceMainItemCode === mainItemId);
-  //   //     if (mainItem) {
-  //   //       // subItem.invoiceSubItemCode = Date.now();
-  //   //       subItem.invoiceMainItemCode = mainItemId
-  //   //       mainItem.subItems.push(subItem);
-  //   //       console.log(`SubItem added to MainItem with ID: ${mainItemId}`, mainItem);
-  //   //       return true;  // Indicate success
-  //   //     } else {
-  //   //       console.error(`MainItem with ID: ${mainItemId} not found.`);
-  //   //       //  this.mergeMainItems(); // Fetch and merge from the database
-  //   //       // mainItem = this.mainItems.find(item => item.invoiceMainItemCode === mainItemId);
-  //   //       return false;  // Indicate failure
-  //   //     }
-  //   //   },
-  //   //   error: (error) => {
-  //   //     console.error("Failed to fetch items from the database:", error);
-  //   //     return false;  
-  //   //   }
-  //   // });
-
-  //   ///..............
-  //  this.mergeMainItems();
-  //   let mainItem = this.mainItems.find(item => item.invoiceMainItemCode === mainItemId);
-  //   if (mainItem) {
-  //     // subItem.invoiceSubItemCode = Date.now();
-  //     subItem.invoiceMainItemCode = mainItemId
-  //     mainItem.subItems.push(subItem);
-  //     console.log(`SubItem added to MainItem with ID: ${mainItemId}`, mainItem);
-  //     return true;  // Indicate success
-  //   } else {
-  //     console.error(`MainItem with ID: ${mainItemId} not found.`);
-  //     //  this.mergeMainItems(); // Fetch and merge from the database
-  //     // mainItem = this.mainItems.find(item => item.invoiceMainItemCode === mainItemId);
-  //     return false;  // Indicate failure
-  //   }
-  // }
-
-  // Retrieve all MainItems
-  // getMainItems(): MainItem[] {
-  //   return this.mainItems;
-  // }
-   getMainItems(): MainItem[] {
-    this.mergeMainItems();  // Ensure merge happens before returning
+ 
+   getMainItems(documentNumber:number): MainItem[] {
+    this.mergeMainItems(documentNumber);  // Ensure merge happens before returning
     return this.mainItems;
   }
 

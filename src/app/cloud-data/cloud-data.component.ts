@@ -2,11 +2,13 @@ import { Component } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { NavigationExtras, Router } from '@angular/router';
 import { ApiService } from '../shared/ApiService.service';
+import { InvoiceService } from '../invoice/invoice.service';
 
 @Component({
   selector: 'app-cloud-data',
   templateUrl: './cloud-data.component.html',
-  styleUrls: ['./cloud-data.component.css']
+  styleUrls: ['./cloud-data.component.css'],
+  providers: [InvoiceService],
 })
 export class CloudDataComponent {
 
@@ -25,12 +27,14 @@ export class CloudDataComponent {
 
   customerId!:number;
 
-  constructor(private router: Router,private _ApiService: ApiService,) {
+  constructor(private router: Router,private _ApiService: ApiService,private _InvoiceService: InvoiceService,) {
   }
 
   nextPage(cloudData: FormGroup) {
 
     console.log(cloudData.value);
+
+    this._InvoiceService.setDocumentNumber(cloudData.value.document);
 
     this._ApiService.get<any>(`mainitems/${cloudData.value.document}/${cloudData.value.item}`).subscribe(response => {
       console.log(response);

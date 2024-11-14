@@ -148,7 +148,7 @@ export class InvoiceComponent {
       this.recordsCurrency = response;
     });
     if (this.savedInMemory) {
-      this.mainItemsRecords = [...this._InvoiceService.getMainItems()];
+      this.mainItemsRecords = [...this._InvoiceService.getMainItems(this.documentNumber)];
       // this.mainItemsRecords = this._InvoiceService.getMainItems();
       console.log(this.mainItemsRecords);
 
@@ -274,11 +274,13 @@ export class InvoiceComponent {
         bodyRequest.profitMargin = newRecord.profitMargin;
       }
       // { quantity: newRecord.quantity, amountPerUnit: newRecord.amountPerUnit, profitMargin: newRecord.profitMargin ? newRecord.profitMargin : 0 }
-      this._ApiService.post<number>(`/total`, bodyRequest).subscribe({
+      this._ApiService.post<any>(`/total`, bodyRequest).subscribe({
         next: (res) => {
           console.log('mainitem with total:', res);
           // this.totalValue = 0;
-          newRecord.total = res;
+          newRecord.total = res.totalWithProfit;
+          newRecord.amountPerUnitWithProfit = res.amountPerUnitWithProfit;
+          newRecord.totalWithProfit = res.totalWithProfit;
 
           const filteredRecord = Object.fromEntries(
             Object.entries(newRecord).filter(([_, value]) => {
@@ -292,7 +294,7 @@ export class InvoiceComponent {
           this.savedInMemory = true;
           this.cdr.detectChanges();
 
-          const newMainItems = this._InvoiceService.getMainItems();
+          const newMainItems = this._InvoiceService.getMainItems(this.documentNumber);
 
           // Combine the current mainItemsRecords with the new list, ensuring no duplicates
           this.mainItemsRecords = [
@@ -366,11 +368,13 @@ export class InvoiceComponent {
         bodyRequest.profitMargin = newRecord.profitMargin;
       }
       // { quantity: newRecord.quantity, amountPerUnit: newRecord.amountPerUnit, profitMargin: newRecord.profitMargin ? newRecord.profitMargin : 0 }
-      this._ApiService.post<number>(`/total`, bodyRequest).subscribe({
+      this._ApiService.post<any>(`/total`, bodyRequest).subscribe({
         next: (res) => {
           console.log('mainitem with total:', res);
           // this.totalValue = 0;
-          newRecord.total = res;
+          newRecord.total = res.totalWithProfit;
+          newRecord.amountPerUnitWithProfit = res.amountPerUnitWithProfit;
+          newRecord.totalWithProfit = res.totalWithProfit;
           const filteredRecord = Object.fromEntries(
             Object.entries(newRecord).filter(([_, value]) => {
               return value !== '' && value !== 0 && value !== undefined && value !== null;
@@ -382,7 +386,7 @@ export class InvoiceComponent {
           this.savedInMemory = true;
           this.cdr.detectChanges();
 
-          const newMainItems = this._InvoiceService.getMainItems();
+          const newMainItems = this._InvoiceService.getMainItems(this.documentNumber);
 
           // Combine the current mainItemsRecords with the new list, ensuring no duplicates
           this.mainItemsRecords = [
@@ -449,11 +453,13 @@ export class InvoiceComponent {
         bodyRequest.profitMargin = newRecord.profitMargin;
       }
       // { quantity: newRecord.quantity, amountPerUnit: newRecord.amountPerUnit, profitMargin: newRecord.profitMargin ? newRecord.profitMargin : 0 }
-      this._ApiService.post<number>(`/total`, bodyRequest).subscribe({
+      this._ApiService.post<any>(`/total`, bodyRequest).subscribe({
         next: (res) => {
           console.log('mainitem with total:', res);
           // this.totalValue = 0;
-          newRecord.total = res;
+          newRecord.total = res.totalWithProfit;
+          newRecord.amountPerUnitWithProfit = res.amountPerUnitWithProfit;
+          newRecord.totalWithProfit = res.totalWithProfit;
 
           const filteredRecord = Object.fromEntries(
             Object.entries(newRecord).filter(([_, value]) => {
@@ -466,7 +472,7 @@ export class InvoiceComponent {
           this.savedInMemory = true;
           this.cdr.detectChanges();
 
-          const newMainItems = this._InvoiceService.getMainItems();
+          const newMainItems = this._InvoiceService.getMainItems(this.documentNumber);
 
           // Combine the current mainItemsRecords with the new list, ensuring no duplicates
           this.mainItemsRecords = [
@@ -526,11 +532,13 @@ export class InvoiceComponent {
         bodyRequest.profitMargin = newRecord.profitMargin;
       }
       // { quantity: newRecord.quantity, amountPerUnit: newRecord.amountPerUnit, profitMargin: newRecord.profitMargin ? newRecord.profitMargin : 0 }
-      this._ApiService.post<number>(`/total`, bodyRequest).subscribe({
+      this._ApiService.post<any>(`/total`, bodyRequest).subscribe({
         next: (res) => {
           console.log('mainitem with total:', res);
           // this.totalValue = 0;
-          newRecord.total = res;
+          newRecord.total = res.totalWithProfit;
+          newRecord.amountPerUnitWithProfit = res.amountPerUnitWithProfit;
+          newRecord.totalWithProfit = res.totalWithProfit;
           const filteredRecord = Object.fromEntries(
             Object.entries(newRecord).filter(([_, value]) => {
               return value !== '' && value !== 0 && value !== undefined && value !== null;
@@ -542,7 +550,7 @@ export class InvoiceComponent {
           this.savedInMemory = true;
           this.cdr.detectChanges();
 
-          const newMainItems = this._InvoiceService.getMainItems();
+          const newMainItems = this._InvoiceService.getMainItems(this.documentNumber);
 
           // Combine the current mainItemsRecords with the new list, ensuring no duplicates
           this.mainItemsRecords = [
@@ -567,7 +575,7 @@ export class InvoiceComponent {
     }
   }
 
-    addSubItemInMemory(mainItem: MainItem) {
+  addSubItemInMemory(mainItem: MainItem) {
     console.log(mainItem);
     if (!this.selectedServiceNumberRecordSubItem && !this.selectedFormulaRecordSubItem) { // if user didn't select serviceNumber && didn't select formula
 
@@ -596,11 +604,11 @@ export class InvoiceComponent {
           amountPerUnit: newRecord.amountPerUnit
         };
 
-        this._ApiService.post<number>(`/total`, bodyRequest).subscribe({
+        this._ApiService.post<any>(`/total`, bodyRequest).subscribe({
           next: async (res) => {
             console.log('subitem with total:', res);
             // this.totalValue = 0;
-            newRecord.total = res;
+            newRecord.total = res.totalWithProfit;
 
             const filteredSubItem = Object.fromEntries(
               Object.entries(newRecord).filter(([_, value]) => {
@@ -609,7 +617,7 @@ export class InvoiceComponent {
             );
             console.log(filteredSubItem);
 
-            const success =  await  this._InvoiceService.addSubItemToMainItem(mainItem.invoiceMainItemCode, filteredSubItem as SubItem);
+            const success = await this._InvoiceService.addSubItemToMainItem(mainItem.invoiceMainItemCode, filteredSubItem as SubItem,this.documentNumber);
             if (success) {
 
               this.savedInMemory = true;
@@ -674,11 +682,11 @@ export class InvoiceComponent {
           amountPerUnit: newRecord.amountPerUnit
         };
 
-        this._ApiService.post<number>(`/total`, bodyRequest).subscribe({
+        this._ApiService.post<any>(`/total`, bodyRequest).subscribe({
           next: async (res) => {
             console.log('subitem with total:', res);
             // this.totalValue = 0;
-            newRecord.total = res;
+            newRecord.total = res.totalWithProfit;
             const filteredSubItem = Object.fromEntries(
               Object.entries(newRecord).filter(([_, value]) => {
                 return value !== '' && value !== 0 && value !== undefined && value !== null;
@@ -686,7 +694,7 @@ export class InvoiceComponent {
             );
             console.log(filteredSubItem);
 
-            const success = await this._InvoiceService.addSubItemToMainItem(mainItem.invoiceMainItemCode, filteredSubItem as SubItem);
+            const success = await this._InvoiceService.addSubItemToMainItem(mainItem.invoiceMainItemCode, filteredSubItem as SubItem,this.documentNumber);
             if (success) {
 
               this.savedInMemory = true;
@@ -755,11 +763,11 @@ export class InvoiceComponent {
           amountPerUnit: newRecord.amountPerUnit
         };
 
-        this._ApiService.post<number>(`/total`, bodyRequest).subscribe({
+        this._ApiService.post<any>(`/total`, bodyRequest).subscribe({
           next: async (res) => {
             console.log('subitem with total:', res);
             // this.totalValue = 0;
-            newRecord.total = res;
+            newRecord.total = res.totalWithProfit;
             const filteredSubItem = Object.fromEntries(
               Object.entries(newRecord).filter(([_, value]) => {
                 return value !== '' && value !== 0 && value !== undefined && value !== null;
@@ -767,7 +775,7 @@ export class InvoiceComponent {
             );
             console.log(filteredSubItem);
 
-            const success = await this._InvoiceService.addSubItemToMainItem(mainItem.invoiceMainItemCode, filteredSubItem as SubItem);
+            const success = await this._InvoiceService.addSubItemToMainItem(mainItem.invoiceMainItemCode, filteredSubItem as SubItem,this.documentNumber);
             if (success) {
 
               this.savedInMemory = true;
@@ -833,11 +841,11 @@ export class InvoiceComponent {
           amountPerUnit: newRecord.amountPerUnit
         };
 
-        this._ApiService.post<number>(`/total`, bodyRequest).subscribe({
+        this._ApiService.post<any>(`/total`, bodyRequest).subscribe({
           next: async (res) => {
             console.log('subitem with total:', res);
             // this.totalValue = 0;
-            newRecord.total = res;
+            newRecord.total = res.totalWithProfit;
             const filteredSubItem = Object.fromEntries(
               Object.entries(newRecord).filter(([_, value]) => {
                 return value !== '' && value !== 0 && value !== undefined && value !== null;
@@ -845,7 +853,7 @@ export class InvoiceComponent {
             );
             console.log(filteredSubItem);
 
-            const success = await this._InvoiceService.addSubItemToMainItem(mainItem.invoiceMainItemCode, filteredSubItem as SubItem);
+            const success = await this._InvoiceService.addSubItemToMainItem(mainItem.invoiceMainItemCode, filteredSubItem as SubItem,this.documentNumber);
             if (success) {
 
               this.savedInMemory = true;
@@ -882,8 +890,6 @@ export class InvoiceComponent {
       }
     }
   }
-
-
 
   saveDocument() {
     this.confirmationService.confirm({
@@ -953,7 +959,7 @@ export class InvoiceComponent {
             this.messageService.add({
               severity: 'success',
               summary: 'Success',
-              detail: 'All records saved successfully',
+              detail: 'The Document has been saved successfully',
               life: 3000
             });
           })
@@ -962,1089 +968,129 @@ export class InvoiceComponent {
             this.messageService.add({
               severity: 'error',
               summary: 'Error',
-              detail: 'Error saving records',
+              detail: 'Error saving The Document',
               life: 3000
             });
           });
-     // }
-   // });
+        // }
+        // });
 
 
-    // // Execute all save requests in parallel and handle the results
-    // Promise.all(saveRequests)
-    //   .then((responses) => {
-    //     console.log('All main items saved successfully:', responses);
+        // // Execute all save requests in parallel and handle the results
+        // Promise.all(saveRequests)
+        //   .then((responses) => {
+        //     console.log('All main items saved successfully:', responses);
 
-    //     this.messageService.add({
-    //       severity: 'success',
-    //       summary: 'Success',
-    //       detail: 'All records saved successfully',
-    //       life: 3000
-    //     });
-    //   })
-    //   .catch((error) => {
-    //     console.error('Error saving main items:', error);
-    //     this.messageService.add({
-    //       severity: 'error',
-    //       summary: 'Error',
-    //       detail: 'Error saving records',
-    //       life: 3000
-    //     });
-    //   });
-
-
+        //     this.messageService.add({
+        //       severity: 'success',
+        //       summary: 'Success',
+        //       detail: 'All records saved successfully',
+        //       life: 3000
+        //     });
+        //   })
+        //   .catch((error) => {
+        //     console.error('Error saving main items:', error);
+        //     this.messageService.add({
+        //       severity: 'error',
+        //       summary: 'Error',
+        //       detail: 'Error saving records',
+        //       life: 3000
+        //     });
+        //   });
 
 
 
-    //...............................
-    // get the last object of mainItemsRecords and post its total header to the cloud
-    // console.log(this.mainItemsRecords[this.mainItemsRecords.length - 1]);
-    // const lastRecord = this.mainItemsRecords[this.mainItemsRecords.length - 1];
-    // //const bodyRequest=  this.removePropertiesFrom(lastRecord, ['serviceInvoiceCode']);
-    // const totalHeader = this.totalValue;
-    // //this.serviceInvoiceRecords[this.serviceInvoiceRecords.length -1].totalHeader;
-    // console.log(totalHeader);
-    // const bodyRequest = {
-    //   totalHeader: totalHeader,
-    //   refrenceId: this.documentNumber,
-
-    //   quantity: this.mainItemsRecords[this.mainItemsRecords.length - 1].quantity,
-    //   amountPerUnit: this.mainItemsRecords[this.mainItemsRecords.length - 1].amountPerUnit,
-
-    //   serviceNumberCode: this.mainItemsRecords[this.mainItemsRecords.length - 1].serviceNumberCode,
-    //   unitOfMeasurementCode: this.mainItemsRecords[this.mainItemsRecords.length - 1].unitOfMeasurementCode,
-    //   currencyCode: this.mainItemsRecords[this.mainItemsRecords.length - 1].currencyCode,
-    //   formulaCode: this.mainItemsRecords[this.mainItemsRecords.length - 1].formulaCode,
-    //   description: this.mainItemsRecords[this.mainItemsRecords.length - 1].description,
-    //   total: this.mainItemsRecords[this.mainItemsRecords.length - 1].total,
-    //   profitMargin: this.mainItemsRecords[this.mainItemsRecords.length - 1].profitMargin,
-    //   totalWithProfit: this.mainItemsRecords[this.mainItemsRecords.length - 1].totalWithProfit,
-    // }
-    // console.log(bodyRequest);
 
 
-    // this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, bodyRequest)
-    //   .pipe(
-    //     tap((res) => {
-    //       console.log('mainitem created in s4:', res);
-    //       this.totalValue = 0;
-    //       this.savedDBApp = false;
-    //     }),
-    //     catchError((err) => {
-    //       console.log(err);
-    //       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid Data for Document' });
-    //       return of(null);
-    //     }),
-    //     switchMap((res) => {
-    //       if (res) {
-    //         return this._ApiService.updateApp<MainItem>(`mainitems`).pipe(
-    //           tap((res) => {
-    //             console.log('mainitem Updated with permanent:', res);
-    //             this.totalValue = 0;
-    //             this.savedDBApp = false;
-    //           }),
-    //           catchError((err) => {
-    //             console.log(err);
-    //             // this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to update mainitem permanently' });
-    //             return of(null);
-    //           })
-    //         );
-    //       }
-    //       return of(null);
-    //     })
-    //   )
-    //   .subscribe({
-    //     complete: () => {
-    //       this.resetNewMainItem();
-    //       this.ngOnInit();
-    //       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Document saved successfully' });
-    //     }
-    //   });
+        //...............................
+        // get the last object of mainItemsRecords and post its total header to the cloud
+        // console.log(this.mainItemsRecords[this.mainItemsRecords.length - 1]);
+        // const lastRecord = this.mainItemsRecords[this.mainItemsRecords.length - 1];
+        // //const bodyRequest=  this.removePropertiesFrom(lastRecord, ['serviceInvoiceCode']);
+        // const totalHeader = this.totalValue;
+        // //this.serviceInvoiceRecords[this.serviceInvoiceRecords.length -1].totalHeader;
+        // console.log(totalHeader);
+        // const bodyRequest = {
+        //   totalHeader: totalHeader,
+        //   refrenceId: this.documentNumber,
+
+        //   quantity: this.mainItemsRecords[this.mainItemsRecords.length - 1].quantity,
+        //   amountPerUnit: this.mainItemsRecords[this.mainItemsRecords.length - 1].amountPerUnit,
+
+        //   serviceNumberCode: this.mainItemsRecords[this.mainItemsRecords.length - 1].serviceNumberCode,
+        //   unitOfMeasurementCode: this.mainItemsRecords[this.mainItemsRecords.length - 1].unitOfMeasurementCode,
+        //   currencyCode: this.mainItemsRecords[this.mainItemsRecords.length - 1].currencyCode,
+        //   formulaCode: this.mainItemsRecords[this.mainItemsRecords.length - 1].formulaCode,
+        //   description: this.mainItemsRecords[this.mainItemsRecords.length - 1].description,
+        //   total: this.mainItemsRecords[this.mainItemsRecords.length - 1].total,
+        //   profitMargin: this.mainItemsRecords[this.mainItemsRecords.length - 1].profitMargin,
+        //   totalWithProfit: this.mainItemsRecords[this.mainItemsRecords.length - 1].totalWithProfit,
+        // }
+        // console.log(bodyRequest);
 
 
-    // old version:::
-    // this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, bodyRequest).subscribe({
-    //   next: (res) => {
-    //     console.log('mainitem created in s4:', res);
-    //     this.totalValue = 0;
-    //     this.savedDBApp = false;
+        // this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, bodyRequest)
+        //   .pipe(
+        //     tap((res) => {
+        //       console.log('mainitem created in s4:', res);
+        //       this.totalValue = 0;
+        //       this.savedDBApp = false;
+        //     }),
+        //     catchError((err) => {
+        //       console.log(err);
+        //       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid Data for Document' });
+        //       return of(null);
+        //     }),
+        //     switchMap((res) => {
+        //       if (res) {
+        //         return this._ApiService.updateApp<MainItem>(`mainitems`).pipe(
+        //           tap((res) => {
+        //             console.log('mainitem Updated with permanent:', res);
+        //             this.totalValue = 0;
+        //             this.savedDBApp = false;
+        //           }),
+        //           catchError((err) => {
+        //             console.log(err);
+        //             // this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to update mainitem permanently' });
+        //             return of(null);
+        //           })
+        //         );
+        //       }
+        //       return of(null);
+        //     })
+        //   )
+        //   .subscribe({
+        //     complete: () => {
+        //       this.resetNewMainItem();
+        //       this.ngOnInit();
+        //       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Document saved successfully' });
+        //     }
+        //   });
+      }, reject: () => {
 
-    //     this._ApiService.updateApp<MainItem>(`mainitems`).subscribe({
-    //       next: (res) => {
-    //         console.log('mainitem Updated with permanent:', res);
-    //         this.totalValue = 0;
-    //         this.savedDBApp = false;
-    //       }, error: (err) => {
-    //         console.log(err);
-    //       },
-    //       complete: () => {
-    //       }
-    //     });
-    //   }, error: (err) => {
-    //     console.log(err);
-    //     this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid Data for Document' });
-    //   },
-    //   complete: () => {
-    //     this.resetNewMainItem();
-    //     this.ngOnInit();
-    //     this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Document saved successfully ' });
-    //   }
-    // });
-
-  }, reject: () => {
         // delete the added records and get the last object of mainItemsRecords and post its total header to the cloud:
 
-        this._ApiService.deleteFromApp<MainItem>(`mainitems`).subscribe({
-    next: (res) => {
-      console.log('mainitem deleted with temporary:', res);
-      this.totalValue = 0;
-      this.savedDBApp = false;
-      this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected Saving the Document', life: 3000 });
+        // this._ApiService.deleteFromApp<MainItem>(`mainitems`).subscribe({
+        //   next: (res) => {
+        //     console.log('mainitem deleted with temporary:', res);
+        //     this.totalValue = 0;
+        //     this.savedDBApp = false;
+        //     this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected Saving the Document', life: 3000 });
 
-    }, error: (err) => {
-      console.log(err);
-    },
-    complete: () => {
-      this.ngOnInit();
-    }
-  });
+        //   }, error: (err) => {
+        //     console.log(err);
+        //   },
+        //   complete: () => {
+        //     this.ngOnInit();
+        //   }
+        // });
 
       }
     });
   }
 
-// For Add new  Sub Item
-newSubItem: SubItem = {
-  Type: '',
-  invoiceSubItemCode: 0,
-  // invoiceMainItemCode: 0,
-  serviceNumberCode: 0,
-  description: "",
-  quantity: 0,
-  unitOfMeasurementCode: "",
-  formulaCode: "",
-  amountPerUnit: 0,
-  currencyCode: "",
-  total: 0
-};
-
-// For Edit  MainItem
-clonedMainItem: { [s: number]: MainItem } = { };
-onMainItemEditInit(record: MainItem) {
-  this.clonedMainItem[record.invoiceMainItemCode] = { ...record };
-}
-onMainItemEditSave(index: number, record: MainItem) {
-  console.log(record);
-
-  const { invoiceMainItemCode, total, totalWithProfit, ...mainItemWithoutMainItemCode } = record;
-  const updatedMainItem = this.removePropertiesFrom(mainItemWithoutMainItemCode, ['invoiceMainItemCode', 'invoiceSubItemCode']);
-  console.log(updatedMainItem);
-
-  console.log(this.updateSelectedServiceNumber);
-  if (this.updateSelectedServiceNumberRecord) {
-    const newRecord: MainItem = {
-      ...record, // Copy all properties from the original record
-      subItems: (record?.subItems ?? []).map(subItem =>
-        this.removeProperties(subItem, ['invoiceMainItemCode', 'invoiceSubItemCode'])
-      ),
-      unitOfMeasurementCode: this.updateSelectedServiceNumberRecord.baseUnitOfMeasurement,
-      description: this.updateSelectedServiceNumberRecord.description,
-    };
-    console.log(newRecord);
-    //....................
-    const bodyRequest: any = {
-      quantity: newRecord.quantity,
-      amountPerUnit: newRecord.amountPerUnit
-    };
-
-    if (newRecord.profitMargin && newRecord.profitMargin !== 0) {
-      bodyRequest.profitMargin = newRecord.profitMargin;
-    }
-    this._ApiService.post<number>(`/total`, bodyRequest).subscribe({
-      next: (res) => {
-        console.log('mainitem with total:', res);
-        newRecord.total = res;
-        const mainItemIndex = this.mainItemsRecords.findIndex(item => item.invoiceMainItemCode === invoiceMainItemCode);
-        if (mainItemIndex > -1) {
-          this.mainItemsRecords[mainItemIndex] = { ...this.mainItemsRecords[mainItemIndex], ...newRecord };
-        }
-        this.cdr.detectChanges();
-        console.log(this.mainItemsRecords);
-      }, error: (err) => {
-        console.log(err);
-      },
-      complete: () => {
-      }
-    });
-    ///...................
-
-    // // Update mainItemsRecords array in the component to reflect the changes
-    // const mainItemIndex = this.mainItemsRecords.findIndex(item => item.invoiceMainItemCode === invoiceMainItemCode);
-    // if (mainItemIndex > -1) {
-    //   // Update the specific MainItem in the array
-    //   this.mainItemsRecords[mainItemIndex] = { ...this.mainItemsRecords[mainItemIndex], ...newRecord };
-    // }
-    // // this.updateSelectedServiceNumberRecord=undefined;
-    // // Trigger change detection
-    // this.cdr.detectChanges();
-    // console.log(this.mainItemsRecords);
-  }
-  if (this.updateSelectedServiceNumberRecord && this.updatedFormulaRecord && this.resultAfterTestUpdate) {
-    console.log(record);
-    console.log(this.updateSelectedServiceNumberRecord);
-    const newRecord: MainItem = {
-      ...record,
-      subItems: (record?.subItems ?? []).map(subItem =>
-        this.removeProperties(subItem, ['invoiceMainItemCode', 'invoiceSubItemCode'])
-      ),
-      unitOfMeasurementCode: this.updateSelectedServiceNumberRecord.baseUnitOfMeasurement,
-      description: this.updateSelectedServiceNumberRecord.description,
-      quantity: this.resultAfterTestUpdate,
-    };
-    console.log(newRecord);
-
-    //....................
-    const bodyRequest: any = {
-      quantity: newRecord.quantity,
-      amountPerUnit: newRecord.amountPerUnit
-    };
-
-    // Conditionally add profitMargin if it has a non-zero value
-    if (newRecord.profitMargin && newRecord.profitMargin !== 0) {
-      bodyRequest.profitMargin = newRecord.profitMargin;
-    }
-    // { quantity: newRecord.quantity, amountPerUnit: newRecord.amountPerUnit, profitMargin: newRecord.profitMargin ? newRecord.profitMargin : 0 }
-    this._ApiService.post<number>(`/total`, bodyRequest).subscribe({
-      next: (res) => {
-        console.log('mainitem with total:', res);
-        // this.totalValue = 0;
-        newRecord.total = res;
-
-        // Update mainItemsRecords array in the component to reflect the changes
-        const mainItemIndex = this.mainItemsRecords.findIndex(item => item.invoiceMainItemCode === invoiceMainItemCode);
-        if (mainItemIndex > -1) {
-          // Update the specific MainItem in the array
-          this.mainItemsRecords[mainItemIndex] = { ...this.mainItemsRecords[mainItemIndex], ...newRecord };
-        }
-        this.updatedFormulaRecord = undefined;
-        this.resultAfterTestUpdate = undefined
-        // Trigger change detection
-        this.cdr.detectChanges();
-        console.log(this.mainItemsRecords);
-      }, error: (err) => {
-        console.log(err);
-      },
-      complete: () => {
-      }
-    });
-    ///...................
-
-    // // Update mainItemsRecords array in the component to reflect the changes
-    // const mainItemIndex = this.mainItemsRecords.findIndex(item => item.invoiceMainItemCode === invoiceMainItemCode);
-    // if (mainItemIndex > -1) {
-    //   // Update the specific MainItem in the array
-    //   this.mainItemsRecords[mainItemIndex] = { ...this.mainItemsRecords[mainItemIndex], ...newRecord };
-    // }
-    // this.updatedFormulaRecord = undefined;
-    // this.resultAfterTestUpdate = undefined
-    // // Trigger change detection
-    // this.cdr.detectChanges();
-    // console.log(this.mainItemsRecords);
-  }
-  if (this.updatedFormulaRecord && this.resultAfterTestUpdate) {
-    const newRecord: MainItem = {
-      ...record,
-      subItems: (record?.subItems ?? []).map(subItem =>
-        this.removeProperties(subItem, ['invoiceMainItemCode', 'invoiceSubItemCode'])
-      ),
-      quantity: this.resultAfterTestUpdate,
-    };
-    console.log(newRecord);
-
-    //....................
-    const bodyRequest: any = {
-      quantity: newRecord.quantity,
-      amountPerUnit: newRecord.amountPerUnit
-    };
-
-    // Conditionally add profitMargin if it has a non-zero value
-    if (newRecord.profitMargin && newRecord.profitMargin !== 0) {
-      bodyRequest.profitMargin = newRecord.profitMargin;
-    }
-    // { quantity: newRecord.quantity, amountPerUnit: newRecord.amountPerUnit, profitMargin: newRecord.profitMargin ? newRecord.profitMargin : 0 }
-    this._ApiService.post<number>(`/total`, bodyRequest).subscribe({
-      next: (res) => {
-        console.log('mainitem with total:', res);
-        // this.totalValue = 0;
-        newRecord.total = res;
-
-        // Update mainItemsRecords array in the component to reflect the changes
-        const mainItemIndex = this.mainItemsRecords.findIndex(item => item.invoiceMainItemCode === invoiceMainItemCode);
-        if (mainItemIndex > -1) {
-          // Update the specific MainItem in the array
-          this.mainItemsRecords[mainItemIndex] = { ...this.mainItemsRecords[mainItemIndex], ...newRecord };
-        }
-        this.updatedFormulaRecord = undefined;
-        this.resultAfterTestUpdate = undefined
-        // Trigger change detection
-        this.cdr.detectChanges();
-        console.log(this.mainItemsRecords);
-      }, error: (err) => {
-        console.log(err);
-      },
-      complete: () => {
-      }
-    });
-    ///...................
-
-    // // Update mainItemsRecords array in the component to reflect the changes
-    // const mainItemIndex = this.mainItemsRecords.findIndex(item => item.invoiceMainItemCode === invoiceMainItemCode);
-    // if (mainItemIndex > -1) {
-    //   // Update the specific MainItem in the array
-    //   this.mainItemsRecords[mainItemIndex] = { ...this.mainItemsRecords[mainItemIndex], ...newRecord };
-    // }
-    // this.updatedFormulaRecord = undefined;
-    // this.resultAfterTestUpdate = undefined
-    // // Trigger change detection
-    // this.cdr.detectChanges();
-    // console.log(this.mainItemsRecords);
-
-  }
-  if (!this.updateSelectedServiceNumberRecord && !this.updatedFormulaRecord && !this.resultAfterTestUpdate) {
-    console.log({ ...mainItemWithoutMainItemCode });
-
-    //....................
-    const bodyRequest: any = {
-      quantity: updatedMainItem.quantity,
-      amountPerUnit: updatedMainItem.amountPerUnit
-    };
-    if (updatedMainItem.profitMargin && updatedMainItem.profitMargin !== 0) {
-      bodyRequest.profitMargin = updatedMainItem.profitMargin;
-    }
-    this._ApiService.post<number>(`/total`, bodyRequest).subscribe({
-      next: (res) => {
-        console.log('mainitem with total:', res);
-        updatedMainItem.total = res;
-        const mainItemIndex = this.mainItemsRecords.findIndex(item => item.invoiceMainItemCode === invoiceMainItemCode);
-        if (mainItemIndex > -1) {
-          this.mainItemsRecords[mainItemIndex] = { ...this.mainItemsRecords[mainItemIndex], ...updatedMainItem };
-        }
-        this.cdr.detectChanges();
-        console.log(this.mainItemsRecords);
-      }, error: (err) => {
-        console.log(err);
-      },
-      complete: () => {
-      }
-    });
-    ///...................
-
-    // // Update mainItemsRecords array in the component to reflect the changes
-    // const mainItemIndex = this.mainItemsRecords.findIndex(item => item.invoiceMainItemCode === invoiceMainItemCode);
-    // if (mainItemIndex > -1) {
-    //   // Update the specific MainItem in the array
-    //   this.mainItemsRecords[mainItemIndex] = { ...this.mainItemsRecords[mainItemIndex], ...updatedMainItem };
-    // }
-    // // Trigger change detection
-    // this.cdr.detectChanges();
-    // console.log(this.mainItemsRecords);
-  }
-}
-
-// old version......
-// onMainItemEditSave(index: number, record: MainItem) {
-//   console.log(record);
-
-//   const { invoiceMainItemCode, total, totalWithProfit, ...mainItemWithoutMainItemCode } = record;
-//   const updatedMainItem = this.removePropertiesFrom(mainItemWithoutMainItemCode, ['invoiceMainItemCode', 'invoiceSubItemCode']);
-//   console.log(updatedMainItem);
-
-//   console.log(this.updateSelectedServiceNumber);
-//   if (this.updateSelectedServiceNumberRecord) {
-//     const newRecord: MainItem = {
-//       ...record, // Copy all properties from the original record
-//       subItems: (record?.subItems ?? []).map(subItem =>
-//         this.removeProperties(subItem, ['invoiceMainItemCode', 'invoiceSubItemCode'])
-//       ),
-//       // Modify specific attributes
-//       unitOfMeasurementCode: this.updateSelectedServiceNumberRecord.baseUnitOfMeasurement,
-//       description: this.updateSelectedServiceNumberRecord.description,
-//     };
-//     console.log(newRecord);
-//     // this._ApiService.patch<MainItem>('mainitems', record.invoiceMainItemCode, newRecord).subscribe({
-//     // update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}
-//     this._ApiService.patch<MainItem>(`mainitems`, record.invoiceMainItemCode, newRecord).subscribe({
-//       next: (res) => {
-//         console.log('mainitem  updated:', res);
-//         this.totalValue = 0;
-
-//         this.savedDBApp = true;
-
-//         this.ngOnInit()
-//       }, error: (err) => {
-//         console.log(err);
-//         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid Data' });
-//       },
-//       complete: () => {
-//         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Record updated successfully ' });
-//       }
-//     });
-//   }
-//   if (this.updateSelectedServiceNumberRecord && this.updatedFormulaRecord && this.resultAfterTestUpdate) {
-//     console.log(record);
-//     console.log(this.updateSelectedServiceNumberRecord);
-//     const newRecord: MainItem = {
-//       ...record,
-//       subItems: (record?.subItems ?? []).map(subItem =>
-//         this.removeProperties(subItem, ['invoiceMainItemCode', 'invoiceSubItemCode'])
-//       ),
-//       unitOfMeasurementCode: this.updateSelectedServiceNumberRecord.baseUnitOfMeasurement,
-//       description: this.updateSelectedServiceNumberRecord.description,
-//       quantity: this.resultAfterTestUpdate,
-//     };
-//     console.log(newRecord);
-//     // this._ApiService.patch<MainItem>('mainitems', record.invoiceMainItemCode, newRecord).subscribe({
-
-//     this._ApiService.patch<MainItem>(`mainitems`, record.invoiceMainItemCode, newRecord).subscribe({
-//       next: (res) => {
-//         console.log('mainitem  updated:', res);
-//         this.totalValue = 0;
-
-//         this.savedDBApp = true;
-
-//         this.ngOnInit()
-//       }, error: (err) => {
-//         console.log(err);
-//         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid Data' });
-//       },
-//       complete: () => {
-//         this.updatedFormulaRecord = undefined;
-//         this.resultAfterTestUpdate = undefined
-
-//         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Record updated successfully ' });
-//         // this.ngOnInit()
-//       }
-//     });
-//   }
-//   if (this.updatedFormulaRecord && this.resultAfterTestUpdate) {
-//     const newRecord: MainItem = {
-//       ...record,
-//       subItems: (record?.subItems ?? []).map(subItem =>
-//         this.removeProperties(subItem, ['invoiceMainItemCode', 'invoiceSubItemCode'])
-//       ),
-//       quantity: this.resultAfterTestUpdate,
-//     };
-//     console.log(newRecord);
-//     // this._ApiService.patch<MainItem>('mainitems', record.invoiceMainItemCode, newRecord).subscribe({
-
-//     this._ApiService.patch<MainItem>(`mainitems`, record.invoiceMainItemCode, newRecord).subscribe({
-//       next: (res) => {
-//         console.log('mainitem  updated:', res);
-//         this.totalValue = 0;
-
-//         this.savedDBApp = true;
-
-//         this.ngOnInit()
-//       }, error: (err) => {
-//         console.log(err);
-//         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid Data' });
-//       },
-//       complete: () => {
-//         this.updatedFormulaRecord = undefined;
-//         this.resultAfterTestUpdate = undefined
-//         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Record updated successfully ' });
-//         // this.ngOnInit()
-//       }
-//     });
-//   }
-//   if (!this.updateSelectedServiceNumberRecord && !this.updatedFormulaRecord && !this.resultAfterTestUpdate) {
-//     console.log({ ...mainItemWithoutMainItemCode });
-//     // this._ApiService.patch<MainItem>('mainitems', record.invoiceMainItemCode, { ...updatedMainItem }).subscribe({
-
-//     this._ApiService.patch<MainItem>(`mainitems`, record.invoiceMainItemCode, { ...updatedMainItem }).subscribe({
-//       next: (res) => {
-//         console.log('mainitem  updated:', res);
-//         this.totalValue = 0;
-
-//         this.savedDBApp = true;
-
-//         this.ngOnInit()
-//       }, error: (err) => {
-//         console.log(err);
-//         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid Data' });
-//       },
-//       complete: () => {
-//         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Record updated successfully ' });
-//         // this.ngOnInit()
-//       }
-//     });
-//   }
-// }
-onMainItemEditCancel(row: MainItem, index: number) {
-  this.mainItemsRecords[index] = this.clonedMainItem[row.invoiceMainItemCode]
-  delete this.clonedMainItem[row.invoiceMainItemCode]
-}
-
-// For Edit  SubItem
-clonedSubItem: { [s: number]: SubItem } = { };
-onSubItemEditInit(record: SubItem) {
-  if (record.invoiceSubItemCode) {
-    this.clonedSubItem[record.invoiceSubItemCode] = { ...record };
-  }
-}
-
-onSubItemEditSave(index: number, record: SubItem, mainItem: MainItem) {
-  console.log(mainItem);
-  console.log(record);
-  console.log(index);
-
-  const { invoiceSubItemCode, ...subItemWithoutSubItemCode } = record;
-  console.log(this.updateSelectedServiceNumberSubItem);
-
-  if (this.updateSelectedServiceNumberRecordSubItem) {
-
-    const newRecord: SubItem = {
-      ...record,
-      unitOfMeasurementCode: this.updateSelectedServiceNumberRecordSubItem.baseUnitOfMeasurement,
-      description: this.updateSelectedServiceNumberRecordSubItem.description,
-    };
-    console.log(newRecord);
-
-
-
-    const { invoiceMainItemCode, total, totalWithProfit, amountPerUnitWithProfit, ...mainItemWithoutMainItemCode } = mainItem;
-
-    const updatedSubItems = (mainItem?.subItems ?? []).map(subItem =>
-      subItem.invoiceSubItemCode === newRecord.invoiceSubItemCode
-        ? this.removeProperties({ ...subItem, ...newRecord }, ['invoiceMainItemCode', 'invoiceSubItemCode'])
-        : this.removeProperties(subItem, ['invoiceMainItemCode', 'invoiceSubItemCode'])
-    );
-
-    const updatedRecord: MainItem = {
-      ...mainItemWithoutMainItemCode, // Copy all properties from the original record
-      subItems: updatedSubItems,
-      invoiceMainItemCode: 0,
-      totalWithProfit: 0,
-      total: 0,
-      amountPerUnitWithProfit: 0,
-    }
-    console.log(updatedRecord);
-    // Remove properties with empty or default values
-    const filteredRecord = Object.fromEntries(
-      Object.entries(updatedRecord).filter(([_, value]) => {
-        return value !== '' && value !== 0 && value !== undefined && value !== null;
-      })
-    );
-    console.log(filteredRecord);
-
-    const mainItemIndex = this.mainItemsRecords.findIndex(item => item.invoiceMainItemCode === invoiceMainItemCode);
-    if (mainItemIndex > -1) {
-      this.mainItemsRecords[mainItemIndex] = { ...this.mainItemsRecords[mainItemIndex], ...filteredRecord };
-    }
-    this.cdr.detectChanges();
-    console.log(this.mainItemsRecords);
-
-
-
-  }
-  if (this.updateSelectedServiceNumberRecordSubItem && this.updatedFormulaRecordSubItem && this.resultAfterTestUpdate) {
-    console.log(record);
-    console.log(this.updateSelectedServiceNumberRecordSubItem);
-    const newRecord: SubItem = {
-      ...record,
-      unitOfMeasurementCode: this.updateSelectedServiceNumberRecordSubItem.baseUnitOfMeasurement,
-      description: this.updateSelectedServiceNumberRecordSubItem.description,
-      quantity: this.resultAfterTestUpdate,
-    };
-    console.log(newRecord);
-
-    const { invoiceMainItemCode, total, totalWithProfit, amountPerUnitWithProfit, ...mainItemWithoutMainItemCode } = mainItem;
-
-    const updatedSubItems = (mainItem?.subItems ?? []).map(subItem =>
-      // Modify only the specific sub-item that needs to be updated
-      subItem.invoiceSubItemCode === newRecord.invoiceSubItemCode
-        ? this.removeProperties({ ...subItem, ...newRecord }, ['invoiceMainItemCode', 'invoiceSubItemCode'])
-        : this.removeProperties(subItem, ['invoiceMainItemCode', 'invoiceSubItemCode'])
-    );
-
-    const updatedRecord: MainItem = {
-      ...mainItemWithoutMainItemCode, // Copy all properties from the original record
-      subItems: updatedSubItems,
-      invoiceMainItemCode: 0,
-      totalWithProfit: 0,
-      total: 0,
-      amountPerUnitWithProfit: 0,
-    }
-    console.log(updatedRecord);
-    // Remove properties with empty or default values
-    const filteredRecord = Object.fromEntries(
-      Object.entries(updatedRecord).filter(([_, value]) => {
-        return value !== '' && value !== 0 && value !== undefined && value !== null;
-      })
-    );
-    console.log(filteredRecord);
-
-    // Update mainItemsRecords array in the component to reflect the changes
-    const mainItemIndex = this.mainItemsRecords.findIndex(item => item.invoiceMainItemCode === invoiceMainItemCode);
-    if (mainItemIndex > -1) {
-      // Update the specific MainItem in the array
-      this.mainItemsRecords[mainItemIndex] = { ...this.mainItemsRecords[mainItemIndex], ...filteredRecord };
-    }
-    // this.updateSelectedServiceNumberRecord=undefined;
-    this.updatedFormulaRecordSubItem = undefined;
-    this.resultAfterTestUpdate = undefined
-    // Trigger change detection
-    this.cdr.detectChanges();
-    console.log(this.mainItemsRecords);
-  }
-  if (this.updatedFormulaRecordSubItem && this.resultAfterTestUpdate) {
-    const newRecord: SubItem = {
-      ...record,
-      quantity: this.resultAfterTestUpdate,
-    };
-    console.log(newRecord);
-
-    const { invoiceMainItemCode, total, totalWithProfit, amountPerUnitWithProfit, ...mainItemWithoutMainItemCode } = mainItem;
-
-    const updatedSubItems = (mainItem?.subItems ?? []).map(subItem =>
-      // Modify only the specific sub-item that needs to be updated
-      subItem.invoiceSubItemCode === newRecord.invoiceSubItemCode
-        ? this.removeProperties({ ...subItem, ...newRecord }, ['invoiceMainItemCode', 'invoiceSubItemCode'])
-        : this.removeProperties(subItem, ['invoiceMainItemCode', 'invoiceSubItemCode'])
-    );
-
-    const updatedRecord: MainItem = {
-      ...mainItemWithoutMainItemCode, // Copy all properties from the original record
-      subItems: updatedSubItems,
-      invoiceMainItemCode: 0,
-      totalWithProfit: 0,
-      total: 0,
-      amountPerUnitWithProfit: 0,
-    }
-    console.log(updatedRecord);
-    // Remove properties with empty or default values
-    const filteredRecord = Object.fromEntries(
-      Object.entries(updatedRecord).filter(([_, value]) => {
-        return value !== '' && value !== 0 && value !== undefined && value !== null;
-      })
-    );
-    console.log(filteredRecord);
-
-    // Update mainItemsRecords array in the component to reflect the changes
-    const mainItemIndex = this.mainItemsRecords.findIndex(item => item.invoiceMainItemCode === invoiceMainItemCode);
-    if (mainItemIndex > -1) {
-      // Update the specific MainItem in the array
-      this.mainItemsRecords[mainItemIndex] = { ...this.mainItemsRecords[mainItemIndex], ...filteredRecord };
-    }
-    // this.updateSelectedServiceNumberRecord=undefined;
-    this.updatedFormulaRecordSubItem = undefined;
-    this.resultAfterTestUpdate = undefined
-    // Trigger change detection
-    this.cdr.detectChanges();
-    console.log(this.mainItemsRecords);
-  }
-  if (!this.updateSelectedServiceNumberRecordSubItem && !this.updatedFormulaRecordSubItem && !this.resultAfterTestUpdate) {
-
-    const { invoiceMainItemCode, total, totalWithProfit, amountPerUnitWithProfit, ...mainItemWithoutMainItemCode } = mainItem;
-
-    const updatedSubItems = (mainItem?.subItems ?? []).map(subItem =>
-      // Modify only the specific sub-item that needs to be updated
-      subItem.invoiceSubItemCode === invoiceSubItemCode
-        ? this.removeProperties({ ...subItem, ...subItemWithoutSubItemCode }, ['invoiceMainItemCode', 'invoiceSubItemCode'])
-        : this.removeProperties(subItem, ['invoiceMainItemCode', 'invoiceSubItemCode'])
-    );
-
-    const updatedRecord: MainItem = {
-      ...mainItemWithoutMainItemCode, // Copy all properties from the original record
-      subItems: updatedSubItems,
-      invoiceMainItemCode: 0,
-      totalWithProfit: 0,
-      total: 0,
-      amountPerUnitWithProfit: 0,
-    }
-    console.log(updatedRecord);
-    // Remove properties with empty or default values
-    const filteredRecord = Object.fromEntries(
-      Object.entries(updatedRecord).filter(([_, value]) => {
-        return value !== '' && value !== 0 && value !== undefined && value !== null;
-      })
-    );
-    console.log(filteredRecord);
-
-    // Update mainItemsRecords array in the component to reflect the changes
-    const mainItemIndex = this.mainItemsRecords.findIndex(item => item.invoiceMainItemCode === invoiceMainItemCode);
-    if (mainItemIndex > -1) {
-      // Update the specific MainItem in the array
-      this.mainItemsRecords[mainItemIndex] = { ...this.mainItemsRecords[mainItemIndex], ...filteredRecord };
-    }
-    // Trigger change detection
-    this.cdr.detectChanges();
-    console.log(this.mainItemsRecords);
-  }
-}
-
-// old version .....
-// onSubItemEditSave(index: number, record: SubItem, mainItem: MainItem) {
-//   console.log(mainItem);
-//   console.log(record);
-//   console.log(index);
-
-//   const { invoiceSubItemCode, ...subItemWithoutSubItemCode } = record;
-//   console.log(this.updateSelectedServiceNumberSubItem);
-
-//   if (this.updateSelectedServiceNumberRecordSubItem) {
-
-//     const newRecord: SubItem = {
-//       ...record, // Copy all properties from the original record
-//       // Modify specific attributes
-//       unitOfMeasurementCode: this.updateSelectedServiceNumberRecordSubItem.baseUnitOfMeasurement,
-//       description: this.updateSelectedServiceNumberRecordSubItem.description,
-//     };
-//     console.log(newRecord);
-
-//     const { invoiceMainItemCode, total, totalWithProfit, amountPerUnitWithProfit, ...mainItemWithoutMainItemCode } = mainItem;
-
-//     const updatedSubItems = (mainItem?.subItems ?? []).map(subItem =>
-//       // Modify only the specific sub-item that needs to be updated
-//       subItem.invoiceSubItemCode === newRecord.invoiceSubItemCode
-//         ? this.removeProperties({ ...subItem, ...newRecord }, ['invoiceMainItemCode', 'invoiceSubItemCode'])
-//         : this.removeProperties(subItem, ['invoiceMainItemCode', 'invoiceSubItemCode'])
-//     );
-
-//     const updatedRecord: MainItem = {
-//       ...mainItemWithoutMainItemCode, // Copy all properties from the original record
-//       subItems: updatedSubItems,
-//       invoiceMainItemCode: 0,
-//       totalWithProfit: 0,
-//       total: 0,
-//       amountPerUnitWithProfit: 0,
-//     }
-//     console.log(updatedRecord);
-//     // Remove properties with empty or default values
-//     const filteredRecord = Object.fromEntries(
-//       Object.entries(updatedRecord).filter(([_, value]) => {
-//         return value !== '' && value !== 0 && value !== undefined && value !== null;
-//       })
-//     );
-//     console.log(filteredRecord);
-
-//     // this._ApiService.patch<MainItem>('mainitems', mainItem.invoiceMainItemCode, filteredRecord).subscribe({
-//     this._ApiService.patch<MainItem>(`mainitems`, mainItem.invoiceMainItemCode, filteredRecord).subscribe({
-//       next: (res) => {
-//         console.log('mainitem with && subItem updated:', res);
-//         this.totalValue = 0;
-
-//         this.savedDBApp = true;
-
-//         this.ngOnInit()
-//       }, error: (err) => {
-//         console.log(err);
-//         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid Data' });
-//       },
-//       complete: () => {
-//         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Record updated successfully ' });
-//         // this.ngOnInit()
-//       }
-//     });
-
-//   }
-//   if (this.updateSelectedServiceNumberRecordSubItem && this.updatedFormulaRecordSubItem && this.resultAfterTestUpdate) {
-//     console.log(record);
-//     console.log(this.updateSelectedServiceNumberRecordSubItem);
-//     const newRecord: SubItem = {
-//       ...record,
-//       unitOfMeasurementCode: this.updateSelectedServiceNumberRecordSubItem.baseUnitOfMeasurement,
-//       description: this.updateSelectedServiceNumberRecordSubItem.description,
-//       quantity: this.resultAfterTestUpdate,
-//     };
-//     console.log(newRecord);
-
-//     const { invoiceMainItemCode, total, totalWithProfit, amountPerUnitWithProfit, ...mainItemWithoutMainItemCode } = mainItem;
-
-//     const updatedSubItems = (mainItem?.subItems ?? []).map(subItem =>
-//       // Modify only the specific sub-item that needs to be updated
-//       subItem.invoiceSubItemCode === newRecord.invoiceSubItemCode
-//         ? this.removeProperties({ ...subItem, ...newRecord }, ['invoiceMainItemCode', 'invoiceSubItemCode'])
-//         : this.removeProperties(subItem, ['invoiceMainItemCode', 'invoiceSubItemCode'])
-//     );
-
-//     const updatedRecord: MainItem = {
-//       ...mainItemWithoutMainItemCode, // Copy all properties from the original record
-//       subItems: updatedSubItems,
-//       invoiceMainItemCode: 0,
-//       totalWithProfit: 0,
-//       total: 0,
-//       amountPerUnitWithProfit: 0,
-//     }
-//     console.log(updatedRecord);
-//     // Remove properties with empty or default values
-//     const filteredRecord = Object.fromEntries(
-//       Object.entries(updatedRecord).filter(([_, value]) => {
-//         return value !== '' && value !== 0 && value !== undefined && value !== null;
-//       })
-//     );
-//     console.log(filteredRecord);
-
-//     // this._ApiService.patch<MainItem>('mainitems', mainItem.invoiceMainItemCode, filteredRecord).subscribe({
-//     this._ApiService.patch<MainItem>(`mainitems`, mainItem.invoiceMainItemCode, filteredRecord).subscribe({
-//       next: (res) => {
-//         console.log('mainitem with && subItem updated:', res);
-//         this.totalValue = 0;
-
-//         this.savedDBApp = true;
-
-//         this.ngOnInit()
-//       }, error: (err) => {
-//         console.log(err);
-//         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid Data' });
-//       },
-//       complete: () => {
-//         this.updatedFormulaRecordSubItem = undefined;
-//         this.resultAfterTestUpdate = undefined
-//         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Record updated successfully ' });
-//         // this.ngOnInit()
-//       }
-//     });
-//   }
-//   if (this.updatedFormulaRecordSubItem && this.resultAfterTestUpdate) {
-//     const newRecord: SubItem = {
-//       ...record,
-//       quantity: this.resultAfterTestUpdate,
-//     };
-//     console.log(newRecord);
-
-//     const { invoiceMainItemCode, total, totalWithProfit, amountPerUnitWithProfit, ...mainItemWithoutMainItemCode } = mainItem;
-
-//     const updatedSubItems = (mainItem?.subItems ?? []).map(subItem =>
-//       // Modify only the specific sub-item that needs to be updated
-//       subItem.invoiceSubItemCode === newRecord.invoiceSubItemCode
-//         ? this.removeProperties({ ...subItem, ...newRecord }, ['invoiceMainItemCode', 'invoiceSubItemCode'])
-//         : this.removeProperties(subItem, ['invoiceMainItemCode', 'invoiceSubItemCode'])
-//     );
-
-//     const updatedRecord: MainItem = {
-//       ...mainItemWithoutMainItemCode, // Copy all properties from the original record
-//       subItems: updatedSubItems,
-//       invoiceMainItemCode: 0,
-//       totalWithProfit: 0,
-//       total: 0,
-//       amountPerUnitWithProfit: 0,
-//     }
-//     console.log(updatedRecord);
-//     // Remove properties with empty or default values
-//     const filteredRecord = Object.fromEntries(
-//       Object.entries(updatedRecord).filter(([_, value]) => {
-//         return value !== '' && value !== 0 && value !== undefined && value !== null;
-//       })
-//     );
-//     console.log(filteredRecord);
-
-//     // this._ApiService.patch<MainItem>('mainitems', mainItem.invoiceMainItemCode, filteredRecord).subscribe({
-//     this._ApiService.patch<MainItem>(`mainitems`, mainItem.invoiceMainItemCode, filteredRecord).subscribe({
-//       next: (res) => {
-//         console.log('mainitem with && subItem updated:', res);
-//         this.totalValue = 0;
-
-//         this.savedDBApp = true;
-
-//         this.ngOnInit()
-//       }, error: (err) => {
-//         console.log(err);
-//         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid Data' });
-//       },
-//       complete: () => {
-//         this.updatedFormulaRecordSubItem = undefined;
-//         this.resultAfterTestUpdate = undefined
-//         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Record updated successfully ' });
-//         // this.ngOnInit()
-//       }
-//     });
-//   }
-//   if (!this.updateSelectedServiceNumberRecordSubItem && !this.updatedFormulaRecordSubItem && !this.resultAfterTestUpdate) {
-
-//     const { invoiceMainItemCode, total, totalWithProfit, amountPerUnitWithProfit, ...mainItemWithoutMainItemCode } = mainItem;
-
-//     const updatedSubItems = (mainItem?.subItems ?? []).map(subItem =>
-//       // Modify only the specific sub-item that needs to be updated
-//       subItem.invoiceSubItemCode === invoiceSubItemCode
-//         ? this.removeProperties({ ...subItem, ...subItemWithoutSubItemCode }, ['invoiceMainItemCode', 'invoiceSubItemCode'])
-//         : this.removeProperties(subItem, ['invoiceMainItemCode', 'invoiceSubItemCode'])
-//     );
-
-//     const updatedRecord: MainItem = {
-//       ...mainItemWithoutMainItemCode, // Copy all properties from the original record
-//       subItems: updatedSubItems,
-//       invoiceMainItemCode: 0,
-//       totalWithProfit: 0,
-//       total: 0,
-//       amountPerUnitWithProfit: 0,
-//     }
-//     console.log(updatedRecord);
-//     // Remove properties with empty or default values
-//     const filteredRecord = Object.fromEntries(
-//       Object.entries(updatedRecord).filter(([_, value]) => {
-//         return value !== '' && value !== 0 && value !== undefined && value !== null;
-//       })
-//     );
-//     console.log(filteredRecord);
-
-//     // this._ApiService.patch<MainItem>('mainitems', mainItem.invoiceMainItemCode, filteredRecord).subscribe({
-//     this._ApiService.patch<MainItem>(`mainitems`, mainItem.invoiceMainItemCode, filteredRecord).subscribe({
-//       next: (res) => {
-//         console.log('mainitem with && subItem updated:', res);
-//         this.totalValue = 0;
-
-//         this.savedDBApp = true;
-
-//         this.ngOnInit()
-//       }, error: (err) => {
-//         console.log(err);
-//         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid Data' });
-//       },
-//       complete: () => {
-
-//         this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Record updated successfully ' });
-//         // this.ngOnInit()
-//       }
-//     });
-//   }
-// }
-onSubItemEditCancel(subItem: any, index: number) {
-  const originalItem = this.clonedSubItem[subItem.invoiceSubItemCode];
-  if (originalItem) {
-    this.mainItemsRecords.forEach(mainItem => {
-      if (mainItem.subItems && mainItem.subItems[index] === subItem) {
-        mainItem.subItems[index] = { ...originalItem };
-      }
-    });
-    delete this.clonedSubItem[subItem.invoiceSubItemCode];
-  }
-
-}
-// Delete MainItem || SubItem
-deleteRecord() {
-  console.log("delete");
-  if (this.selectedMainItems.length) {
-    this.confirmationService.confirm({
-      message: 'Are you sure you want to delete the selected record?',
-      header: 'Confirm',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        for (const record of this.selectedMainItems) {
-          console.log(record);
-
-          this.mainItemsRecords = this.mainItemsRecords.filter(item => item.invoiceMainItemCode !== record.invoiceMainItemCode);
-          this.cdr.detectChanges();
-          console.log(this.mainItemsRecords);
-
-          // this._ApiService.delete<MainItem>('mainitems', record.invoiceMainItemCode).subscribe({
-          //   next: (res) => {
-          //     console.log('mainitem deleted :', res);
-          //     this.totalValue = 0;
-          //     this.ngOnInit()
-          //   }, error: (err) => {
-          //     console.log(err);
-          //   },
-          //   complete: () => {
-          //     this.messageService.add({ severity: 'success', summary: 'Successfully', detail: 'Deleted', life: 3000 });
-          //     this.selectedMainItems = []
-          //   }
-          // })
-        }
-      }
-    });
-  }
-  if (this.selectedSubItems.length) {
-    this.confirmationService.confirm({
-      message: 'Are you sure you want to delete the selected record?',
-      header: 'Confirm',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        for (const record of this.selectedSubItems) {
-          console.log(record);
-          if (record.invoiceSubItemCode) {
-
-            for (const mainItem of this.mainItemsRecords) {
-              // Find the MainItem that contains the SubItem
-              const subItemIndex = mainItem.subItems.findIndex(subItem => subItem.invoiceSubItemCode === record.invoiceSubItemCode);
-              if (subItemIndex > -1) {
-                // Remove the SubItem from the MainItem's subItems array
-                mainItem.subItems.splice(subItemIndex, 1);
-              }
-            }
-            this.cdr.detectChanges();
-            console.log(this.mainItemsRecords);
-
-
-            // this._ApiService.delete<SubItem>('subitems', record.invoiceSubItemCode).subscribe(response => {
-            //   console.log('subitem deleted :', response);
-            //   //this.totalValue = 0;
-            //   this.ngOnInit();
-            // });
-          }
-
-        }
-        this.messageService.add({ severity: 'success', summary: 'Successfully', detail: 'Deleted', life: 3000 });
-        this.selectedSubItems = []; // Clear the selectedRecords array after deleting all records
-      }
-    });
-  }
-}
-
-
-
-
-// Helper Functions:
-removePropertiesFrom(obj: any, propertiesToRemove: string[]): any {
-  const newObj: any = {};
-  for (let key in obj) {
-    if (obj.hasOwnProperty(key)) {
-      if (Array.isArray(obj[key])) {
-        // If the property is an array, recursively remove properties from each element
-        newObj[key] = obj[key].map((item: any) => this.removeProperties(item, propertiesToRemove));
-      } else if (typeof obj[key] === 'object' && obj[key] !== null) {
-        // If the property is an object, recursively remove properties from the object
-        newObj[key] = this.removeProperties(obj[key], propertiesToRemove);
-      } else if (!propertiesToRemove.includes(key)) {
-        // Otherwise, copy the property if it's not in the list to remove
-        newObj[key] = obj[key];
-      }
-    }
-  }
-  return newObj;
-}
-removeProperties(obj: any, propertiesToRemove: string[]): any {
-  const newObj: any = {};
-  Object.keys(obj).forEach(key => {
-    if (!propertiesToRemove.includes(key)) {
-      newObj[key] = obj[key];
-    }
-  });
-  return newObj;
-}
-resetNewMainItem() {
-  this.newMainItem = {
-    Type: '',
-    invoiceMainItemCode: 0,
-    serviceNumberCode: 0,
-    description: "",
-    quantity: 0,
-    unitOfMeasurementCode: "",
-    formulaCode: "",
-    amountPerUnit: 0,
-    currencyCode: "",
-    total: 0,
-    profitMargin: 0,
-    totalWithProfit: 0,
-    subItems: [],
-    isPersisted: false,
-  },
-    this.selectedUnitOfMeasure = "";
-  this.selectedFormula = "";
-  this.selectedCurrency = "";
-}
-resetNewSubItem() {
-  this.newSubItem = {
+  // For Add new  Sub Item
+  newSubItem: SubItem = {
     Type: '',
     invoiceSubItemCode: 0,
     // invoiceMainItemCode: 0,
@@ -2056,408 +1102,1139 @@ resetNewSubItem() {
     amountPerUnit: 0,
     currencyCode: "",
     total: 0
-  },
-    this.selectedUnitOfMeasureSubItem = "";
-  this.selectedFormulaSubItem = "";
-  this.selectedCurrencySubItem = "";
-}
-// to handel checkbox selection:
-selectedMainItems: MainItem[] = [];
-selectedSubItems: SubItem[] = [];
-onMainItemSelection(event: any, mainItem: MainItem) {
-  mainItem.selected = event.checked;
-  this.selectedMainItems = event.checked
-  if (mainItem.selected) {
-    if (mainItem.subItems && mainItem.subItems.length > 0) {
-      mainItem.subItems.forEach(subItem => subItem.selected = !subItem.selected);
+  };
+
+  // For Edit  MainItem
+  clonedMainItem: { [s: number]: MainItem } = {};
+  onMainItemEditInit(record: MainItem) {
+    this.clonedMainItem[record.invoiceMainItemCode] = { ...record };
+  }
+  onMainItemEditSave(index: number, record: MainItem) {
+    console.log(record);
+
+    const { invoiceMainItemCode, total, totalWithProfit, ...mainItemWithoutMainItemCode } = record;
+    const updatedMainItem = this.removePropertiesFrom(mainItemWithoutMainItemCode, ['invoiceMainItemCode', 'invoiceSubItemCode']);
+    console.log(updatedMainItem);
+
+    console.log(this.updateSelectedServiceNumber);
+    if (this.updateSelectedServiceNumberRecord) {
+      const newRecord: MainItem = {
+        ...record, // Copy all properties from the original record
+        subItems: (record?.subItems ?? []).map(subItem =>
+          this.removeProperties(subItem, ['invoiceMainItemCode', 'invoiceSubItemCode'])
+        ),
+        unitOfMeasurementCode: this.updateSelectedServiceNumberRecord.baseUnitOfMeasurement,
+        description: this.updateSelectedServiceNumberRecord.description,
+      };
+      console.log(newRecord);
+      //....................
+      const bodyRequest: any = {
+        quantity: newRecord.quantity,
+        amountPerUnit: newRecord.amountPerUnit
+      };
+
+      if (newRecord.profitMargin && newRecord.profitMargin !== 0) {
+        bodyRequest.profitMargin = newRecord.profitMargin;
+      }
+      this._ApiService.post<any>(`/total`, bodyRequest).subscribe({
+        next: (res) => {
+          console.log('mainitem with total:', res);
+          newRecord.total = res.totalWithProfit;
+          newRecord.amountPerUnitWithProfit = res.amountPerUnitWithProfit;
+          newRecord.totalWithProfit = res.totalWithProfit;
+          const mainItemIndex = this.mainItemsRecords.findIndex(item => item.invoiceMainItemCode === invoiceMainItemCode);
+          if (mainItemIndex > -1) {
+            this.mainItemsRecords[mainItemIndex] = { ...this.mainItemsRecords[mainItemIndex], ...newRecord };
+          }
+          this.cdr.detectChanges();
+          console.log(this.mainItemsRecords);
+        }, error: (err) => {
+          console.log(err);
+        },
+        complete: () => {
+        }
+      });
+      ///...................
+
+      // // Update mainItemsRecords array in the component to reflect the changes
+      // const mainItemIndex = this.mainItemsRecords.findIndex(item => item.invoiceMainItemCode === invoiceMainItemCode);
+      // if (mainItemIndex > -1) {
+      //   // Update the specific MainItem in the array
+      //   this.mainItemsRecords[mainItemIndex] = { ...this.mainItemsRecords[mainItemIndex], ...newRecord };
+      // }
+      // // this.updateSelectedServiceNumberRecord=undefined;
+      // // Trigger change detection
+      // this.cdr.detectChanges();
+      // console.log(this.mainItemsRecords);
+    }
+    if (this.updateSelectedServiceNumberRecord && this.updatedFormulaRecord && this.resultAfterTestUpdate) {
+      console.log(record);
+      console.log(this.updateSelectedServiceNumberRecord);
+      const newRecord: MainItem = {
+        ...record,
+        subItems: (record?.subItems ?? []).map(subItem =>
+          this.removeProperties(subItem, ['invoiceMainItemCode', 'invoiceSubItemCode'])
+        ),
+        unitOfMeasurementCode: this.updateSelectedServiceNumberRecord.baseUnitOfMeasurement,
+        description: this.updateSelectedServiceNumberRecord.description,
+        quantity: this.resultAfterTestUpdate,
+      };
+      console.log(newRecord);
+
+      //....................
+      const bodyRequest: any = {
+        quantity: newRecord.quantity,
+        amountPerUnit: newRecord.amountPerUnit
+      };
+
+      // Conditionally add profitMargin if it has a non-zero value
+      if (newRecord.profitMargin && newRecord.profitMargin !== 0) {
+        bodyRequest.profitMargin = newRecord.profitMargin;
+      }
+      // { quantity: newRecord.quantity, amountPerUnit: newRecord.amountPerUnit, profitMargin: newRecord.profitMargin ? newRecord.profitMargin : 0 }
+      this._ApiService.post<any>(`/total`, bodyRequest).subscribe({
+        next: (res) => {
+          console.log('mainitem with total:', res);
+          // this.totalValue = 0;
+          newRecord.total = res.totalWithProfit;
+          newRecord.amountPerUnitWithProfit = res.amountPerUnitWithProfit;
+          newRecord.totalWithProfit = res.totalWithProfit;
+
+          // Update mainItemsRecords array in the component to reflect the changes
+          const mainItemIndex = this.mainItemsRecords.findIndex(item => item.invoiceMainItemCode === invoiceMainItemCode);
+          if (mainItemIndex > -1) {
+            // Update the specific MainItem in the array
+            this.mainItemsRecords[mainItemIndex] = { ...this.mainItemsRecords[mainItemIndex], ...newRecord };
+          }
+          this.updatedFormulaRecord = undefined;
+          this.resultAfterTestUpdate = undefined
+          // Trigger change detection
+          this.cdr.detectChanges();
+          console.log(this.mainItemsRecords);
+        }, error: (err) => {
+          console.log(err);
+        },
+        complete: () => {
+        }
+      });
+      ///...................
+
+      // // Update mainItemsRecords array in the component to reflect the changes
+      // const mainItemIndex = this.mainItemsRecords.findIndex(item => item.invoiceMainItemCode === invoiceMainItemCode);
+      // if (mainItemIndex > -1) {
+      //   // Update the specific MainItem in the array
+      //   this.mainItemsRecords[mainItemIndex] = { ...this.mainItemsRecords[mainItemIndex], ...newRecord };
+      // }
+      // this.updatedFormulaRecord = undefined;
+      // this.resultAfterTestUpdate = undefined
+      // // Trigger change detection
+      // this.cdr.detectChanges();
+      // console.log(this.mainItemsRecords);
+    }
+    if (this.updatedFormulaRecord && this.resultAfterTestUpdate) {
+      const newRecord: MainItem = {
+        ...record,
+        subItems: (record?.subItems ?? []).map(subItem =>
+          this.removeProperties(subItem, ['invoiceMainItemCode', 'invoiceSubItemCode'])
+        ),
+        quantity: this.resultAfterTestUpdate,
+      };
+      console.log(newRecord);
+
+      //....................
+      const bodyRequest: any = {
+        quantity: newRecord.quantity,
+        amountPerUnit: newRecord.amountPerUnit
+      };
+
+      // Conditionally add profitMargin if it has a non-zero value
+      if (newRecord.profitMargin && newRecord.profitMargin !== 0) {
+        bodyRequest.profitMargin = newRecord.profitMargin;
+      }
+      // { quantity: newRecord.quantity, amountPerUnit: newRecord.amountPerUnit, profitMargin: newRecord.profitMargin ? newRecord.profitMargin : 0 }
+      this._ApiService.post<any>(`/total`, bodyRequest).subscribe({
+        next: (res) => {
+          console.log('mainitem with total:', res);
+          // this.totalValue = 0;
+          newRecord.total = res.totalWithProfit;
+          newRecord.amountPerUnitWithProfit = res.amountPerUnitWithProfit;
+          newRecord.totalWithProfit = res.totalWithProfit;
+
+          // Update mainItemsRecords array in the component to reflect the changes
+          const mainItemIndex = this.mainItemsRecords.findIndex(item => item.invoiceMainItemCode === invoiceMainItemCode);
+          if (mainItemIndex > -1) {
+            // Update the specific MainItem in the array
+            this.mainItemsRecords[mainItemIndex] = { ...this.mainItemsRecords[mainItemIndex], ...newRecord };
+          }
+          this.updatedFormulaRecord = undefined;
+          this.resultAfterTestUpdate = undefined
+          // Trigger change detection
+          this.cdr.detectChanges();
+          console.log(this.mainItemsRecords);
+        }, error: (err) => {
+          console.log(err);
+        },
+        complete: () => {
+        }
+      });
+      ///...................
+
+      // // Update mainItemsRecords array in the component to reflect the changes
+      // const mainItemIndex = this.mainItemsRecords.findIndex(item => item.invoiceMainItemCode === invoiceMainItemCode);
+      // if (mainItemIndex > -1) {
+      //   // Update the specific MainItem in the array
+      //   this.mainItemsRecords[mainItemIndex] = { ...this.mainItemsRecords[mainItemIndex], ...newRecord };
+      // }
+      // this.updatedFormulaRecord = undefined;
+      // this.resultAfterTestUpdate = undefined
+      // // Trigger change detection
+      // this.cdr.detectChanges();
+      // console.log(this.mainItemsRecords);
+
+    }
+    if (!this.updateSelectedServiceNumberRecord && !this.updatedFormulaRecord && !this.resultAfterTestUpdate) {
+      console.log({ ...mainItemWithoutMainItemCode });
+
+      //....................
+      const bodyRequest: any = {
+        quantity: updatedMainItem.quantity,
+        amountPerUnit: updatedMainItem.amountPerUnit
+      };
+      if (updatedMainItem.profitMargin && updatedMainItem.profitMargin !== 0) {
+        bodyRequest.profitMargin = updatedMainItem.profitMargin;
+      }
+      this._ApiService.post<any>(`/total`, bodyRequest).subscribe({
+        next: (res) => {
+          console.log('mainitem with total:', res);
+          updatedMainItem.total = res.totalWithProfit;
+          updatedMainItem.amountPerUnitWithProfit = res.amountPerUnitWithProfit;
+          updatedMainItem.totalWithProfit = res.totalWithProfit;
+          const mainItemIndex = this.mainItemsRecords.findIndex(item => item.invoiceMainItemCode === invoiceMainItemCode);
+          if (mainItemIndex > -1) {
+            this.mainItemsRecords[mainItemIndex] = { ...this.mainItemsRecords[mainItemIndex], ...updatedMainItem };
+          }
+          this.cdr.detectChanges();
+          console.log(this.mainItemsRecords);
+        }, error: (err) => {
+          console.log(err);
+        },
+        complete: () => {
+        }
+      });
+      ///...................
+
+      // // Update mainItemsRecords array in the component to reflect the changes
+      // const mainItemIndex = this.mainItemsRecords.findIndex(item => item.invoiceMainItemCode === invoiceMainItemCode);
+      // if (mainItemIndex > -1) {
+      //   // Update the specific MainItem in the array
+      //   this.mainItemsRecords[mainItemIndex] = { ...this.mainItemsRecords[mainItemIndex], ...updatedMainItem };
+      // }
+      // // Trigger change detection
+      // this.cdr.detectChanges();
+      // console.log(this.mainItemsRecords);
     }
   }
-  else {
-    // User deselected the record, so we need to deselect all associated subitems
-    if (mainItem.subItems && mainItem.subItems.length > 0) {
-      mainItem.subItems.forEach(subItem => subItem.selected = false)
-      console.log(mainItem.subItems);
+
+  onMainItemEditCancel(row: MainItem, index: number) {
+    this.mainItemsRecords[index] = this.clonedMainItem[row.invoiceMainItemCode]
+    delete this.clonedMainItem[row.invoiceMainItemCode]
+  }
+
+  // For Edit  SubItem
+  clonedSubItem: { [s: number]: SubItem } = {};
+  onSubItemEditInit(record: SubItem) {
+    if (record.invoiceSubItemCode) {
+      this.clonedSubItem[record.invoiceSubItemCode] = { ...record };
     }
   }
-  // For Profit Margin:
-  if (event.checked) {
-    this.selectedRowsForProfit.push(mainItem);
-    console.log(this.selectedRowsForProfit);
-  } else {
-    const index = this.selectedRowsForProfit.indexOf(mainItem);
-    if (index !== -1) {
-      this.selectedRowsForProfit.splice(index, 1);
-      console.log(this.selectedRowsForProfit);
+
+  onSubItemEditSave(index: number, record: SubItem, mainItem: MainItem) {
+    console.log(mainItem);
+    console.log(record);
+    console.log(index);
+
+    const { invoiceSubItemCode, ...subItemWithoutSubItemCode } = record;
+    console.log(this.updateSelectedServiceNumberSubItem);
+
+    if (this.updateSelectedServiceNumberRecordSubItem) {
+
+      const newRecord: SubItem = {
+        ...record,
+        unitOfMeasurementCode: this.updateSelectedServiceNumberRecordSubItem.baseUnitOfMeasurement,
+        description: this.updateSelectedServiceNumberRecordSubItem.description,
+      };
+      console.log(newRecord);
+      //..............
+
+      const bodyRequest: any = {
+        quantity: newRecord.quantity,
+        amountPerUnit: newRecord.amountPerUnit
+      };
+
+
+      this._ApiService.post<any>(`/total`, bodyRequest).subscribe({
+        next: (res) => {
+          console.log('subitem with total:', res);
+          newRecord.total = res.totalWithProfit;
+
+          const { invoiceMainItemCode, total, totalWithProfit, amountPerUnitWithProfit, ...mainItemWithoutMainItemCode } = mainItem;
+
+          const updatedSubItems = (mainItem?.subItems ?? []).map(subItem =>
+            subItem.invoiceSubItemCode === newRecord.invoiceSubItemCode
+              ? this.removeProperties({ ...subItem, ...newRecord }, ['invoiceMainItemCode', 'invoiceSubItemCode'])
+              : this.removeProperties(subItem, ['invoiceMainItemCode', 'invoiceSubItemCode'])
+          );
+
+          const updatedRecord: MainItem = {
+            ...mainItemWithoutMainItemCode, // Copy all properties from the original record
+            subItems: updatedSubItems,
+            invoiceMainItemCode: 0,
+            totalWithProfit: 0,
+            total: 0,
+            amountPerUnitWithProfit: 0,
+          }
+          console.log(updatedRecord);
+          // Remove properties with empty or default values
+          const filteredRecord = Object.fromEntries(
+            Object.entries(updatedRecord).filter(([_, value]) => {
+              return value !== '' && value !== 0 && value !== undefined && value !== null;
+            })
+          );
+          console.log(filteredRecord);
+
+          const mainItemIndex = this.mainItemsRecords.findIndex(item => item.invoiceMainItemCode === invoiceMainItemCode);
+          if (mainItemIndex > -1) {
+            this.mainItemsRecords[mainItemIndex] = { ...this.mainItemsRecords[mainItemIndex], ...filteredRecord };
+          }
+          this.cdr.detectChanges();
+          console.log(this.mainItemsRecords);
+
+        }, error: (err) => {
+          console.log(err);
+        },
+        complete: () => {
+        }
+      });
+
+
+      //..............
+
+      // const { invoiceMainItemCode, total, totalWithProfit, amountPerUnitWithProfit, ...mainItemWithoutMainItemCode } = mainItem;
+
+      // const updatedSubItems = (mainItem?.subItems ?? []).map(subItem =>
+      //   subItem.invoiceSubItemCode === newRecord.invoiceSubItemCode
+      //     ? this.removeProperties({ ...subItem, ...newRecord }, ['invoiceMainItemCode', 'invoiceSubItemCode'])
+      //     : this.removeProperties(subItem, ['invoiceMainItemCode', 'invoiceSubItemCode'])
+      // );
+
+      // const updatedRecord: MainItem = {
+      //   ...mainItemWithoutMainItemCode, // Copy all properties from the original record
+      //   subItems: updatedSubItems,
+      //   invoiceMainItemCode: 0,
+      //   totalWithProfit: 0,
+      //   total: 0,
+      //   amountPerUnitWithProfit: 0,
+      // }
+      // console.log(updatedRecord);
+      // // Remove properties with empty or default values
+      // const filteredRecord = Object.fromEntries(
+      //   Object.entries(updatedRecord).filter(([_, value]) => {
+      //     return value !== '' && value !== 0 && value !== undefined && value !== null;
+      //   })
+      // );
+      // console.log(filteredRecord);
+
+      // const mainItemIndex = this.mainItemsRecords.findIndex(item => item.invoiceMainItemCode === invoiceMainItemCode);
+      // if (mainItemIndex > -1) {
+      //   this.mainItemsRecords[mainItemIndex] = { ...this.mainItemsRecords[mainItemIndex], ...filteredRecord };
+      // }
+      // this.cdr.detectChanges();
+      // console.log(this.mainItemsRecords);
+
+
+
+    }
+    if (this.updateSelectedServiceNumberRecordSubItem && this.updatedFormulaRecordSubItem && this.resultAfterTestUpdate) {
+      console.log(record);
+      console.log(this.updateSelectedServiceNumberRecordSubItem);
+      const newRecord: SubItem = {
+        ...record,
+        unitOfMeasurementCode: this.updateSelectedServiceNumberRecordSubItem.baseUnitOfMeasurement,
+        description: this.updateSelectedServiceNumberRecordSubItem.description,
+        quantity: this.resultAfterTestUpdate,
+      };
+      console.log(newRecord);
+
+      //....................
+      const bodyRequest: any = {
+        quantity: newRecord.quantity,
+        amountPerUnit: newRecord.amountPerUnit
+      };
+
+      this._ApiService.post<any>(`/total`, bodyRequest).subscribe({
+        next: (res) => {
+          console.log('subitem with total:', res);
+          newRecord.total = res.totalWithProfit;
+          //....
+          const { invoiceMainItemCode, total, totalWithProfit, amountPerUnitWithProfit, ...mainItemWithoutMainItemCode } = mainItem;
+
+          const updatedSubItems = (mainItem?.subItems ?? []).map(subItem =>
+            // Modify only the specific sub-item that needs to be updated
+            subItem.invoiceSubItemCode === newRecord.invoiceSubItemCode
+              ? this.removeProperties({ ...subItem, ...newRecord }, ['invoiceMainItemCode', 'invoiceSubItemCode'])
+              : this.removeProperties(subItem, ['invoiceMainItemCode', 'invoiceSubItemCode'])
+          );
+
+          const updatedRecord: MainItem = {
+            ...mainItemWithoutMainItemCode, // Copy all properties from the original record
+            subItems: updatedSubItems,
+            invoiceMainItemCode: 0,
+            totalWithProfit: 0,
+            total: 0,
+            amountPerUnitWithProfit: 0,
+          }
+          console.log(updatedRecord);
+          // Remove properties with empty or default values
+          const filteredRecord = Object.fromEntries(
+            Object.entries(updatedRecord).filter(([_, value]) => {
+              return value !== '' && value !== 0 && value !== undefined && value !== null;
+            })
+          );
+          console.log(filteredRecord);
+
+          // Update mainItemsRecords array in the component to reflect the changes
+          const mainItemIndex = this.mainItemsRecords.findIndex(item => item.invoiceMainItemCode === invoiceMainItemCode);
+          if (mainItemIndex > -1) {
+            // Update the specific MainItem in the array
+            this.mainItemsRecords[mainItemIndex] = { ...this.mainItemsRecords[mainItemIndex], ...filteredRecord };
+          }
+          // this.updateSelectedServiceNumberRecord=undefined;
+          this.updatedFormulaRecordSubItem = undefined;
+          this.resultAfterTestUpdate = undefined
+          // Trigger change detection
+          this.cdr.detectChanges();
+          console.log(this.mainItemsRecords);
+
+        }, error: (err) => {
+          console.log(err);
+        },
+        complete: () => {
+        }
+      });
+      ///...................
+
+
+    }
+    if (this.updatedFormulaRecordSubItem && this.resultAfterTestUpdate) {
+      const newRecord: SubItem = {
+        ...record,
+        quantity: this.resultAfterTestUpdate,
+      };
+      console.log(newRecord);
+
+      //....................
+      const bodyRequest: any = {
+        quantity: newRecord.quantity,
+        amountPerUnit: newRecord.amountPerUnit
+      };
+
+
+      this._ApiService.post<any>(`/total`, bodyRequest).subscribe({
+        next: (res) => {
+          console.log('subitem with total:', res);
+          newRecord.total = res.totalWithProfit;
+          //...
+          const { invoiceMainItemCode, total, totalWithProfit, amountPerUnitWithProfit, ...mainItemWithoutMainItemCode } = mainItem;
+
+          const updatedSubItems = (mainItem?.subItems ?? []).map(subItem =>
+            // Modify only the specific sub-item that needs to be updated
+            subItem.invoiceSubItemCode === newRecord.invoiceSubItemCode
+              ? this.removeProperties({ ...subItem, ...newRecord }, ['invoiceMainItemCode', 'invoiceSubItemCode'])
+              : this.removeProperties(subItem, ['invoiceMainItemCode', 'invoiceSubItemCode'])
+          );
+
+          const updatedRecord: MainItem = {
+            ...mainItemWithoutMainItemCode, // Copy all properties from the original record
+            subItems: updatedSubItems,
+            invoiceMainItemCode: 0,
+            totalWithProfit: 0,
+            total: 0,
+            amountPerUnitWithProfit: 0,
+          }
+          console.log(updatedRecord);
+          // Remove properties with empty or default values
+          const filteredRecord = Object.fromEntries(
+            Object.entries(updatedRecord).filter(([_, value]) => {
+              return value !== '' && value !== 0 && value !== undefined && value !== null;
+            })
+          );
+          console.log(filteredRecord);
+
+          // Update mainItemsRecords array in the component to reflect the changes
+          const mainItemIndex = this.mainItemsRecords.findIndex(item => item.invoiceMainItemCode === invoiceMainItemCode);
+          if (mainItemIndex > -1) {
+            // Update the specific MainItem in the array
+            this.mainItemsRecords[mainItemIndex] = { ...this.mainItemsRecords[mainItemIndex], ...filteredRecord };
+          }
+          // this.updateSelectedServiceNumberRecord=undefined;
+          this.updatedFormulaRecordSubItem = undefined;
+          this.resultAfterTestUpdate = undefined
+          // Trigger change detection
+          this.cdr.detectChanges();
+          console.log(this.mainItemsRecords);
+
+        }, error: (err) => {
+          console.log(err);
+        },
+        complete: () => {
+        }
+      });
+      ///...................
+
+
+    }
+    if (!this.updateSelectedServiceNumberRecordSubItem && !this.updatedFormulaRecordSubItem && !this.resultAfterTestUpdate) {
+
+      //....................
+      const bodyRequest: any = {
+        quantity: subItemWithoutSubItemCode.quantity,
+        amountPerUnit: subItemWithoutSubItemCode.amountPerUnit
+      };
+
+
+      this._ApiService.post<any>(`/total`, bodyRequest).subscribe({
+        next: (res) => {
+          console.log('subitem with total:', res);
+          subItemWithoutSubItemCode.total = res.totalWithProfit;
+
+          const { invoiceMainItemCode, total, totalWithProfit, amountPerUnitWithProfit, ...mainItemWithoutMainItemCode } = mainItem;
+
+          const updatedSubItems = (mainItem?.subItems ?? []).map(subItem =>
+            // Modify only the specific sub-item that needs to be updated
+            subItem.invoiceSubItemCode === invoiceSubItemCode
+              ? this.removeProperties({ ...subItem, ...subItemWithoutSubItemCode }, ['invoiceMainItemCode', 'invoiceSubItemCode'])
+              : this.removeProperties(subItem, ['invoiceMainItemCode', 'invoiceSubItemCode'])
+          );
+
+          const updatedRecord: MainItem = {
+            ...mainItemWithoutMainItemCode, // Copy all properties from the original record
+            subItems: updatedSubItems,
+            invoiceMainItemCode: 0,
+            totalWithProfit: 0,
+            total: 0,
+            amountPerUnitWithProfit: 0,
+          }
+          console.log(updatedRecord);
+          // Remove properties with empty or default values
+          const filteredRecord = Object.fromEntries(
+            Object.entries(updatedRecord).filter(([_, value]) => {
+              return value !== '' && value !== 0 && value !== undefined && value !== null;
+            })
+          );
+          console.log(filteredRecord);
+
+          // Update mainItemsRecords array in the component to reflect the changes
+          const mainItemIndex = this.mainItemsRecords.findIndex(item => item.invoiceMainItemCode === invoiceMainItemCode);
+          if (mainItemIndex > -1) {
+            // Update the specific MainItem in the array
+            this.mainItemsRecords[mainItemIndex] = { ...this.mainItemsRecords[mainItemIndex], ...filteredRecord };
+          }
+          // Trigger change detection
+          this.cdr.detectChanges();
+          console.log(this.mainItemsRecords);
+
+        }, error: (err) => {
+          console.log(err);
+        },
+        complete: () => {
+        }
+      });
+      ///...................
+
+      // const { invoiceMainItemCode, total, totalWithProfit, amountPerUnitWithProfit, ...mainItemWithoutMainItemCode } = mainItem;
+
+      // const updatedSubItems = (mainItem?.subItems ?? []).map(subItem =>
+      //   // Modify only the specific sub-item that needs to be updated
+      //   subItem.invoiceSubItemCode === invoiceSubItemCode
+      //     ? this.removeProperties({ ...subItem, ...subItemWithoutSubItemCode }, ['invoiceMainItemCode', 'invoiceSubItemCode'])
+      //     : this.removeProperties(subItem, ['invoiceMainItemCode', 'invoiceSubItemCode'])
+      // );
+
+      // const updatedRecord: MainItem = {
+      //   ...mainItemWithoutMainItemCode, // Copy all properties from the original record
+      //   subItems: updatedSubItems,
+      //   invoiceMainItemCode: 0,
+      //   totalWithProfit: 0,
+      //   total: 0,
+      //   amountPerUnitWithProfit: 0,
+      // }
+      // console.log(updatedRecord);
+      // // Remove properties with empty or default values
+      // const filteredRecord = Object.fromEntries(
+      //   Object.entries(updatedRecord).filter(([_, value]) => {
+      //     return value !== '' && value !== 0 && value !== undefined && value !== null;
+      //   })
+      // );
+      // console.log(filteredRecord);
+
+      // // Update mainItemsRecords array in the component to reflect the changes
+      // const mainItemIndex = this.mainItemsRecords.findIndex(item => item.invoiceMainItemCode === invoiceMainItemCode);
+      // if (mainItemIndex > -1) {
+      //   // Update the specific MainItem in the array
+      //   this.mainItemsRecords[mainItemIndex] = { ...this.mainItemsRecords[mainItemIndex], ...filteredRecord };
+      // }
+      // // Trigger change detection
+      // this.cdr.detectChanges();
+      // console.log(this.mainItemsRecords);
     }
   }
-}
-// to handle All Records Selection / Deselection 
-selectedAllRecords: MainItem[] = [];
-onSelectAllRecords(event: any): void {
-  if(Array.isArray(event.checked) && event.checked.length > 0) {
-  this.selectedAllRecords = [...this.mainItemsRecords];
-  console.log(this.selectedAllRecords);
-} else {
-  this.selectedAllRecords = [];
-}
+
+  onSubItemEditCancel(subItem: any, index: number) {
+    const originalItem = this.clonedSubItem[subItem.invoiceSubItemCode];
+    if (originalItem) {
+      this.mainItemsRecords.forEach(mainItem => {
+        if (mainItem.subItems && mainItem.subItems[index] === subItem) {
+          mainItem.subItems[index] = { ...originalItem };
+        }
+      });
+      delete this.clonedSubItem[subItem.invoiceSubItemCode];
+    }
+
+  }
+  // Delete MainItem || SubItem
+  deleteRecord() {
+    console.log("delete");
+    if (this.selectedMainItems.length) {
+      this.confirmationService.confirm({
+        message: 'Are you sure you want to delete the selected record?',
+        header: 'Confirm',
+        icon: 'pi pi-exclamation-triangle',
+        accept: () => {
+          for (const record of this.selectedMainItems) {
+            console.log(record);
+
+            this.mainItemsRecords = this.mainItemsRecords.filter(item => item.invoiceMainItemCode !== record.invoiceMainItemCode);
+            this.cdr.detectChanges();
+            console.log(this.mainItemsRecords);
+
+            // this._ApiService.delete<MainItem>('mainitems', record.invoiceMainItemCode).subscribe({
+            //   next: (res) => {
+            //     console.log('mainitem deleted :', res);
+            //     this.totalValue = 0;
+            //     this.ngOnInit()
+            //   }, error: (err) => {
+            //     console.log(err);
+            //   },
+            //   complete: () => {
+            //     this.messageService.add({ severity: 'success', summary: 'Successfully', detail: 'Deleted', life: 3000 });
+            //     this.selectedMainItems = []
+            //   }
+            // })
+          }
+        }
+      });
+    }
+    if (this.selectedSubItems.length) {
+      this.confirmationService.confirm({
+        message: 'Are you sure you want to delete the selected record?',
+        header: 'Confirm',
+        icon: 'pi pi-exclamation-triangle',
+        accept: () => {
+          for (const record of this.selectedSubItems) {
+            console.log(record);
+            if (record.invoiceSubItemCode) {
+
+              for (const mainItem of this.mainItemsRecords) {
+                // Find the MainItem that contains the SubItem
+                const subItemIndex = mainItem.subItems.findIndex(subItem => subItem.invoiceSubItemCode === record.invoiceSubItemCode);
+                if (subItemIndex > -1) {
+                  // Remove the SubItem from the MainItem's subItems array
+                  mainItem.subItems.splice(subItemIndex, 1);
+                }
+              }
+              this.cdr.detectChanges();
+              console.log(this.mainItemsRecords);
+
+
+              // this._ApiService.delete<SubItem>('subitems', record.invoiceSubItemCode).subscribe(response => {
+              //   console.log('subitem deleted :', response);
+              //   //this.totalValue = 0;
+              //   this.ngOnInit();
+              // });
+            }
+
+          }
+          this.messageService.add({ severity: 'success', summary: 'Successfully', detail: 'Deleted', life: 3000 });
+          this.selectedSubItems = []; // Clear the selectedRecords array after deleting all records
+        }
+      });
+    }
   }
 
-onSubItemSelection(event: any, subItem: SubItem) {
-  console.log(subItem);
-  this.selectedSubItems.push(subItem);
-}
-//In Creation to handle shortTextChangeAlowlled Flag 
-onServiceNumberChange(event: any) {
-  const selectedRecord = this.recordsServiceNumber.find(record => record.serviceNumberCode === this.selectedServiceNumber);
-  if (selectedRecord) {
-    this.selectedServiceNumberRecord = selectedRecord
-    this.shortTextChangeAllowed = this.selectedServiceNumberRecord?.shortTextChangeAllowed || false;
-    this.shortText = ""
+  // Helper Functions:
+  removePropertiesFrom(obj: any, propertiesToRemove: string[]): any {
+    const newObj: any = {};
+    for (let key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        if (Array.isArray(obj[key])) {
+          // If the property is an array, recursively remove properties from each element
+          newObj[key] = obj[key].map((item: any) => this.removeProperties(item, propertiesToRemove));
+        } else if (typeof obj[key] === 'object' && obj[key] !== null) {
+          // If the property is an object, recursively remove properties from the object
+          newObj[key] = this.removeProperties(obj[key], propertiesToRemove);
+        } else if (!propertiesToRemove.includes(key)) {
+          // Otherwise, copy the property if it's not in the list to remove
+          newObj[key] = obj[key];
+        }
+      }
+    }
+    return newObj;
   }
-  else {
-    console.log("no service number");
-    //this.dontSelectServiceNumber = false
-    this.selectedServiceNumberRecord = undefined;
-  }
-}
-//In Update to handle shortTextChangeAlowlled Flag 
-onServiceNumberUpdateChange(event: any) {
-  const updateSelectedRecord = this.recordsServiceNumber.find(record => record.serviceNumberCode === event.value);
-  if (updateSelectedRecord) {
-    this.updateSelectedServiceNumberRecord = updateSelectedRecord
-    this.updateShortTextChangeAllowed = this.updateSelectedServiceNumberRecord?.shortTextChangeAllowed || false;
-    this.updateShortText = ""
-  }
-  else {
-    this.updateSelectedServiceNumberRecord = undefined;
-  }
-}
-
-//In Creation SubItem to handle shortTextChangeAlowlled Flag 
-onServiceNumberChangeSubItem(event: any) {
-  const selectedRecord = this.recordsServiceNumber.find(record => record.serviceNumberCode === this.selectedServiceNumberSubItem);
-  if (selectedRecord) {
-    this.selectedServiceNumberRecordSubItem = selectedRecord
-    this.shortTextChangeAllowedSubItem = this.selectedServiceNumberRecordSubItem?.shortTextChangeAllowed || false;
-    this.shortTextSubItem = ""
-  }
-  else {
-    console.log("no service number");
-    //this.dontSelectServiceNumber = false
-    this.selectedServiceNumberRecordSubItem = undefined;
-  }
-}
-//In Update SubItem to handle shortTextChangeAlowlled Flag 
-onServiceNumberUpdateChangeSubItem(event: any) {
-  const updateSelectedRecord = this.recordsServiceNumber.find(record => record.serviceNumberCode === event.value);
-  if (updateSelectedRecord) {
-    this.updateSelectedServiceNumberRecordSubItem = updateSelectedRecord
-    this.updateShortTextChangeAllowedSubItem = this.updateSelectedServiceNumberRecordSubItem?.shortTextChangeAllowed || false;
-    this.updateShortTextSubItem = ""
-  }
-  else {
-    this.updateSelectedServiceNumberRecordSubItem = undefined;
-  }
-}
-
-onFormulaSelect(event: any) {
-  const selectedRecord = this.recordsFormula.find(record => record.formula === this.selectedFormula);
-  if (selectedRecord) {
-    this.selectedFormulaRecord = selectedRecord
-    console.log(this.selectedFormulaRecord);
-  }
-  else {
-    console.log("no Formula");
-    this.selectedFormulaRecord = undefined;
-  }
-}
-onFormulaUpdateSelect(event: any) {
-  const selectedRecord = this.recordsFormula.find(record => record.formula === event.value);
-  if (selectedRecord) {
-    this.updatedFormulaRecord = selectedRecord
-    console.log(this.updatedFormulaRecord);
-  }
-  else {
-    this.updatedFormulaRecord = undefined;
-    console.log(this.updatedFormulaRecord);
-  }
-}
-
-onFormulaSelectSubItem(event: any) {
-  const selectedRecord = this.recordsFormula.find(record => record.formula === this.selectedFormulaSubItem);
-  if (selectedRecord) {
-    this.selectedFormulaRecordSubItem = selectedRecord
-    console.log(this.selectedFormulaRecordSubItem);
-  }
-  else {
-    console.log("no Formula");
-    this.selectedFormulaRecordSubItem = undefined;
-  }
-}
-onFormulaUpdateSelectSubItem(event: any) {
-  const selectedRecord = this.recordsFormula.find(record => record.formula === event.value);
-  if (selectedRecord) {
-    this.updatedFormulaRecordSubItem = selectedRecord
-    console.log(this.updatedFormulaRecordSubItem);
-  }
-  else {
-    this.updatedFormulaRecordSubItem = undefined;
-    console.log(this.updatedFormulaRecordSubItem);
-  }
-}
-expandAll() {
-  this.mainItemsRecords.forEach(item => this.expandedRows[item.invoiceMainItemCode] = true);
-}
-collapseAll() {
-  this.expandedRows = {};
-}
-
-// Export to excel sheet:
-transformData(data: MainItem[]) {
-  const transformed: MainItem[] = []
-
-  data.forEach((mainItem) => {
-    transformed.push({
-      Type: 'Main Item',
-      serviceNumberCode: mainItem.serviceNumberCode,
-      description: mainItem.description,
-      quantity: mainItem.quantity,
-      unitOfMeasurementCode: mainItem.unitOfMeasurementCode,
-      formulaCode: mainItem.formulaCode,
-      amountPerUnit: mainItem.amountPerUnit,
-      currencyCode: mainItem.currencyCode,
-      total: mainItem.total,
-      profitMargin: mainItem.profitMargin,
-      totalWithProfit: mainItem.totalWithProfit,
-      doNotPrint: mainItem.doNotPrint,
-      invoiceMainItemCode: mainItem.invoiceMainItemCode,
-      subItems: [],
-      isPersisted: false
+  removeProperties(obj: any, propertiesToRemove: string[]): any {
+    const newObj: any = {};
+    Object.keys(obj).forEach(key => {
+      if (!propertiesToRemove.includes(key)) {
+        newObj[key] = obj[key];
+      }
     });
+    return newObj;
+  }
+  resetNewMainItem() {
+    this.newMainItem = {
+      Type: '',
+      invoiceMainItemCode: 0,
+      serviceNumberCode: 0,
+      description: "",
+      quantity: 0,
+      unitOfMeasurementCode: "",
+      formulaCode: "",
+      amountPerUnit: 0,
+      currencyCode: "",
+      total: 0,
+      profitMargin: 0,
+      totalWithProfit: 0,
+      subItems: [],
+      isPersisted: false,
+    },
+      this.selectedUnitOfMeasure = "";
+    this.selectedFormula = "";
+    this.selectedCurrency = "";
+  }
+  resetNewSubItem() {
+    this.newSubItem = {
+      Type: '',
+      invoiceSubItemCode: 0,
+      // invoiceMainItemCode: 0,
+      serviceNumberCode: 0,
+      description: "",
+      quantity: 0,
+      unitOfMeasurementCode: "",
+      formulaCode: "",
+      amountPerUnit: 0,
+      currencyCode: "",
+      total: 0
+    },
+      this.selectedUnitOfMeasureSubItem = "";
+    this.selectedFormulaSubItem = "";
+    this.selectedCurrencySubItem = "";
+  }
+  // to handel checkbox selection:
+  selectedMainItems: MainItem[] = [];
+  selectedSubItems: SubItem[] = [];
+  onMainItemSelection(event: any, mainItem: MainItem) {
+    mainItem.selected = event.checked;
+    this.selectedMainItems = event.checked
+    if (mainItem.selected) {
+      if (mainItem.subItems && mainItem.subItems.length > 0) {
+        mainItem.subItems.forEach(subItem => subItem.selected = !subItem.selected);
+      }
+    }
+    else {
+      // User deselected the record, so we need to deselect all associated subitems
+      if (mainItem.subItems && mainItem.subItems.length > 0) {
+        mainItem.subItems.forEach(subItem => subItem.selected = false)
+        console.log(mainItem.subItems);
+      }
+    }
+    // For Profit Margin:
+    if (event.checked) {
+      this.selectedRowsForProfit.push(mainItem);
+      console.log(this.selectedRowsForProfit);
+    } else {
+      const index = this.selectedRowsForProfit.indexOf(mainItem);
+      if (index !== -1) {
+        this.selectedRowsForProfit.splice(index, 1);
+        console.log(this.selectedRowsForProfit);
+      }
+    }
+  }
+  // to handle All Records Selection / Deselection 
+  selectedAllRecords: MainItem[] = [];
+  onSelectAllRecords(event: any): void {
+    if (Array.isArray(event.checked) && event.checked.length > 0) {
+      this.selectedAllRecords = [...this.mainItemsRecords];
+      console.log(this.selectedAllRecords);
+    } else {
+      this.selectedAllRecords = [];
+    }
+  }
 
-    // Add subitems
-    mainItem.subItems?.forEach(subItem => {
+  onSubItemSelection(event: any, subItem: SubItem) {
+    console.log(subItem);
+    this.selectedSubItems.push(subItem);
+  }
+  //In Creation to handle shortTextChangeAlowlled Flag 
+  onServiceNumberChange(event: any) {
+    const selectedRecord = this.recordsServiceNumber.find(record => record.serviceNumberCode === this.selectedServiceNumber);
+    if (selectedRecord) {
+      this.selectedServiceNumberRecord = selectedRecord
+      this.shortTextChangeAllowed = this.selectedServiceNumberRecord?.shortTextChangeAllowed || false;
+      this.shortText = ""
+    }
+    else {
+      console.log("no service number");
+      //this.dontSelectServiceNumber = false
+      this.selectedServiceNumberRecord = undefined;
+    }
+  }
+  //In Update to handle shortTextChangeAlowlled Flag 
+  onServiceNumberUpdateChange(event: any) {
+    const updateSelectedRecord = this.recordsServiceNumber.find(record => record.serviceNumberCode === event.value);
+    if (updateSelectedRecord) {
+      this.updateSelectedServiceNumberRecord = updateSelectedRecord
+      this.updateShortTextChangeAllowed = this.updateSelectedServiceNumberRecord?.shortTextChangeAllowed || false;
+      this.updateShortText = ""
+    }
+    else {
+      this.updateSelectedServiceNumberRecord = undefined;
+    }
+  }
+
+  //In Creation SubItem to handle shortTextChangeAlowlled Flag 
+  onServiceNumberChangeSubItem(event: any) {
+    const selectedRecord = this.recordsServiceNumber.find(record => record.serviceNumberCode === this.selectedServiceNumberSubItem);
+    if (selectedRecord) {
+      this.selectedServiceNumberRecordSubItem = selectedRecord
+      this.shortTextChangeAllowedSubItem = this.selectedServiceNumberRecordSubItem?.shortTextChangeAllowed || false;
+      this.shortTextSubItem = ""
+    }
+    else {
+      console.log("no service number");
+      //this.dontSelectServiceNumber = false
+      this.selectedServiceNumberRecordSubItem = undefined;
+    }
+  }
+  //In Update SubItem to handle shortTextChangeAlowlled Flag 
+  onServiceNumberUpdateChangeSubItem(event: any) {
+    const updateSelectedRecord = this.recordsServiceNumber.find(record => record.serviceNumberCode === event.value);
+    if (updateSelectedRecord) {
+      this.updateSelectedServiceNumberRecordSubItem = updateSelectedRecord
+      this.updateShortTextChangeAllowedSubItem = this.updateSelectedServiceNumberRecordSubItem?.shortTextChangeAllowed || false;
+      this.updateShortTextSubItem = ""
+    }
+    else {
+      this.updateSelectedServiceNumberRecordSubItem = undefined;
+    }
+  }
+
+  onFormulaSelect(event: any) {
+    const selectedRecord = this.recordsFormula.find(record => record.formula === this.selectedFormula);
+    if (selectedRecord) {
+      this.selectedFormulaRecord = selectedRecord
+      console.log(this.selectedFormulaRecord);
+    }
+    else {
+      console.log("no Formula");
+      this.selectedFormulaRecord = undefined;
+    }
+  }
+  onFormulaUpdateSelect(event: any) {
+    const selectedRecord = this.recordsFormula.find(record => record.formula === event.value);
+    if (selectedRecord) {
+      this.updatedFormulaRecord = selectedRecord
+      console.log(this.updatedFormulaRecord);
+    }
+    else {
+      this.updatedFormulaRecord = undefined;
+      console.log(this.updatedFormulaRecord);
+    }
+  }
+
+  onFormulaSelectSubItem(event: any) {
+    const selectedRecord = this.recordsFormula.find(record => record.formula === this.selectedFormulaSubItem);
+    if (selectedRecord) {
+      this.selectedFormulaRecordSubItem = selectedRecord
+      console.log(this.selectedFormulaRecordSubItem);
+    }
+    else {
+      console.log("no Formula");
+      this.selectedFormulaRecordSubItem = undefined;
+    }
+  }
+  onFormulaUpdateSelectSubItem(event: any) {
+    const selectedRecord = this.recordsFormula.find(record => record.formula === event.value);
+    if (selectedRecord) {
+      this.updatedFormulaRecordSubItem = selectedRecord
+      console.log(this.updatedFormulaRecordSubItem);
+    }
+    else {
+      this.updatedFormulaRecordSubItem = undefined;
+      console.log(this.updatedFormulaRecordSubItem);
+    }
+  }
+  expandAll() {
+    this.mainItemsRecords.forEach(item => this.expandedRows[item.invoiceMainItemCode] = true);
+  }
+  collapseAll() {
+    this.expandedRows = {};
+  }
+
+  // Export to excel sheet:
+  transformData(data: MainItem[]) {
+    const transformed: MainItem[] = []
+
+    data.forEach((mainItem) => {
       transformed.push({
-        Type: 'Sub Item',
-        serviceNumberCode: subItem.serviceNumberCode,
-        description: subItem.description,
-        quantity: subItem.quantity,
-        unitOfMeasurementCode: subItem.unitOfMeasurementCode,
-        amountPerUnit: subItem.amountPerUnit,
-        formulaCode: subItem.formulaCode,
-        currencyCode: subItem.currencyCode,
-        total: subItem.total ? subItem.total : 0,
-
-        //profitMargin: mainItem.profitMargin,
-        totalWithProfit: 0,
-        // doNotPrint: subItem.doNotPrint,
+        Type: 'Main Item',
+        serviceNumberCode: mainItem.serviceNumberCode,
+        description: mainItem.description,
+        quantity: mainItem.quantity,
+        unitOfMeasurementCode: mainItem.unitOfMeasurementCode,
+        formulaCode: mainItem.formulaCode,
+        amountPerUnit: mainItem.amountPerUnit,
+        currencyCode: mainItem.currencyCode,
+        total: mainItem.total,
+        profitMargin: mainItem.profitMargin,
+        totalWithProfit: mainItem.totalWithProfit,
+        doNotPrint: mainItem.doNotPrint,
         invoiceMainItemCode: mainItem.invoiceMainItemCode,
         subItems: [],
         isPersisted: false
       });
+
+      // Add subitems
+      mainItem.subItems?.forEach(subItem => {
+        transformed.push({
+          Type: 'Sub Item',
+          serviceNumberCode: subItem.serviceNumberCode,
+          description: subItem.description,
+          quantity: subItem.quantity,
+          unitOfMeasurementCode: subItem.unitOfMeasurementCode,
+          amountPerUnit: subItem.amountPerUnit,
+          formulaCode: subItem.formulaCode,
+          currencyCode: subItem.currencyCode,
+          total: subItem.total ? subItem.total : 0,
+
+          //profitMargin: mainItem.profitMargin,
+          totalWithProfit: 0,
+          // doNotPrint: subItem.doNotPrint,
+          invoiceMainItemCode: mainItem.invoiceMainItemCode,
+          subItems: [],
+          isPersisted: false
+        });
+      });
     });
-  });
 
-  return transformed;
-}
+    return transformed;
+  }
 
-exportExcel() {
-  import('xlsx').then((xlsx) => {
-    const transformedData = this.transformData(this.mainItemsRecords);
-    const worksheet = xlsx.utils.json_to_sheet(transformedData);
-    const workbook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
-    const ws = workbook.Sheets.data;
-    if (!ws['!ref']) {
-      ws['!ref'] = 'A1:Z1000';
-    }
-    const range = xlsx.utils.decode_range(ws['!ref']);
-    let rowStart = 1;
+  exportExcel() {
+    import('xlsx').then((xlsx) => {
+      const transformedData = this.transformData(this.mainItemsRecords);
+      const worksheet = xlsx.utils.json_to_sheet(transformedData);
+      const workbook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
+      const ws = workbook.Sheets.data;
+      if (!ws['!ref']) {
+        ws['!ref'] = 'A1:Z1000';
+      }
+      const range = xlsx.utils.decode_range(ws['!ref']);
+      let rowStart = 1;
 
-    transformedData.forEach((row, index) => {
-      if (row.Type === 'Main Item') {
+      transformedData.forEach((row, index) => {
+        if (row.Type === 'Main Item') {
 
-        if (index + 1 < transformedData.length && transformedData[index + 1].Type === 'Sub Item') {
-          ws['!rows'] = ws['!rows'] || [];
-          ws['!rows'][index] = { hidden: false };
-          ws['!rows'][index + 1] = { hidden: false };
+          if (index + 1 < transformedData.length && transformedData[index + 1].Type === 'Sub Item') {
+            ws['!rows'] = ws['!rows'] || [];
+            ws['!rows'][index] = { hidden: false };
+            ws['!rows'][index + 1] = { hidden: false };
+          } else {
+            ws['!rows'] = ws['!rows'] || [];
+            ws['!rows'][index] = { hidden: false };
+          }
         } else {
           ws['!rows'] = ws['!rows'] || [];
           ws['!rows'][index] = { hidden: false };
         }
-      } else {
-        ws['!rows'] = ws['!rows'] || [];
-        ws['!rows'][index] = { hidden: false };
+      });
+
+      const excelBuffer: any = xlsx.write(workbook, { bookType: 'xlsx', type: 'array' });
+      this.saveAsExcelFile(excelBuffer, 'Tendering BOQ');
+    });
+  }
+
+  saveAsExcelFile(buffer: any, fileName: string): void {
+    let EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+    let EXCEL_EXTENSION = '.xlsx';
+    const data: Blob = new Blob([buffer], {
+      type: EXCEL_TYPE
+    });
+    FileSaver.saveAs(data, fileName + '_export_' + new Date().getTime() + EXCEL_EXTENSION);
+  }
+
+  // handle Formula Parameters 
+  showPopup: boolean = false;
+  parameterValues: { [key: string]: number } = {};
+  showPopupUpdate: boolean = false;
+  parameterValuesUpdate: { [key: string]: number } = {};
+  openPopup() {
+    if (this.selectedFormulaRecord) {
+      this.showPopup = true;
+      for (const parameterId of this.selectedFormulaRecord.parameterIds) {
+        this.parameterValues[parameterId] = 0;
+        console.log(this.parameterValues);
       }
-    });
+    }
+    else if (this.selectedFormulaRecordSubItem) {
+      this.showPopup = true;
+      for (const parameterId of this.selectedFormulaRecordSubItem.parameterIds) {
+        this.parameterValues[parameterId] = 0;
+        console.log(this.parameterValues);
+      }
+    }
+    else {
+      this.showPopup = false;
+    }
+  }
+  openPopupUpdate() {
+    if (this.updatedFormulaRecord) {
+      this.showPopupUpdate = true;
+      console.log(this.showPopupUpdate);
 
-    const excelBuffer: any = xlsx.write(workbook, { bookType: 'xlsx', type: 'array' });
-    this.saveAsExcelFile(excelBuffer, 'Tendering BOQ');
-  });
-}
+      for (const parameterId of this.updatedFormulaRecord.parameterIds) {
+        this.parameterValuesUpdate[parameterId] = 0;
+        console.log(this.parameterValuesUpdate);
+      }
+    } else if (this.updatedFormulaRecordSubItem) {
+      this.showPopupUpdate = true;
+      console.log(this.showPopupUpdate);
 
-saveAsExcelFile(buffer: any, fileName: string): void {
-  let EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-  let EXCEL_EXTENSION = '.xlsx';
-  const data: Blob = new Blob([buffer], {
-    type: EXCEL_TYPE
-  });
-  FileSaver.saveAs(data, fileName + '_export_' + new Date().getTime() + EXCEL_EXTENSION);
-}
-
-// handle Formula Parameters 
-showPopup: boolean = false;
-parameterValues: { [key: string]: number } = { };
-showPopupUpdate: boolean = false;
-parameterValuesUpdate: { [key: string]: number } = { };
-openPopup() {
-  if (this.selectedFormulaRecord) {
-    this.showPopup = true;
-    for (const parameterId of this.selectedFormulaRecord.parameterIds) {
-      this.parameterValues[parameterId] = 0;
+      for (const parameterId of this.updatedFormulaRecordSubItem.parameterIds) {
+        this.parameterValuesUpdate[parameterId] = 0;
+        console.log(this.parameterValuesUpdate);
+      }
+    }
+    else {
+      this.showPopupUpdate = false;
+    }
+  }
+  resultAfterTest?: number
+  resultAfterTestUpdate?: number
+  saveParameters() {
+    if (this.selectedFormulaRecord) {
       console.log(this.parameterValues);
+      const valuesOnly = Object.values(this.parameterValues)
+        .filter(value => typeof value === 'number') as number[];
+      console.log(valuesOnly);
+      console.log(this.resultAfterTest);
+
+      const formulaObject: any = {
+        formula: this.selectedFormulaRecord.formula,
+        description: this.selectedFormulaRecord.description,
+        numberOfParameters: this.selectedFormulaRecord.numberOfParameters,
+        parameterIds: this.selectedFormulaRecord.parameterIds,
+        parameterDescriptions: this.selectedFormulaRecord.parameterDescriptions,
+        formulaLogic: this.selectedFormulaRecord.formulaLogic,
+        testParameters: valuesOnly
+      };
+      console.log(formulaObject);
+      this._ApiService.patch<any>('formulas', this.selectedFormulaRecord.formulaCode, formulaObject).subscribe((response: Formula) => {
+        console.log('formula updated:', response);
+        this.resultAfterTest = response.result;
+        console.log(this.resultAfterTest);
+      });
+      this.showPopup = false;
     }
-  }
-  else if (this.selectedFormulaRecordSubItem) {
-    this.showPopup = true;
-    for (const parameterId of this.selectedFormulaRecordSubItem.parameterIds) {
-      this.parameterValues[parameterId] = 0;
+    if (this.updatedFormulaRecord) {
+      console.log(this.parameterValuesUpdate);
+      const valuesOnly = Object.values(this.parameterValuesUpdate)
+        .filter(value => typeof value === 'number') as number[];
+      console.log(valuesOnly);
+      console.log(this.resultAfterTestUpdate);
+      const formulaObject: any = {
+        formula: this.updatedFormulaRecord.formula,
+        description: this.updatedFormulaRecord.description,
+        numberOfParameters: this.updatedFormulaRecord.numberOfParameters,
+        parameterIds: this.updatedFormulaRecord.parameterIds,
+        parameterDescriptions: this.updatedFormulaRecord.parameterDescriptions,
+        formulaLogic: this.updatedFormulaRecord.formulaLogic,
+        testParameters: valuesOnly
+      };
+      console.log(formulaObject);
+      this._ApiService.put<any>('formulas', this.updatedFormulaRecord.formulaCode, formulaObject).subscribe((response: Formula) => {
+        console.log('formula updated:', response);
+        this.resultAfterTestUpdate = response.result;
+        console.log(this.resultAfterTestUpdate);
+
+      });
+      this.showPopupUpdate = false;
+    }
+
+    if (this.selectedFormulaRecordSubItem) {
       console.log(this.parameterValues);
-    }
-  }
-  else {
-    this.showPopup = false;
-  }
-}
-openPopupUpdate() {
-  if (this.updatedFormulaRecord) {
-    this.showPopupUpdate = true;
-    console.log(this.showPopupUpdate);
-
-    for (const parameterId of this.updatedFormulaRecord.parameterIds) {
-      this.parameterValuesUpdate[parameterId] = 0;
-      console.log(this.parameterValuesUpdate);
-    }
-  } else if (this.updatedFormulaRecordSubItem) {
-    this.showPopupUpdate = true;
-    console.log(this.showPopupUpdate);
-
-    for (const parameterId of this.updatedFormulaRecordSubItem.parameterIds) {
-      this.parameterValuesUpdate[parameterId] = 0;
-      console.log(this.parameterValuesUpdate);
-    }
-  }
-  else {
-    this.showPopupUpdate = false;
-  }
-}
-resultAfterTest ?: number
-resultAfterTestUpdate ?: number
-saveParameters() {
-  if (this.selectedFormulaRecord) {
-    console.log(this.parameterValues);
-    const valuesOnly = Object.values(this.parameterValues)
-      .filter(value => typeof value === 'number') as number[];
-    console.log(valuesOnly);
-    console.log(this.resultAfterTest);
-
-    const formulaObject: any = {
-      formula: this.selectedFormulaRecord.formula,
-      description: this.selectedFormulaRecord.description,
-      numberOfParameters: this.selectedFormulaRecord.numberOfParameters,
-      parameterIds: this.selectedFormulaRecord.parameterIds,
-      parameterDescriptions: this.selectedFormulaRecord.parameterDescriptions,
-      formulaLogic: this.selectedFormulaRecord.formulaLogic,
-      testParameters: valuesOnly
-    };
-    console.log(formulaObject);
-    this._ApiService.patch<any>('formulas', this.selectedFormulaRecord.formulaCode, formulaObject).subscribe((response: Formula) => {
-      console.log('formula updated:', response);
-      this.resultAfterTest = response.result;
+      const valuesOnly = Object.values(this.parameterValues)
+        .filter(value => typeof value === 'number') as number[];
+      console.log(valuesOnly);
       console.log(this.resultAfterTest);
-    });
+
+      const formulaObject: any = {
+        formula: this.selectedFormulaRecordSubItem.formula,
+        description: this.selectedFormulaRecordSubItem.description,
+        numberOfParameters: this.selectedFormulaRecordSubItem.numberOfParameters,
+        parameterIds: this.selectedFormulaRecordSubItem.parameterIds,
+        parameterDescriptions: this.selectedFormulaRecordSubItem.parameterDescriptions,
+        formulaLogic: this.selectedFormulaRecordSubItem.formulaLogic,
+        testParameters: valuesOnly
+      };
+      console.log(formulaObject);
+      this._ApiService.patch<any>('formulas', this.selectedFormulaRecordSubItem.formulaCode, formulaObject).subscribe((response: Formula) => {
+        console.log('formula updated:', response);
+        this.resultAfterTest = response.result;
+        console.log(this.resultAfterTest);
+      });
+      this.showPopup = false;
+    }
+
+    if (this.updatedFormulaRecordSubItem) {
+      console.log(this.parameterValuesUpdate);
+      const valuesOnly = Object.values(this.parameterValuesUpdate)
+        .filter(value => typeof value === 'number') as number[];
+      console.log(valuesOnly);
+      console.log(this.resultAfterTestUpdate);
+      const formulaObject: any = {
+        formula: this.updatedFormulaRecordSubItem.formula,
+        description: this.updatedFormulaRecordSubItem.description,
+        numberOfParameters: this.updatedFormulaRecordSubItem.numberOfParameters,
+        parameterIds: this.updatedFormulaRecordSubItem.parameterIds,
+        parameterDescriptions: this.updatedFormulaRecordSubItem.parameterDescriptions,
+        formulaLogic: this.updatedFormulaRecordSubItem.formulaLogic,
+        testParameters: valuesOnly
+      };
+      console.log(formulaObject);
+      this._ApiService.put<any>('formulas', this.updatedFormulaRecordSubItem.formulaCode, formulaObject).subscribe((response: Formula) => {
+        console.log('formula updated:', response);
+        this.resultAfterTestUpdate = response.result;
+        console.log(this.resultAfterTestUpdate);
+
+      });
+      this.showPopupUpdate = false;
+    }
+
+  }
+
+  closePopup() {
+    this.showPopupUpdate = false;
     this.showPopup = false;
   }
-  if (this.updatedFormulaRecord) {
-    console.log(this.parameterValuesUpdate);
-    const valuesOnly = Object.values(this.parameterValuesUpdate)
-      .filter(value => typeof value === 'number') as number[];
-    console.log(valuesOnly);
-    console.log(this.resultAfterTestUpdate);
-    const formulaObject: any = {
-      formula: this.updatedFormulaRecord.formula,
-      description: this.updatedFormulaRecord.description,
-      numberOfParameters: this.updatedFormulaRecord.numberOfParameters,
-      parameterIds: this.updatedFormulaRecord.parameterIds,
-      parameterDescriptions: this.updatedFormulaRecord.parameterDescriptions,
-      formulaLogic: this.updatedFormulaRecord.formulaLogic,
-      testParameters: valuesOnly
-    };
-    console.log(formulaObject);
-    this._ApiService.put<any>('formulas', this.updatedFormulaRecord.formulaCode, formulaObject).subscribe((response: Formula) => {
-      console.log('formula updated:', response);
-      this.resultAfterTestUpdate = response.result;
-      console.log(this.resultAfterTestUpdate);
-
-    });
-    this.showPopupUpdate = false;
-  }
-
-  if (this.selectedFormulaRecordSubItem) {
-    console.log(this.parameterValues);
-    const valuesOnly = Object.values(this.parameterValues)
-      .filter(value => typeof value === 'number') as number[];
-    console.log(valuesOnly);
-    console.log(this.resultAfterTest);
-
-    const formulaObject: any = {
-      formula: this.selectedFormulaRecordSubItem.formula,
-      description: this.selectedFormulaRecordSubItem.description,
-      numberOfParameters: this.selectedFormulaRecordSubItem.numberOfParameters,
-      parameterIds: this.selectedFormulaRecordSubItem.parameterIds,
-      parameterDescriptions: this.selectedFormulaRecordSubItem.parameterDescriptions,
-      formulaLogic: this.selectedFormulaRecordSubItem.formulaLogic,
-      testParameters: valuesOnly
-    };
-    console.log(formulaObject);
-    this._ApiService.patch<any>('formulas', this.selectedFormulaRecordSubItem.formulaCode, formulaObject).subscribe((response: Formula) => {
-      console.log('formula updated:', response);
-      this.resultAfterTest = response.result;
-      console.log(this.resultAfterTest);
-    });
-    this.showPopup = false;
-  }
-
-  if (this.updatedFormulaRecordSubItem) {
-    console.log(this.parameterValuesUpdate);
-    const valuesOnly = Object.values(this.parameterValuesUpdate)
-      .filter(value => typeof value === 'number') as number[];
-    console.log(valuesOnly);
-    console.log(this.resultAfterTestUpdate);
-    const formulaObject: any = {
-      formula: this.updatedFormulaRecordSubItem.formula,
-      description: this.updatedFormulaRecordSubItem.description,
-      numberOfParameters: this.updatedFormulaRecordSubItem.numberOfParameters,
-      parameterIds: this.updatedFormulaRecordSubItem.parameterIds,
-      parameterDescriptions: this.updatedFormulaRecordSubItem.parameterDescriptions,
-      formulaLogic: this.updatedFormulaRecordSubItem.formulaLogic,
-      testParameters: valuesOnly
-    };
-    console.log(formulaObject);
-    this._ApiService.put<any>('formulas', this.updatedFormulaRecordSubItem.formulaCode, formulaObject).subscribe((response: Formula) => {
-      console.log('formula updated:', response);
-      this.resultAfterTestUpdate = response.result;
-      console.log(this.resultAfterTestUpdate);
-
-    });
-    this.showPopupUpdate = false;
-  }
-
-}
-
-closePopup() {
-  this.showPopupUpdate = false;
-  this.showPopup = false;
-}
 }
 
 
