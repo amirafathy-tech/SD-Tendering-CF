@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import * as FileSaver from 'file-saver';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { InvoiceService } from './invoice.service';
@@ -15,7 +15,7 @@ import { catchError, of, switchMap, tap } from 'rxjs';
   templateUrl: './invoice.component.html',
   styleUrls: ['./invoice.component.css'],
   providers: [MessageService, InvoiceService, ConfirmationService],
-  changeDetection: ChangeDetectionStrategy.Default
+ // changeDetection: ChangeDetectionStrategy.Default
 })
 export class InvoiceComponent {
 
@@ -94,7 +94,7 @@ export class InvoiceComponent {
     } else {
       for (const row of this.selectedRowsForProfit) {
         row.profitMargin = value;
-        const { invoiceMainItemCode, total, totalWithProfit, ...mainItemWithoutMainItemCode } = row;
+        const { invoiceMainItemCode, totalWithProfit, ...mainItemWithoutMainItemCode } = row;
         const updatedMainItem = this.removePropertiesFrom(mainItemWithoutMainItemCode, ['invoiceMainItemCode', 'invoiceSubItemCode']);
         console.log(updatedMainItem);
         const newRecord: MainItem = {
@@ -107,24 +107,56 @@ export class InvoiceComponent {
 
         };
         console.log(newRecord);
-        const updatedRecord = this.removeProperties(newRecord, ['selected'])
+        const updatedRecord = this.removeProperties(newRecord, ['selected']);
+        console.log(updatedRecord);
 
-        // this._ApiService.patch<MainItem>(`mainitems`, row.invoiceMainItemCode, updatedRecord).subscribe({
-        // update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`
-        this._ApiService.patch<MainItem>(`mainitems`, row.invoiceMainItemCode, updatedRecord).subscribe({
+        const bodyRequest: any = {
+          quantity: updatedRecord.quantity,
+          amountPerUnit: updatedRecord.amountPerUnit,
+          profitMargin:updatedRecord.profitMargin,
+          total:updatedRecord.total
+        };
+  
+        this._ApiService.post<any>(`/total`, bodyRequest).subscribe({
           next: (res) => {
-            console.log('mainitem  updated:', res);
-            this.totalValue = 0;
-            this.ngOnInit()
+            console.log('mainitem with total:', res);
+            // this.totalValue = 0;
+           // updatedRecord.total = res.totalWithProfit;
+            updatedRecord.amountPerUnitWithProfit = res.amountPerUnitWithProfit;
+            updatedRecord.totalWithProfit = res.totalWithProfit;
+
+            const mainItemIndex = this.mainItemsRecords.findIndex(item => item.invoiceMainItemCode === invoiceMainItemCode);
+            if (mainItemIndex > -1) {
+              this.mainItemsRecords[mainItemIndex] = { ...this.mainItemsRecords[mainItemIndex], ...updatedRecord };
+            }
+          //  this.cdr.detectChanges();
+            console.log(this.mainItemsRecords);
+  
           }, error: (err) => {
             console.log(err);
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid Data' });
           },
           complete: () => {
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Profit Margin applied successfully ' });
             this.selectedRowsForProfit = [];
           }
         });
+        
+
+        // this._ApiService.patch<MainItem>(`mainitems`, row.invoiceMainItemCode, updatedRecord).subscribe({
+        // update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`
+        // this._ApiService.patch<MainItem>(`mainitems`, row.invoiceMainItemCode, updatedRecord).subscribe({
+        //   next: (res) => {
+        //     console.log('mainitem  updated:', res);
+        //     this.totalValue = 0;
+        //     this.ngOnInit()
+        //   }, error: (err) => {
+        //     console.log(err);
+        //     this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid Data' });
+        //   },
+        //   complete: () => {
+        //     this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Profit Margin applied successfully ' });
+        //     this.selectedRowsForProfit = [];
+        //   }
+        // });
       }
     }
   }
@@ -149,12 +181,11 @@ export class InvoiceComponent {
     });
     if (this.savedInMemory) {
       this.mainItemsRecords = [...this._InvoiceService.getMainItems(this.documentNumber)];
-      // this.mainItemsRecords = this._InvoiceService.getMainItems();
       console.log(this.mainItemsRecords);
-
     }
     if (this.savedDBApp) {
-      this.getAllMainItemsForDocument();
+      this.getCloudDocument();
+      //this.getAllMainItemsForDocument();
     } else {
       this.getCloudDocument();
     }
@@ -173,8 +204,8 @@ export class InvoiceComponent {
         this.loading = false;
         this.totalValue = this.mainItemsRecords.reduce((sum, record) => sum + record.totalWithProfit, 0);
         console.log('Total Value:', this.totalValue);
-        //this.cdr.markForCheck();
-        this.cdr.detectChanges();
+      
+       // this.cdr.detectChanges();
       }, error: (err) => {
         console.log(err);
         console.log(err.status);
@@ -183,8 +214,7 @@ export class InvoiceComponent {
           this.loading = false;
           this.totalValue = this.mainItemsRecords.reduce((sum, record) => sum + record.totalWithProfit, 0);
           console.log('Total Value:', this.totalValue);
-          //this.cdr.markForCheck();
-          this.cdr.detectChanges();
+         // this.cdr.detectChanges();
         }
       },
       complete: () => {
@@ -206,7 +236,7 @@ export class InvoiceComponent {
         this.loading = false;
         this.totalValue = this.mainItemsRecords.reduce((sum, record) => sum + record.totalWithProfit, 0);
         console.log('Total Value:', this.totalValue);
-        this.cdr.detectChanges();
+       // this.cdr.detectChanges();
       }, error: (err) => {
         console.log(err);
         console.log(err.status);
@@ -215,8 +245,7 @@ export class InvoiceComponent {
           this.loading = false;
           this.totalValue = this.mainItemsRecords.reduce((sum, record) => sum + record.totalWithProfit, 0);
           console.log('Total Value:', this.totalValue);
-          //this.cdr.markForCheck();
-          this.cdr.detectChanges();
+          //this.cdr.detectChanges();
         }
       },
       complete: () => {
@@ -281,18 +310,19 @@ export class InvoiceComponent {
           newRecord.total = res.totalWithProfit;
           newRecord.amountPerUnitWithProfit = res.amountPerUnitWithProfit;
           newRecord.totalWithProfit = res.totalWithProfit;
+          console.log(' Record:', newRecord);
 
           const filteredRecord = Object.fromEntries(
             Object.entries(newRecord).filter(([_, value]) => {
               return value !== '' && value !== 0 && value !== undefined && value !== null;
             })
           ) as MainItem;
-          console.log(filteredRecord);
+          console.log('Filtered Record:', filteredRecord);
 
           this._InvoiceService.addMainItem(filteredRecord);
 
           this.savedInMemory = true;
-          this.cdr.detectChanges();
+         // this.cdr.detectChanges();
 
           const newMainItems = this._InvoiceService.getMainItems(this.documentNumber);
 
@@ -313,20 +343,6 @@ export class InvoiceComponent {
         }
       });
 
-      // this.savedInMemory = true;
-      // this.cdr.detectChanges();
-
-      // const newMainItems = this._InvoiceService.getMainItems();
-
-      // // Combine the current mainItemsRecords with the new list, ensuring no duplicates
-      // this.mainItemsRecords = [
-      //   ...this.mainItemsRecords.filter(item => !newMainItems.some(newItem => newItem.invoiceMainItemCode === item.invoiceMainItemCode)), // Remove existing items
-      //   ...newMainItems
-      // ];
-      // console.log(this.mainItemsRecords);
-      // this.resetNewMainItem();
-      // this.selectedUnitOfMeasure="";
-      // this.selectedCurrency="";
     }
     else if (!this.selectedServiceNumberRecord && this.selectedFormulaRecord && this.resultAfterTest) { // if user didn't select serviceNumber && select formula
       const newRecord: MainItem = {
@@ -384,7 +400,7 @@ export class InvoiceComponent {
 
           this._InvoiceService.addMainItem(filteredRecord);
           this.savedInMemory = true;
-          this.cdr.detectChanges();
+         // this.cdr.detectChanges();
 
           const newMainItems = this._InvoiceService.getMainItems(this.documentNumber);
 
@@ -470,7 +486,7 @@ export class InvoiceComponent {
 
           this._InvoiceService.addMainItem(filteredRecord);
           this.savedInMemory = true;
-          this.cdr.detectChanges();
+         // this.cdr.detectChanges();
 
           const newMainItems = this._InvoiceService.getMainItems(this.documentNumber);
 
@@ -548,7 +564,7 @@ export class InvoiceComponent {
 
           this._InvoiceService.addMainItem(filteredRecord);
           this.savedInMemory = true;
-          this.cdr.detectChanges();
+         // this.cdr.detectChanges();
 
           const newMainItems = this._InvoiceService.getMainItems(this.documentNumber);
 
@@ -639,7 +655,7 @@ export class InvoiceComponent {
               this.resetNewSubItem();
               this.selectedUnitOfMeasureSubItem = "";
               this.selectedCurrencySubItem = "";
-              this.cdr.detectChanges(); // Trigger change detection if needed
+             // this.cdr.detectChanges(); // Trigger change detection if needed
               console.log(this.mainItemsRecords);
             }
 
@@ -719,7 +735,7 @@ export class InvoiceComponent {
               this.selectedFormulaSubItem = "";
               this.selectedFormulaRecordSubItem = undefined
               this.resultAfterTest = undefined;
-              this.cdr.detectChanges(); // Trigger change detection if needed
+            //  this.cdr.detectChanges(); // Trigger change detection if needed
               console.log(this.mainItemsRecords);
             }
           }, error: (err) => {
@@ -798,7 +814,7 @@ export class InvoiceComponent {
               this.selectedCurrencySubItem = "";
               this.selectedFormulaRecordSubItem = undefined;
               this.selectedServiceNumberRecordSubItem = undefined
-              this.cdr.detectChanges(); // Trigger change detection if needed
+            //  this.cdr.detectChanges(); // Trigger change detection if needed
               console.log(this.mainItemsRecords);
             }
           }, error: (err) => {
@@ -877,7 +893,7 @@ export class InvoiceComponent {
               this.selectedFormulaRecordSubItem = undefined
               this.resultAfterTest = undefined;
               this.selectedServiceNumberRecordSubItem = undefined
-              this.cdr.detectChanges(); // Trigger change detection if needed
+             // this.cdr.detectChanges(); // Trigger change detection if needed
               console.log(this.mainItemsRecords);
             }
           }, error: (err) => {
@@ -952,6 +968,12 @@ export class InvoiceComponent {
         this._ApiService.post<MainItem[]>(url, saveRequests).toPromise()
           .then((responses) => {
             console.log('All main items saved successfully:', responses);
+            this.savedDBApp =true;
+            this.totalValue = 0;
+            this.ngOnInit();
+
+
+           
 
             // Optionally, update the saved records as persisted
             //  unsavedItems.forEach(item => item.isPersisted = true);
@@ -1146,7 +1168,7 @@ export class InvoiceComponent {
           if (mainItemIndex > -1) {
             this.mainItemsRecords[mainItemIndex] = { ...this.mainItemsRecords[mainItemIndex], ...newRecord };
           }
-          this.cdr.detectChanges();
+         // this.cdr.detectChanges();
           console.log(this.mainItemsRecords);
         }, error: (err) => {
           console.log(err);
@@ -1209,7 +1231,7 @@ export class InvoiceComponent {
           this.updatedFormulaRecord = undefined;
           this.resultAfterTestUpdate = undefined
           // Trigger change detection
-          this.cdr.detectChanges();
+          //this.cdr.detectChanges();
           console.log(this.mainItemsRecords);
         }, error: (err) => {
           console.log(err);
@@ -1269,7 +1291,7 @@ export class InvoiceComponent {
           this.updatedFormulaRecord = undefined;
           this.resultAfterTestUpdate = undefined
           // Trigger change detection
-          this.cdr.detectChanges();
+          //this.cdr.detectChanges();
           console.log(this.mainItemsRecords);
         }, error: (err) => {
           console.log(err);
@@ -1313,7 +1335,7 @@ export class InvoiceComponent {
           if (mainItemIndex > -1) {
             this.mainItemsRecords[mainItemIndex] = { ...this.mainItemsRecords[mainItemIndex], ...updatedMainItem };
           }
-          this.cdr.detectChanges();
+         // this.cdr.detectChanges();
           console.log(this.mainItemsRecords);
         }, error: (err) => {
           console.log(err);
@@ -1406,7 +1428,7 @@ export class InvoiceComponent {
           if (mainItemIndex > -1) {
             this.mainItemsRecords[mainItemIndex] = { ...this.mainItemsRecords[mainItemIndex], ...filteredRecord };
           }
-          this.cdr.detectChanges();
+         // this.cdr.detectChanges();
           console.log(this.mainItemsRecords);
 
         }, error: (err) => {
@@ -1512,7 +1534,7 @@ export class InvoiceComponent {
           this.updatedFormulaRecordSubItem = undefined;
           this.resultAfterTestUpdate = undefined
           // Trigger change detection
-          this.cdr.detectChanges();
+         // this.cdr.detectChanges();
           console.log(this.mainItemsRecords);
 
         }, error: (err) => {
@@ -1580,7 +1602,7 @@ export class InvoiceComponent {
           this.updatedFormulaRecordSubItem = undefined;
           this.resultAfterTestUpdate = undefined
           // Trigger change detection
-          this.cdr.detectChanges();
+         // this.cdr.detectChanges();
           console.log(this.mainItemsRecords);
 
         }, error: (err) => {
@@ -1640,7 +1662,7 @@ export class InvoiceComponent {
             this.mainItemsRecords[mainItemIndex] = { ...this.mainItemsRecords[mainItemIndex], ...filteredRecord };
           }
           // Trigger change detection
-          this.cdr.detectChanges();
+         // this.cdr.detectChanges();
           console.log(this.mainItemsRecords);
 
         }, error: (err) => {
@@ -1714,7 +1736,7 @@ export class InvoiceComponent {
             console.log(record);
 
             this.mainItemsRecords = this.mainItemsRecords.filter(item => item.invoiceMainItemCode !== record.invoiceMainItemCode);
-            this.cdr.detectChanges();
+           // this.cdr.detectChanges();
             console.log(this.mainItemsRecords);
 
             // this._ApiService.delete<MainItem>('mainitems', record.invoiceMainItemCode).subscribe({
@@ -1752,7 +1774,7 @@ export class InvoiceComponent {
                   mainItem.subItems.splice(subItemIndex, 1);
                 }
               }
-              this.cdr.detectChanges();
+             // this.cdr.detectChanges();
               console.log(this.mainItemsRecords);
 
 

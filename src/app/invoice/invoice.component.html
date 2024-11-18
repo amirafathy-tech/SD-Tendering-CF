@@ -323,7 +323,7 @@
                         </ng-container>
                     </ng-template>
                     <ng-template pTemplate="output">
-                        {{ mainItem.total | number:'1.2-2' }}
+                        {{ mainItem?.total | number:'1.2-2' }}
                     </ng-template>
                 </p-cellEditor>
             </td>
@@ -335,7 +335,7 @@
 
                     </ng-template>
                     <ng-template pTemplate="output">
-                        {{ mainItem.profitMargin }}
+                        {{ mainItem?.profitMargin }}
                     </ng-template>
                 </p-cellEditor>
             </td>
@@ -351,7 +351,7 @@
 
                     </ng-template>
                     <ng-template pTemplate="output">
-                        {{ mainItem.amountPerUnitWithProfit }}
+                        {{ mainItem?.amountPerUnitWithProfit }}
                     </ng-template>
                 </p-cellEditor>
             </td>
@@ -379,7 +379,7 @@
 
                     </ng-template>
                     <ng-template pTemplate="output">
-                        {{ mainItem.totalWithProfit }}
+                        {{ mainItem?.totalWithProfit }}
                     </ng-template>
                 </p-cellEditor>
             </td>
