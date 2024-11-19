@@ -15,7 +15,7 @@ import { catchError, of, switchMap, tap } from 'rxjs';
   templateUrl: './invoice.component.html',
   styleUrls: ['./invoice.component.css'],
   providers: [MessageService, InvoiceService, ConfirmationService],
- // changeDetection: ChangeDetectionStrategy.Default
+  // changeDetection: ChangeDetectionStrategy.Default
 })
 export class InvoiceComponent {
 
@@ -113,15 +113,15 @@ export class InvoiceComponent {
         const bodyRequest: any = {
           quantity: updatedRecord.quantity,
           amountPerUnit: updatedRecord.amountPerUnit,
-          profitMargin:updatedRecord.profitMargin,
-          total:updatedRecord.total
+          profitMargin: updatedRecord.profitMargin,
+          total: updatedRecord.total
         };
-  
+
         this._ApiService.post<any>(`/total`, bodyRequest).subscribe({
           next: (res) => {
             console.log('mainitem with total:', res);
             // this.totalValue = 0;
-           // updatedRecord.total = res.totalWithProfit;
+            // updatedRecord.total = res.totalWithProfit;
             updatedRecord.amountPerUnitWithProfit = res.amountPerUnitWithProfit;
             updatedRecord.totalWithProfit = res.totalWithProfit;
 
@@ -129,9 +129,9 @@ export class InvoiceComponent {
             if (mainItemIndex > -1) {
               this.mainItemsRecords[mainItemIndex] = { ...this.mainItemsRecords[mainItemIndex], ...updatedRecord };
             }
-          //  this.cdr.detectChanges();
+            //  this.cdr.detectChanges();
             console.log(this.mainItemsRecords);
-  
+
           }, error: (err) => {
             console.log(err);
           },
@@ -139,7 +139,7 @@ export class InvoiceComponent {
             this.selectedRowsForProfit = [];
           }
         });
-        
+
 
         // this._ApiService.patch<MainItem>(`mainitems`, row.invoiceMainItemCode, updatedRecord).subscribe({
         // update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`
@@ -166,6 +166,17 @@ export class InvoiceComponent {
     this.itemNumber = this.router.getCurrentNavigation()?.extras.state?.['itemNumber'];
     this.customerId = this.router.getCurrentNavigation()?.extras.state?.['customerId'];
     console.log(this.documentNumber, this.itemNumber, this.customerId);
+  }
+
+  // Initial calculation of totalValue (call this when initializing the component)
+  calculateTotalValue(): void {
+    this.totalValue = this.mainItemsRecords.reduce((sum, item) => sum + (item.totalWithProfit || 0), 0);
+  }
+
+  // Call this method when the mainItemsRecords array is updated
+  updateTotalValueAfterAction(): void {
+    this.calculateTotalValue();
+    console.log('Updated Total Value:', this.totalValue);
   }
 
   ngOnInit() {
@@ -204,8 +215,8 @@ export class InvoiceComponent {
         this.loading = false;
         this.totalValue = this.mainItemsRecords.reduce((sum, record) => sum + record.totalWithProfit, 0);
         console.log('Total Value:', this.totalValue);
-      
-       // this.cdr.detectChanges();
+
+        // this.cdr.detectChanges();
       }, error: (err) => {
         console.log(err);
         console.log(err.status);
@@ -214,7 +225,7 @@ export class InvoiceComponent {
           this.loading = false;
           this.totalValue = this.mainItemsRecords.reduce((sum, record) => sum + record.totalWithProfit, 0);
           console.log('Total Value:', this.totalValue);
-         // this.cdr.detectChanges();
+          // this.cdr.detectChanges();
         }
       },
       complete: () => {
@@ -225,18 +236,15 @@ export class InvoiceComponent {
   getCloudDocument() {
     this._ApiService.get<MainItem[]>(`mainitems/referenceid?referenceId=${this.documentNumber}`).subscribe({
       next: (res) => {
-
-
         // Set isPersisted to true for all items fetched from the database
         this.mainItemsRecords = res.map(item => ({ ...item, isPersisted: true }))
           .sort((a, b) => a.invoiceMainItemCode - b.invoiceMainItemCode);
 
-        // this.mainItemsRecords = res.sort((a, b) => a.invoiceMainItemCode - b.invoiceMainItemCode);
         console.log(this.mainItemsRecords);
         this.loading = false;
         this.totalValue = this.mainItemsRecords.reduce((sum, record) => sum + record.totalWithProfit, 0);
         console.log('Total Value:', this.totalValue);
-       // this.cdr.detectChanges();
+        // this.cdr.detectChanges();
       }, error: (err) => {
         console.log(err);
         console.log(err.status);
@@ -297,7 +305,6 @@ export class InvoiceComponent {
         quantity: newRecord.quantity,
         amountPerUnit: newRecord.amountPerUnit
       };
-
       // Conditionally add profitMargin if it has a non-zero value
       if (newRecord.profitMargin && newRecord.profitMargin !== 0) {
         bodyRequest.profitMargin = newRecord.profitMargin;
@@ -321,8 +328,11 @@ export class InvoiceComponent {
 
           this._InvoiceService.addMainItem(filteredRecord);
 
+          //this.totalValue += filteredRecord.totalWithProfit;
+          console.log(this.totalValue);
+
           this.savedInMemory = true;
-         // this.cdr.detectChanges();
+          // this.cdr.detectChanges();
 
           const newMainItems = this._InvoiceService.getMainItems(this.documentNumber);
 
@@ -331,6 +341,9 @@ export class InvoiceComponent {
             ...this.mainItemsRecords.filter(item => !newMainItems.some(newItem => newItem.invoiceMainItemCode === item.invoiceMainItemCode)), // Remove existing items
             ...newMainItems
           ];
+
+          this.updateTotalValueAfterAction();
+
           console.log(this.mainItemsRecords);
           this.resetNewMainItem();
           this.selectedUnitOfMeasure = "";
@@ -399,8 +412,12 @@ export class InvoiceComponent {
           console.log(filteredRecord);
 
           this._InvoiceService.addMainItem(filteredRecord);
+
+          //this.totalValue += filteredRecord.totalWithProfit;
+          console.log(this.totalValue);
+
           this.savedInMemory = true;
-         // this.cdr.detectChanges();
+          // this.cdr.detectChanges();
 
           const newMainItems = this._InvoiceService.getMainItems(this.documentNumber);
 
@@ -409,6 +426,9 @@ export class InvoiceComponent {
             ...this.mainItemsRecords.filter(item => !newMainItems.some(newItem => newItem.invoiceMainItemCode === item.invoiceMainItemCode)), // Remove existing items
             ...newMainItems
           ];
+
+          this.updateTotalValueAfterAction();
+
           console.log(this.mainItemsRecords);
           this.resetNewMainItem();
           this.selectedUnitOfMeasure = "";
@@ -432,7 +452,8 @@ export class InvoiceComponent {
     else if (this.selectedServiceNumberRecord && !this.selectedFormulaRecord && !this.resultAfterTest) { // if user select serviceNumber && didn't select formula
       const newRecord: MainItem = {
         serviceNumberCode: this.selectedServiceNumber,
-        unitOfMeasurementCode: this.selectedServiceNumberRecord.baseUnitOfMeasurement,
+        unitOfMeasurementCode: this.selectedServiceNumberRecord.unitOfMeasurementCode,
+        // this.selectedServiceNumberRecord.baseUnitOfMeasurement,
         currencyCode: this.selectedCurrency,
         description: this.selectedServiceNumberRecord.description,
         quantity: this.newMainItem.quantity,
@@ -485,8 +506,12 @@ export class InvoiceComponent {
           console.log(filteredRecord);
 
           this._InvoiceService.addMainItem(filteredRecord);
+
+          //  this.totalValue += filteredRecord.totalWithProfit;
+          console.log(this.totalValue);
+
           this.savedInMemory = true;
-         // this.cdr.detectChanges();
+          // this.cdr.detectChanges();
 
           const newMainItems = this._InvoiceService.getMainItems(this.documentNumber);
 
@@ -495,6 +520,9 @@ export class InvoiceComponent {
             ...this.mainItemsRecords.filter(item => !newMainItems.some(newItem => newItem.invoiceMainItemCode === item.invoiceMainItemCode)), // Remove existing items
             ...newMainItems
           ];
+
+          this.updateTotalValueAfterAction();
+
           console.log(this.mainItemsRecords);
           this.resetNewMainItem();
         }, error: (err) => {
@@ -510,7 +538,8 @@ export class InvoiceComponent {
     else if (this.selectedServiceNumberRecord && this.selectedFormulaRecord && this.resultAfterTest) { // if user select serviceNumber && select formula
       const newRecord: MainItem = {
         serviceNumberCode: this.selectedServiceNumber,
-        unitOfMeasurementCode: this.selectedServiceNumberRecord.baseUnitOfMeasurement,
+        unitOfMeasurementCode: this.selectedServiceNumberRecord.unitOfMeasurementCode,
+        // this.selectedServiceNumberRecord.baseUnitOfMeasurement,
         currencyCode: this.selectedCurrency,
         formulaCode: this.selectedFormula,
         description: this.selectedServiceNumberRecord.description,
@@ -563,8 +592,12 @@ export class InvoiceComponent {
           console.log(filteredRecord);
 
           this._InvoiceService.addMainItem(filteredRecord);
+
+          // this.totalValue += filteredRecord.totalWithProfit;
+          console.log(this.totalValue);
+
           this.savedInMemory = true;
-         // this.cdr.detectChanges();
+          // this.cdr.detectChanges();
 
           const newMainItems = this._InvoiceService.getMainItems(this.documentNumber);
 
@@ -573,6 +606,9 @@ export class InvoiceComponent {
             ...this.mainItemsRecords.filter(item => !newMainItems.some(newItem => newItem.invoiceMainItemCode === item.invoiceMainItemCode)), // Remove existing items
             ...newMainItems
           ];
+
+          this.updateTotalValueAfterAction();
+
           console.log(this.mainItemsRecords);
           this.resetNewMainItem();
           this.selectedFormula = "";
@@ -619,11 +655,9 @@ export class InvoiceComponent {
           quantity: newRecord.quantity,
           amountPerUnit: newRecord.amountPerUnit
         };
-
         this._ApiService.post<any>(`/total`, bodyRequest).subscribe({
           next: async (res) => {
             console.log('subitem with total:', res);
-            // this.totalValue = 0;
             newRecord.total = res.totalWithProfit;
 
             const filteredSubItem = Object.fromEntries(
@@ -633,29 +667,74 @@ export class InvoiceComponent {
             );
             console.log(filteredSubItem);
 
-            const success = await this._InvoiceService.addSubItemToMainItem(mainItem.invoiceMainItemCode, filteredSubItem as SubItem,this.documentNumber);
+            const success = await this._InvoiceService.addSubItemToMainItem(mainItem.invoiceMainItemCode, filteredSubItem as SubItem, this.documentNumber);
             if (success) {
-
               this.savedInMemory = true;
+              console.log(this.mainItemsRecords);
 
               const mainItemIndex = this.mainItemsRecords.findIndex(item => item.invoiceMainItemCode === mainItem.invoiceMainItemCode);
-
+              console.log(mainItemIndex);
               if (mainItemIndex > -1) {
+                console.log(mainItemIndex);
                 // Check if subitem already exists by comparing invoiceSubItemCode
                 const existingSubItem = this.mainItemsRecords[mainItemIndex].subItems.find(
-                  subItem => subItem.invoiceSubItemCode === filteredSubItem['invoiceSubItemCode']
+                  subItem => String(subItem.invoiceSubItemCode) === String(filteredSubItem['invoiceSubItemCode'])
                 );
+
                 if (!existingSubItem) {
                   this.mainItemsRecords[mainItemIndex].subItems.push(filteredSubItem as SubItem);
                   console.log(this.mainItemsRecords);
                 } else {
                   console.log('Duplicate subitem detected; skipping addition.');
+                  console.log(this.mainItemsRecords);
+                   ///......
+                  // Calculate the sum of total values for all subitems
+                  const totalOfSubItems = this.mainItemsRecords[mainItemIndex].subItems.reduce(
+                    (sum, subItem) => sum + (subItem.total || 0),
+                    0
+                  );
+                  this.mainItemsRecords[mainItemIndex].amountPerUnit = totalOfSubItems;
+                  console.log(
+                    `Updated MainItem (ID: ${mainItem.invoiceMainItemCode}) AmountPerUnit:`,
+                    this.mainItemsRecords[mainItemIndex].amountPerUnit
+                  );
+
+                  // Recalculate the main item's total, amountPerUnitWithProfit, and totalWithProfit
+                  const recalculateBodyRequest = {
+                    quantity: this.mainItemsRecords[mainItemIndex].quantity,
+                    amountPerUnit: totalOfSubItems,
+                  };
+
+                  this._ApiService.post<any>(`/total`, recalculateBodyRequest).subscribe({
+                    next: (recalculateRes) => {
+                      console.log('Updated main item totals:', recalculateRes);
+
+                      this.mainItemsRecords[mainItemIndex] = {
+                        ...this.mainItemsRecords[mainItemIndex],
+                        total: recalculateRes.totalWithProfit,
+                        amountPerUnitWithProfit: recalculateRes.amountPerUnitWithProfit,
+                        totalWithProfit: recalculateRes.totalWithProfit,
+                      };
+
+                      console.log(
+                        `Recalculated MainItem (ID: ${mainItem.invoiceMainItemCode}):`,
+                        this.mainItemsRecords[mainItemIndex]
+                      );
+                      this.updateTotalValueAfterAction();
+
+                      // this.cdr.detectChanges();
+                    },
+                    error: (err) => {
+                      console.error('Failed to recalculate totals:', err);
+                    },
+                  });
+                  ///......
                 }
               }
               this.resetNewSubItem();
               this.selectedUnitOfMeasureSubItem = "";
               this.selectedCurrencySubItem = "";
-             // this.cdr.detectChanges(); // Trigger change detection if needed
+              // this.cdr.detectChanges(); // Trigger change detection if needed
               console.log(this.mainItemsRecords);
             }
 
@@ -665,9 +744,6 @@ export class InvoiceComponent {
           complete: () => {
           }
         });
-
-
-
       }
     }
     else if (!this.selectedServiceNumberRecordSubItem && this.selectedFormulaRecordSubItem && this.resultAfterTest) { // if user didn't select serviceNumber && select formula
@@ -710,7 +786,7 @@ export class InvoiceComponent {
             );
             console.log(filteredSubItem);
 
-            const success = await this._InvoiceService.addSubItemToMainItem(mainItem.invoiceMainItemCode, filteredSubItem as SubItem,this.documentNumber);
+            const success = await this._InvoiceService.addSubItemToMainItem(mainItem.invoiceMainItemCode, filteredSubItem as SubItem, this.documentNumber);
             if (success) {
 
               this.savedInMemory = true;
@@ -725,8 +801,52 @@ export class InvoiceComponent {
                 if (!existingSubItem) {
                   this.mainItemsRecords[mainItemIndex].subItems.push(filteredSubItem as SubItem);
                   console.log(this.mainItemsRecords);
+                
                 } else {
                   console.log('Duplicate subitem detected; skipping addition.');
+                  console.log(this.mainItemsRecords);
+                  ///......
+                 // Calculate the sum of total values for all subitems
+                 const totalOfSubItems = this.mainItemsRecords[mainItemIndex].subItems.reduce(
+                   (sum, subItem) => sum + (subItem.total || 0),
+                   0
+                 );
+                 this.mainItemsRecords[mainItemIndex].amountPerUnit = totalOfSubItems;
+                 console.log(
+                   `Updated MainItem (ID: ${mainItem.invoiceMainItemCode}) AmountPerUnit:`,
+                   this.mainItemsRecords[mainItemIndex].amountPerUnit
+                 );
+
+                 // Recalculate the main item's total, amountPerUnitWithProfit, and totalWithProfit
+                 const recalculateBodyRequest = {
+                   quantity: this.mainItemsRecords[mainItemIndex].quantity,
+                   amountPerUnit: totalOfSubItems,
+                 };
+
+                 this._ApiService.post<any>(`/total`, recalculateBodyRequest).subscribe({
+                   next: (recalculateRes) => {
+                     console.log('Updated main item totals:', recalculateRes);
+
+                     this.mainItemsRecords[mainItemIndex] = {
+                       ...this.mainItemsRecords[mainItemIndex],
+                       total: recalculateRes.totalWithProfit,
+                       amountPerUnitWithProfit: recalculateRes.amountPerUnitWithProfit,
+                       totalWithProfit: recalculateRes.totalWithProfit,
+                     };
+
+                     console.log(
+                       `Recalculated MainItem (ID: ${mainItem.invoiceMainItemCode}):`,
+                       this.mainItemsRecords[mainItemIndex]
+                     );
+                     this.updateTotalValueAfterAction();
+
+                     // this.cdr.detectChanges();
+                   },
+                   error: (err) => {
+                     console.error('Failed to recalculate totals:', err);
+                   },
+                 });
+                 ///......
                 }
               }
               this.resetNewSubItem();
@@ -735,7 +855,7 @@ export class InvoiceComponent {
               this.selectedFormulaSubItem = "";
               this.selectedFormulaRecordSubItem = undefined
               this.resultAfterTest = undefined;
-            //  this.cdr.detectChanges(); // Trigger change detection if needed
+              //  this.cdr.detectChanges(); // Trigger change detection if needed
               console.log(this.mainItemsRecords);
             }
           }, error: (err) => {
@@ -754,7 +874,8 @@ export class InvoiceComponent {
 
       const newRecord: SubItem = {
         serviceNumberCode: this.selectedServiceNumberSubItem,
-        unitOfMeasurementCode: this.selectedServiceNumberRecordSubItem.baseUnitOfMeasurement,
+        unitOfMeasurementCode: this.selectedServiceNumberRecordSubItem.unitOfMeasurementCode,
+        //this.selectedServiceNumberRecordSubItem.baseUnitOfMeasurement,
         currencyCode: this.selectedCurrencySubItem,
         description: this.selectedServiceNumberRecordSubItem.description,
         quantity: this.newSubItem.quantity,
@@ -791,7 +912,7 @@ export class InvoiceComponent {
             );
             console.log(filteredSubItem);
 
-            const success = await this._InvoiceService.addSubItemToMainItem(mainItem.invoiceMainItemCode, filteredSubItem as SubItem,this.documentNumber);
+            const success = await this._InvoiceService.addSubItemToMainItem(mainItem.invoiceMainItemCode, filteredSubItem as SubItem, this.documentNumber);
             if (success) {
 
               this.savedInMemory = true;
@@ -806,15 +927,59 @@ export class InvoiceComponent {
                 if (!existingSubItem) {
                   this.mainItemsRecords[mainItemIndex].subItems.push(filteredSubItem as SubItem);
                   console.log(this.mainItemsRecords);
+                 
                 } else {
                   console.log('Duplicate subitem detected; skipping addition.');
+                  console.log(this.mainItemsRecords);
+                  ///......
+                 // Calculate the sum of total values for all subitems
+                 const totalOfSubItems = this.mainItemsRecords[mainItemIndex].subItems.reduce(
+                   (sum, subItem) => sum + (subItem.total || 0),
+                   0
+                 );
+                 this.mainItemsRecords[mainItemIndex].amountPerUnit = totalOfSubItems;
+                 console.log(
+                   `Updated MainItem (ID: ${mainItem.invoiceMainItemCode}) AmountPerUnit:`,
+                   this.mainItemsRecords[mainItemIndex].amountPerUnit
+                 );
+
+                 // Recalculate the main item's total, amountPerUnitWithProfit, and totalWithProfit
+                 const recalculateBodyRequest = {
+                   quantity: this.mainItemsRecords[mainItemIndex].quantity,
+                   amountPerUnit: totalOfSubItems,
+                 };
+
+                 this._ApiService.post<any>(`/total`, recalculateBodyRequest).subscribe({
+                   next: (recalculateRes) => {
+                     console.log('Updated main item totals:', recalculateRes);
+
+                     this.mainItemsRecords[mainItemIndex] = {
+                       ...this.mainItemsRecords[mainItemIndex],
+                       total: recalculateRes.totalWithProfit,
+                       amountPerUnitWithProfit: recalculateRes.amountPerUnitWithProfit,
+                       totalWithProfit: recalculateRes.totalWithProfit,
+                     };
+
+                     console.log(
+                       `Recalculated MainItem (ID: ${mainItem.invoiceMainItemCode}):`,
+                       this.mainItemsRecords[mainItemIndex]
+                     );
+                     this.updateTotalValueAfterAction();
+
+                     // this.cdr.detectChanges();
+                   },
+                   error: (err) => {
+                     console.error('Failed to recalculate totals:', err);
+                   },
+                 });
+                 ///......
                 }
               }
               this.resetNewSubItem();
               this.selectedCurrencySubItem = "";
               this.selectedFormulaRecordSubItem = undefined;
               this.selectedServiceNumberRecordSubItem = undefined
-            //  this.cdr.detectChanges(); // Trigger change detection if needed
+              //  this.cdr.detectChanges(); // Trigger change detection if needed
               console.log(this.mainItemsRecords);
             }
           }, error: (err) => {
@@ -831,7 +996,8 @@ export class InvoiceComponent {
     else if (this.selectedServiceNumberRecordSubItem && this.selectedFormulaRecordSubItem && this.resultAfterTest) { // if user select serviceNumber && select formula
       const newRecord: SubItem = {
         serviceNumberCode: this.selectedServiceNumberSubItem,
-        unitOfMeasurementCode: this.selectedServiceNumberRecordSubItem.baseUnitOfMeasurement,
+        unitOfMeasurementCode: this.selectedServiceNumberRecordSubItem.unitOfMeasurementCode,
+        //this.selectedServiceNumberRecordSubItem.baseUnitOfMeasurement,
         currencyCode: this.selectedCurrencySubItem,
         formulaCode: this.selectedFormulaSubItem,
         description: this.selectedServiceNumberRecordSubItem.description,
@@ -869,7 +1035,7 @@ export class InvoiceComponent {
             );
             console.log(filteredSubItem);
 
-            const success = await this._InvoiceService.addSubItemToMainItem(mainItem.invoiceMainItemCode, filteredSubItem as SubItem,this.documentNumber);
+            const success = await this._InvoiceService.addSubItemToMainItem(mainItem.invoiceMainItemCode, filteredSubItem as SubItem, this.documentNumber);
             if (success) {
 
               this.savedInMemory = true;
@@ -884,8 +1050,52 @@ export class InvoiceComponent {
                 if (!existingSubItem) {
                   this.mainItemsRecords[mainItemIndex].subItems.push(filteredSubItem as SubItem);
                   console.log(this.mainItemsRecords);
+                 
                 } else {
                   console.log('Duplicate subitem detected; skipping addition.');
+                  console.log(this.mainItemsRecords);
+                  ///......
+                 // Calculate the sum of total values for all subitems
+                 const totalOfSubItems = this.mainItemsRecords[mainItemIndex].subItems.reduce(
+                   (sum, subItem) => sum + (subItem.total || 0),
+                   0
+                 );
+                 this.mainItemsRecords[mainItemIndex].amountPerUnit = totalOfSubItems;
+                 console.log(
+                   `Updated MainItem (ID: ${mainItem.invoiceMainItemCode}) AmountPerUnit:`,
+                   this.mainItemsRecords[mainItemIndex].amountPerUnit
+                 );
+
+                 // Recalculate the main item's total, amountPerUnitWithProfit, and totalWithProfit
+                 const recalculateBodyRequest = {
+                   quantity: this.mainItemsRecords[mainItemIndex].quantity,
+                   amountPerUnit: totalOfSubItems,
+                 };
+
+                 this._ApiService.post<any>(`/total`, recalculateBodyRequest).subscribe({
+                   next: (recalculateRes) => {
+                     console.log('Updated main item totals:', recalculateRes);
+
+                     this.mainItemsRecords[mainItemIndex] = {
+                       ...this.mainItemsRecords[mainItemIndex],
+                       total: recalculateRes.totalWithProfit,
+                       amountPerUnitWithProfit: recalculateRes.amountPerUnitWithProfit,
+                       totalWithProfit: recalculateRes.totalWithProfit,
+                     };
+
+                     console.log(
+                       `Recalculated MainItem (ID: ${mainItem.invoiceMainItemCode}):`,
+                       this.mainItemsRecords[mainItemIndex]
+                     );
+                     this.updateTotalValueAfterAction();
+
+                     // this.cdr.detectChanges();
+                   },
+                   error: (err) => {
+                     console.error('Failed to recalculate totals:', err);
+                   },
+                 });
+                 ///......
                 }
               }
               this.resetNewSubItem();
@@ -893,7 +1103,7 @@ export class InvoiceComponent {
               this.selectedFormulaRecordSubItem = undefined
               this.resultAfterTest = undefined;
               this.selectedServiceNumberRecordSubItem = undefined
-             // this.cdr.detectChanges(); // Trigger change detection if needed
+              // this.cdr.detectChanges(); // Trigger change detection if needed
               console.log(this.mainItemsRecords);
             }
           }, error: (err) => {
@@ -960,53 +1170,48 @@ export class InvoiceComponent {
           profitMargin: item.profitMargin,
           totalWithProfit: item.totalWithProfit,
         }));
+        console.log(saveRequests);
+
 
         // Set dynamic parameters for URL
         const url = `/mainitems?salesQuotation=${this.documentNumber}&salesQuotationItem=${this.itemNumber}&pricingProcedureStep=20&pricingProcedureCounter=1&customerNumber=${this.customerId}`;
 
         // Send the array of bodyRequest objects to the server in a single POST request
-        this._ApiService.post<MainItem[]>(url, saveRequests).toPromise()
-          .then((responses) => {
-            console.log('All main items saved successfully:', responses);
-            this.savedDBApp =true;
+        this._ApiService.post<MainItem[]>(url, saveRequests).subscribe({
+          next: (res) => {
+            console.log('All main items saved successfully:', res);
+            this.mainItemsRecords = res;
+            const lastRecord = res[res.length - 1];
+            // this.savedDBApp =true;
             this.totalValue = 0;
-            this.ngOnInit();
+            this.totalValue = lastRecord.totalHeader ? lastRecord.totalHeader : 0;
+            // this.ngOnInit();
 
+          }, error: (err) => {
+            console.log(err);
+          },
+          complete: () => {
+            // this.ngOnInit();
+          }
 
-           
-
-            // Optionally, update the saved records as persisted
-            //  unsavedItems.forEach(item => item.isPersisted = true);
-
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Success',
-              detail: 'The Document has been saved successfully',
-              life: 3000
-            });
-          })
-          .catch((error) => {
-            console.error('Error saving main items:', error);
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'Error saving The Document',
-              life: 3000
-            });
-          });
-        // }
-        // });
-
-
-        // // Execute all save requests in parallel and handle the results
-        // Promise.all(saveRequests)
+        })
+        // .toPromise()
         //   .then((responses) => {
         //     console.log('All main items saved successfully:', responses);
+        //     this.mainItemsRecords = responses?responses:[];
+        //     const lastRecord = responses[responses.length - 1];
+        //    // this.savedDBApp =true;
+        //     this.totalValue = 0;
+        //     this.totalValue = lastRecord.totalHeader;
+        //    // this.ngOnInit();
+
+        //     // Optionally, update the saved records as persisted
+        //     //  unsavedItems.forEach(item => item.isPersisted = true);
 
         //     this.messageService.add({
         //       severity: 'success',
         //       summary: 'Success',
-        //       detail: 'All records saved successfully',
+        //       detail: 'The Document has been saved successfully',
         //       life: 3000
         //     });
         //   })
@@ -1015,81 +1220,13 @@ export class InvoiceComponent {
         //     this.messageService.add({
         //       severity: 'error',
         //       summary: 'Error',
-        //       detail: 'Error saving records',
+        //       detail: 'Error saving The Document',
         //       life: 3000
         //     });
         //   });
-
-
-
-
-
-        //...............................
-        // get the last object of mainItemsRecords and post its total header to the cloud
-        // console.log(this.mainItemsRecords[this.mainItemsRecords.length - 1]);
-        // const lastRecord = this.mainItemsRecords[this.mainItemsRecords.length - 1];
-        // //const bodyRequest=  this.removePropertiesFrom(lastRecord, ['serviceInvoiceCode']);
-        // const totalHeader = this.totalValue;
-        // //this.serviceInvoiceRecords[this.serviceInvoiceRecords.length -1].totalHeader;
-        // console.log(totalHeader);
-        // const bodyRequest = {
-        //   totalHeader: totalHeader,
-        //   refrenceId: this.documentNumber,
-
-        //   quantity: this.mainItemsRecords[this.mainItemsRecords.length - 1].quantity,
-        //   amountPerUnit: this.mainItemsRecords[this.mainItemsRecords.length - 1].amountPerUnit,
-
-        //   serviceNumberCode: this.mainItemsRecords[this.mainItemsRecords.length - 1].serviceNumberCode,
-        //   unitOfMeasurementCode: this.mainItemsRecords[this.mainItemsRecords.length - 1].unitOfMeasurementCode,
-        //   currencyCode: this.mainItemsRecords[this.mainItemsRecords.length - 1].currencyCode,
-        //   formulaCode: this.mainItemsRecords[this.mainItemsRecords.length - 1].formulaCode,
-        //   description: this.mainItemsRecords[this.mainItemsRecords.length - 1].description,
-        //   total: this.mainItemsRecords[this.mainItemsRecords.length - 1].total,
-        //   profitMargin: this.mainItemsRecords[this.mainItemsRecords.length - 1].profitMargin,
-        //   totalWithProfit: this.mainItemsRecords[this.mainItemsRecords.length - 1].totalWithProfit,
         // }
-        // console.log(bodyRequest);
-
-
-        // this._ApiService.update<MainItem>(`mainitems/${this.documentNumber}/${this.itemNumber}/20/1/${this.customerId}`, bodyRequest)
-        //   .pipe(
-        //     tap((res) => {
-        //       console.log('mainitem created in s4:', res);
-        //       this.totalValue = 0;
-        //       this.savedDBApp = false;
-        //     }),
-        //     catchError((err) => {
-        //       console.log(err);
-        //       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Invalid Data for Document' });
-        //       return of(null);
-        //     }),
-        //     switchMap((res) => {
-        //       if (res) {
-        //         return this._ApiService.updateApp<MainItem>(`mainitems`).pipe(
-        //           tap((res) => {
-        //             console.log('mainitem Updated with permanent:', res);
-        //             this.totalValue = 0;
-        //             this.savedDBApp = false;
-        //           }),
-        //           catchError((err) => {
-        //             console.log(err);
-        //             // this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to update mainitem permanently' });
-        //             return of(null);
-        //           })
-        //         );
-        //       }
-        //       return of(null);
-        //     })
-        //   )
-        //   .subscribe({
-        //     complete: () => {
-        //       this.resetNewMainItem();
-        //       this.ngOnInit();
-        //       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Document saved successfully' });
-        //     }
-        //   });
+        // });
       }, reject: () => {
-
         // delete the added records and get the last object of mainItemsRecords and post its total header to the cloud:
 
         // this._ApiService.deleteFromApp<MainItem>(`mainitems`).subscribe({
@@ -1106,7 +1243,6 @@ export class InvoiceComponent {
         //     this.ngOnInit();
         //   }
         // });
-
       }
     });
   }
@@ -1145,7 +1281,8 @@ export class InvoiceComponent {
         subItems: (record?.subItems ?? []).map(subItem =>
           this.removeProperties(subItem, ['invoiceMainItemCode', 'invoiceSubItemCode'])
         ),
-        unitOfMeasurementCode: this.updateSelectedServiceNumberRecord.baseUnitOfMeasurement,
+        unitOfMeasurementCode: this.updateSelectedServiceNumberRecord.unitOfMeasurementCode,
+        //this.updateSelectedServiceNumberRecord.baseUnitOfMeasurement,
         description: this.updateSelectedServiceNumberRecord.description,
       };
       console.log(newRecord);
@@ -1167,8 +1304,9 @@ export class InvoiceComponent {
           const mainItemIndex = this.mainItemsRecords.findIndex(item => item.invoiceMainItemCode === invoiceMainItemCode);
           if (mainItemIndex > -1) {
             this.mainItemsRecords[mainItemIndex] = { ...this.mainItemsRecords[mainItemIndex], ...newRecord };
+            this.updateTotalValueAfterAction();
           }
-         // this.cdr.detectChanges();
+          // this.cdr.detectChanges();
           console.log(this.mainItemsRecords);
         }, error: (err) => {
           console.log(err);
@@ -1197,7 +1335,8 @@ export class InvoiceComponent {
         subItems: (record?.subItems ?? []).map(subItem =>
           this.removeProperties(subItem, ['invoiceMainItemCode', 'invoiceSubItemCode'])
         ),
-        unitOfMeasurementCode: this.updateSelectedServiceNumberRecord.baseUnitOfMeasurement,
+        unitOfMeasurementCode: this.updateSelectedServiceNumberRecord.unitOfMeasurementCode,
+        // this.updateSelectedServiceNumberRecord.baseUnitOfMeasurement,
         description: this.updateSelectedServiceNumberRecord.description,
         quantity: this.resultAfterTestUpdate,
       };
@@ -1227,6 +1366,7 @@ export class InvoiceComponent {
           if (mainItemIndex > -1) {
             // Update the specific MainItem in the array
             this.mainItemsRecords[mainItemIndex] = { ...this.mainItemsRecords[mainItemIndex], ...newRecord };
+            this.updateTotalValueAfterAction();
           }
           this.updatedFormulaRecord = undefined;
           this.resultAfterTestUpdate = undefined
@@ -1287,6 +1427,7 @@ export class InvoiceComponent {
           if (mainItemIndex > -1) {
             // Update the specific MainItem in the array
             this.mainItemsRecords[mainItemIndex] = { ...this.mainItemsRecords[mainItemIndex], ...newRecord };
+            this.updateTotalValueAfterAction();
           }
           this.updatedFormulaRecord = undefined;
           this.resultAfterTestUpdate = undefined
@@ -1334,8 +1475,9 @@ export class InvoiceComponent {
           const mainItemIndex = this.mainItemsRecords.findIndex(item => item.invoiceMainItemCode === invoiceMainItemCode);
           if (mainItemIndex > -1) {
             this.mainItemsRecords[mainItemIndex] = { ...this.mainItemsRecords[mainItemIndex], ...updatedMainItem };
+            this.updateTotalValueAfterAction();
           }
-         // this.cdr.detectChanges();
+          // this.cdr.detectChanges();
           console.log(this.mainItemsRecords);
         }, error: (err) => {
           console.log(err);
@@ -1382,7 +1524,8 @@ export class InvoiceComponent {
 
       const newRecord: SubItem = {
         ...record,
-        unitOfMeasurementCode: this.updateSelectedServiceNumberRecordSubItem.baseUnitOfMeasurement,
+        unitOfMeasurementCode: this.updateSelectedServiceNumberRecordSubItem.unitOfMeasurementCode,
+        //this.updateSelectedServiceNumberRecordSubItem.baseUnitOfMeasurement,
         description: this.updateSelectedServiceNumberRecordSubItem.description,
       };
       console.log(newRecord);
@@ -1427,8 +1570,54 @@ export class InvoiceComponent {
           const mainItemIndex = this.mainItemsRecords.findIndex(item => item.invoiceMainItemCode === invoiceMainItemCode);
           if (mainItemIndex > -1) {
             this.mainItemsRecords[mainItemIndex] = { ...this.mainItemsRecords[mainItemIndex], ...filteredRecord };
+
+            ///....
+            // Calculate the total of all subitems
+            const totalOfSubItems = this.mainItemsRecords[mainItemIndex].subItems.reduce(
+              (sum, subItem) => sum + (subItem.total || 0),
+              0
+            );
+
+            // Update the main item's `amountPerUnit`
+            this.mainItemsRecords[mainItemIndex].amountPerUnit = totalOfSubItems;
+
+            console.log(
+              `Updated MainItem (ID: ${mainItem.invoiceMainItemCode}) AmountPerUnit:`,
+              this.mainItemsRecords[mainItemIndex].amountPerUnit
+            );
+
+            // Recalculate the main item's total, amountPerUnitWithProfit, and totalWithProfit
+            const recalculateBodyRequest = {
+              quantity: this.mainItemsRecords[mainItemIndex].quantity,
+              amountPerUnit: totalOfSubItems,
+            };
+
+            this._ApiService.post<any>(`/total`, recalculateBodyRequest).subscribe({
+              next: (recalculateRes) => {
+                console.log('Updated main item totals:', recalculateRes);
+
+                this.mainItemsRecords[mainItemIndex] = {
+                  ...this.mainItemsRecords[mainItemIndex],
+                  total: recalculateRes.totalWithProfit,
+                  amountPerUnitWithProfit: recalculateRes.amountPerUnitWithProfit,
+                  totalWithProfit: recalculateRes.totalWithProfit,
+                };
+
+                console.log(
+                  `Recalculated MainItem (ID: ${mainItem.invoiceMainItemCode}):`,
+                  this.mainItemsRecords[mainItemIndex]
+                );
+
+                // Update the global total value
+                this.updateTotalValueAfterAction();
+              },
+              error: (err) => {
+                console.error('Failed to recalculate totals:', err);
+              },
+            });
+            ///....
           }
-         // this.cdr.detectChanges();
+          // this.cdr.detectChanges();
           console.log(this.mainItemsRecords);
 
         }, error: (err) => {
@@ -1481,7 +1670,8 @@ export class InvoiceComponent {
       console.log(this.updateSelectedServiceNumberRecordSubItem);
       const newRecord: SubItem = {
         ...record,
-        unitOfMeasurementCode: this.updateSelectedServiceNumberRecordSubItem.baseUnitOfMeasurement,
+        unitOfMeasurementCode:this.updateSelectedServiceNumberRecordSubItem.unitOfMeasurementCode,
+        // this.updateSelectedServiceNumberRecordSubItem.baseUnitOfMeasurement,
         description: this.updateSelectedServiceNumberRecordSubItem.description,
         quantity: this.resultAfterTestUpdate,
       };
@@ -1529,12 +1719,58 @@ export class InvoiceComponent {
           if (mainItemIndex > -1) {
             // Update the specific MainItem in the array
             this.mainItemsRecords[mainItemIndex] = { ...this.mainItemsRecords[mainItemIndex], ...filteredRecord };
+
+            ///....
+            // Calculate the total of all subitems
+            const totalOfSubItems = this.mainItemsRecords[mainItemIndex].subItems.reduce(
+              (sum, subItem) => sum + (subItem.total || 0),
+              0
+            );
+
+            // Update the main item's `amountPerUnit`
+            this.mainItemsRecords[mainItemIndex].amountPerUnit = totalOfSubItems;
+
+            console.log(
+              `Updated MainItem (ID: ${mainItem.invoiceMainItemCode}) AmountPerUnit:`,
+              this.mainItemsRecords[mainItemIndex].amountPerUnit
+            );
+
+            // Recalculate the main item's total, amountPerUnitWithProfit, and totalWithProfit
+            const recalculateBodyRequest = {
+              quantity: this.mainItemsRecords[mainItemIndex].quantity,
+              amountPerUnit: totalOfSubItems,
+            };
+
+            this._ApiService.post<any>(`/total`, recalculateBodyRequest).subscribe({
+              next: (recalculateRes) => {
+                console.log('Updated main item totals:', recalculateRes);
+
+                this.mainItemsRecords[mainItemIndex] = {
+                  ...this.mainItemsRecords[mainItemIndex],
+                  total: recalculateRes.totalWithProfit,
+                  amountPerUnitWithProfit: recalculateRes.amountPerUnitWithProfit,
+                  totalWithProfit: recalculateRes.totalWithProfit,
+                };
+
+                console.log(
+                  `Recalculated MainItem (ID: ${mainItem.invoiceMainItemCode}):`,
+                  this.mainItemsRecords[mainItemIndex]
+                );
+
+                // Update the global total value
+                this.updateTotalValueAfterAction();
+              },
+              error: (err) => {
+                console.error('Failed to recalculate totals:', err);
+              },
+            });
+            ///....
           }
           // this.updateSelectedServiceNumberRecord=undefined;
           this.updatedFormulaRecordSubItem = undefined;
           this.resultAfterTestUpdate = undefined
           // Trigger change detection
-         // this.cdr.detectChanges();
+          // this.cdr.detectChanges();
           console.log(this.mainItemsRecords);
 
         }, error: (err) => {
@@ -1597,12 +1833,58 @@ export class InvoiceComponent {
           if (mainItemIndex > -1) {
             // Update the specific MainItem in the array
             this.mainItemsRecords[mainItemIndex] = { ...this.mainItemsRecords[mainItemIndex], ...filteredRecord };
+
+            ///....
+            // Calculate the total of all subitems
+            const totalOfSubItems = this.mainItemsRecords[mainItemIndex].subItems.reduce(
+              (sum, subItem) => sum + (subItem.total || 0),
+              0
+            );
+
+            // Update the main item's `amountPerUnit`
+            this.mainItemsRecords[mainItemIndex].amountPerUnit = totalOfSubItems;
+
+            console.log(
+              `Updated MainItem (ID: ${mainItem.invoiceMainItemCode}) AmountPerUnit:`,
+              this.mainItemsRecords[mainItemIndex].amountPerUnit
+            );
+
+            // Recalculate the main item's total, amountPerUnitWithProfit, and totalWithProfit
+            const recalculateBodyRequest = {
+              quantity: this.mainItemsRecords[mainItemIndex].quantity,
+              amountPerUnit: totalOfSubItems,
+            };
+
+            this._ApiService.post<any>(`/total`, recalculateBodyRequest).subscribe({
+              next: (recalculateRes) => {
+                console.log('Updated main item totals:', recalculateRes);
+
+                this.mainItemsRecords[mainItemIndex] = {
+                  ...this.mainItemsRecords[mainItemIndex],
+                  total: recalculateRes.totalWithProfit,
+                  amountPerUnitWithProfit: recalculateRes.amountPerUnitWithProfit,
+                  totalWithProfit: recalculateRes.totalWithProfit,
+                };
+
+                console.log(
+                  `Recalculated MainItem (ID: ${mainItem.invoiceMainItemCode}):`,
+                  this.mainItemsRecords[mainItemIndex]
+                );
+
+                // Update the global total value
+                this.updateTotalValueAfterAction();
+              },
+              error: (err) => {
+                console.error('Failed to recalculate totals:', err);
+              },
+            });
+            ///....
           }
           // this.updateSelectedServiceNumberRecord=undefined;
           this.updatedFormulaRecordSubItem = undefined;
           this.resultAfterTestUpdate = undefined
           // Trigger change detection
-         // this.cdr.detectChanges();
+          // this.cdr.detectChanges();
           console.log(this.mainItemsRecords);
 
         }, error: (err) => {
@@ -1660,9 +1942,55 @@ export class InvoiceComponent {
           if (mainItemIndex > -1) {
             // Update the specific MainItem in the array
             this.mainItemsRecords[mainItemIndex] = { ...this.mainItemsRecords[mainItemIndex], ...filteredRecord };
+
+            ///....
+            // Calculate the total of all subitems
+            const totalOfSubItems = this.mainItemsRecords[mainItemIndex].subItems.reduce(
+              (sum, subItem) => sum + (subItem.total || 0),
+              0
+            );
+
+            // Update the main item's `amountPerUnit`
+            this.mainItemsRecords[mainItemIndex].amountPerUnit = totalOfSubItems;
+
+            console.log(
+              `Updated MainItem (ID: ${mainItem.invoiceMainItemCode}) AmountPerUnit:`,
+              this.mainItemsRecords[mainItemIndex].amountPerUnit
+            );
+
+            // Recalculate the main item's total, amountPerUnitWithProfit, and totalWithProfit
+            const recalculateBodyRequest = {
+              quantity: this.mainItemsRecords[mainItemIndex].quantity,
+              amountPerUnit: totalOfSubItems,
+            };
+
+            this._ApiService.post<any>(`/total`, recalculateBodyRequest).subscribe({
+              next: (recalculateRes) => {
+                console.log('Updated main item totals:', recalculateRes);
+
+                this.mainItemsRecords[mainItemIndex] = {
+                  ...this.mainItemsRecords[mainItemIndex],
+                  total: recalculateRes.totalWithProfit,
+                  amountPerUnitWithProfit: recalculateRes.amountPerUnitWithProfit,
+                  totalWithProfit: recalculateRes.totalWithProfit,
+                };
+
+                console.log(
+                  `Recalculated MainItem (ID: ${mainItem.invoiceMainItemCode}):`,
+                  this.mainItemsRecords[mainItemIndex]
+                );
+
+                // Update the global total value
+                this.updateTotalValueAfterAction();
+              },
+              error: (err) => {
+                console.error('Failed to recalculate totals:', err);
+              },
+            });
+            ///....
           }
           // Trigger change detection
-         // this.cdr.detectChanges();
+          // this.cdr.detectChanges();
           console.log(this.mainItemsRecords);
 
         }, error: (err) => {
@@ -1736,8 +2064,9 @@ export class InvoiceComponent {
             console.log(record);
 
             this.mainItemsRecords = this.mainItemsRecords.filter(item => item.invoiceMainItemCode !== record.invoiceMainItemCode);
-           // this.cdr.detectChanges();
+            // this.cdr.detectChanges();
             console.log(this.mainItemsRecords);
+            this.updateTotalValueAfterAction();
 
             // this._ApiService.delete<MainItem>('mainitems', record.invoiceMainItemCode).subscribe({
             //   next: (res) => {
@@ -1772,17 +2101,43 @@ export class InvoiceComponent {
                 if (subItemIndex > -1) {
                   // Remove the SubItem from the MainItem's subItems array
                   mainItem.subItems.splice(subItemIndex, 1);
+                  //....
+                  // Recalculate the total of all subitems
+                  const totalOfSubItems = mainItem.subItems.reduce(
+                    (sum, subItem) => sum + (subItem.total || 0),
+                    0
+                  );
+
+                  // Update the main item's amountPerUnit
+                  mainItem.amountPerUnit = totalOfSubItems;
+
+                  // Prepare the recalculation request for the main item's totals
+                  const recalculateBodyRequest = {
+                    quantity: mainItem.quantity,
+                    amountPerUnit: totalOfSubItems,
+                  };
+
+                  // Call the API to recalculate the main item's totals
+                  this._ApiService.post<any>(`/total`, recalculateBodyRequest).subscribe({
+                    next: (recalculateRes) => {
+                      console.log('Updated main item totals after deletion:', recalculateRes);
+
+                      mainItem.total = recalculateRes.total;
+                      mainItem.amountPerUnitWithProfit = recalculateRes.amountPerUnitWithProfit;
+                      mainItem.totalWithProfit = recalculateRes.totalWithProfit;
+
+                      // Recalculate the global total value
+                      this.updateTotalValueAfterAction();
+                    },
+                    error: (err) => {
+                      console.error('Failed to recalculate totals:', err);
+                    },
+                  });
+                  //....
                 }
               }
-             // this.cdr.detectChanges();
+              // this.cdr.detectChanges();
               console.log(this.mainItemsRecords);
-
-
-              // this._ApiService.delete<SubItem>('subitems', record.invoiceSubItemCode).subscribe(response => {
-              //   console.log('subitem deleted :', response);
-              //   //this.totalValue = 0;
-              //   this.ngOnInit();
-              // });
             }
 
           }

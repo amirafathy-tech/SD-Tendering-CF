@@ -12,6 +12,7 @@ export class ServiceMaster {
   public serviceTypeCode: string;
   public materialGroupCode: string;
   public baseUnitOfMeasurement: string;
+  public unitOfMeasurementCode: string;
   public toBeConvertedUnitOfMeasurement: string
   public defaultUnitOfMeasurement: string;
 
@@ -19,7 +20,7 @@ export class ServiceMaster {
     numberToBeConverted: number,
     convertedNumber: number,
     serviceTypeCode: string, materialGroupCode: string,
-    baseUnitOfMeasurement: string, toBeConvertedUnitOfMeasurement: string,
+    baseUnitOfMeasurement: string,unitOfMeasurementCode: string, toBeConvertedUnitOfMeasurement: string,
     defaultUnitOfMeasurement: string
   ) {
     this.searchTerm = searchTerm;
@@ -33,6 +34,7 @@ export class ServiceMaster {
     this.serviceTypeCode = serviceTypeCode;
     this.materialGroupCode = materialGroupCode;
     this.baseUnitOfMeasurement = baseUnitOfMeasurement;
+    this.unitOfMeasurementCode=unitOfMeasurementCode;
     this.toBeConvertedUnitOfMeasurement = toBeConvertedUnitOfMeasurement;
     this.defaultUnitOfMeasurement = defaultUnitOfMeasurement;
   }

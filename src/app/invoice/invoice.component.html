@@ -3,14 +3,15 @@
     <p-toolbar>
 
         <div class="p-toolbar-group-start">
-            <h6>1.0 Exacavation</h6>
+            <!-- <h6>1.0 Exacavation</h6> -->
+             <h5>{{selectedServiceNumberRecord?.description}}</h5>
         </div>
 
         <div class="p-toolbar-group-end">
             <!-- <button pButton pRipple icon="pi pi-copy" class="p-button-rounded m-2"></button> -->
             <button pButton size="small" (click)="saveDocument()" severity="danger" class="m-2">Save Document</button>
-            <button pButton size="small" icon="pi pi-trash" (click)="deleteRecord()" severity="danger"
-                class="m-2"></button>
+            <!-- <button pButton size="small" icon="pi pi-trash" (click)="deleteRecord()" severity="danger"
+                class="m-2"></button> -->
             <button pButton icon="pi pi-print" size="small" class="m-2 "></button>
             <button pButton label="Export" size="small" (click)="exportExcel()" icon="pi pi-download"
                 class="m-2"></button>
@@ -82,8 +83,14 @@
                 </div> -->
             </div>
             <div>
-                <p-button class=" btn btn-sm" label="Expand All" icon="pi pi-plus" (onClick)="expandAll()" />
-                <p-button class="btn btn-sm" label="Collapse All" icon="pi pi-minus" (onClick)="collapseAll()" />
+                <button pButton size="small" icon="pi pi-trash" (click)="deleteRecord()" severity="danger"
+                class="m-2"></button>
+                <button pButton size="small" icon="pi pi-plus"  (click)="expandAll()" 
+                class="m-2"></button>
+                <button pButton size="small" icon="pi pi-minus"  (click)="collapseAll()" 
+                class="m-2"></button>
+                <!-- <p-button class=" btn btn-sm" label="Expand All" icon="pi pi-plus" (onClick)="expandAll()" />
+                <p-button class="btn btn-sm" label="Collapse All" icon="pi pi-minus" (onClick)="collapseAll()" /> -->
             </div>
         </div>
     </ng-template>
@@ -221,7 +228,8 @@
                 <p-cellEditor>
                     <ng-template pTemplate="input">
                         <ng-container *ngIf="updateSelectedServiceNumberRecord">
-                            {{ updateSelectedServiceNumberRecord.baseUnitOfMeasurement }}
+                            {{ updateSelectedServiceNumberRecord.unitOfMeasurementCode }}
+                            <!-- {{ updateSelectedServiceNumberRecord.baseUnitOfMeasurement }} -->
                         </ng-container>
                         <ng-container *ngIf="!updateSelectedServiceNumberRecord">
                             <p-dropdown [options]="recordsUnitOfMeasure" [(ngModel)]="mainItem.unitOfMeasurementCode"
@@ -533,7 +541,8 @@
                             <p-cellEditor>
                                 <ng-template pTemplate="input">
                                     <ng-container *ngIf="updateSelectedServiceNumberRecordSubItem">
-                                        {{ updateSelectedServiceNumberRecordSubItem.baseUnitOfMeasurement }}
+                                        {{ updateSelectedServiceNumberRecordSubItem.unitOfMeasurementCode }}
+                                        <!-- {{ updateSelectedServiceNumberRecordSubItem.baseUnitOfMeasurement }} -->
                                     </ng-container>
                                     <ng-container *ngIf="!updateSelectedServiceNumberRecordSubItem">
                                         <p-dropdown [options]="recordsUnitOfMeasure"
@@ -722,7 +731,8 @@
                         </td>
                         <td style="min-width: 10.2rem;">
                             <ng-container *ngIf="selectedServiceNumberRecordSubItem">
-                                {{selectedServiceNumberRecordSubItem.baseUnitOfMeasurement}}
+                                <!-- {{selectedServiceNumberRecordSubItem.baseUnitOfMeasurement}} -->
+                                {{selectedServiceNumberRecordSubItem.unitOfMeasurementCode}}
                             </ng-container>
 
                             <ng-container *ngIf="!selectedServiceNumberRecordSubItem">
@@ -876,7 +886,8 @@
             </td>
             <td style="min-width: 10rem;">
                 <ng-container *ngIf="selectedServiceNumberRecord">
-                    {{selectedServiceNumberRecord.baseUnitOfMeasurement}}
+                    <!-- {{selectedServiceNumberRecord.baseUnitOfMeasurement}} -->
+                    {{selectedServiceNumberRecord.unitOfMeasurementCode}}
                 </ng-container>
 
                 <ng-container *ngIf="!selectedServiceNumberRecord">

@@ -42,7 +42,9 @@ export class MainItem {
     totalWithProfit: number=0;
     selected?: boolean;
     // subItems?:SubItem[];
-    subItems: SubItem[] = []
+    subItems: SubItem[] = [];
+
+    totalHeader?:number;
     
     doNotPrint?:boolean;
     amountPerUnitWithProfit?: number;
