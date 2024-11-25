@@ -30,7 +30,7 @@
                 {{totalValue}}
             </div>
             <div class="col-2 border ">
-                Currency
+               SAR
             </div>
         </div>
     </div>
@@ -233,14 +233,14 @@
                         </ng-container>
                         <ng-container *ngIf="!updateSelectedServiceNumberRecord">
                             <p-dropdown [options]="recordsUnitOfMeasure" [(ngModel)]="mainItem.unitOfMeasurementCode"
-                                [ngModelOptions]="{standalone: true}" optionValue="UnitOfMeasureLongName"
-                                optionLabel="UnitOfMeasureLongName" [filter]="true"
-                                [filterFields]="['UnitOfMeasureLongName','UnitOfMeasureName']" [showClear]="true"
+                                [ngModelOptions]="{standalone: true}" optionValue="code"
+                                optionLabel="code" [filter]="true"
+                                [filterFields]="['code','description']" [showClear]="true"
                                 placeholder=`{{mainItem.unitOfMeasurementCode}}` [required]="true" [appendTo]="'body'"
                                 [virtualScroll]="true" [virtualScrollItemSize]="40">
                                 <ng-template let-record pTemplate="item">
                                     <div class="flex align-items-center gap-2">
-                                        <div>{{ record.UnitOfMeasureLongName }}::{{ record.UnitOfMeasureName }}</div>
+                                        <div>{{ record.code }}::{{ record.description }}</div>
                                     </div>
                                 </ng-template>
                             </p-dropdown>
@@ -315,7 +315,7 @@
 
                     </ng-template>
                     <ng-template pTemplate="output">
-                        {{ mainItem.currencyCode }}
+                        {{ mainItem.currencyCode?mainItem.currencyCode:"SAR"}}
                     </ng-template>
                 </p-cellEditor>
             </td>
@@ -547,15 +547,15 @@
                                     <ng-container *ngIf="!updateSelectedServiceNumberRecordSubItem">
                                         <p-dropdown [options]="recordsUnitOfMeasure"
                                             [(ngModel)]="subItem.unitOfMeasurementCode"
-                                            [ngModelOptions]="{standalone: true}" optionValue="UnitOfMeasureLongName"
-                                            optionLabel="UnitOfMeasureLongName" [filter]="true"
-                                            [filterFields]="['UnitOfMeasureLongName','UnitOfMeasureName']"
+                                            [ngModelOptions]="{standalone: true}" optionValue="description"
+                                            optionLabel="code" [filter]="true"
+                                            [filterFields]="['code','description']"
                                             [showClear]="true" placeholder=`{{mainItem.unitOfMeasurementCode}}`
                                             [required]="true" [appendTo]="'body'" [virtualScroll]="true"
                                             [virtualScrollItemSize]="40">
                                             <ng-template let-record pTemplate="item">
                                                 <div class="flex align-items-center gap-2">
-                                                    <div>{{ record.UnitOfMeasureLongName }}::{{ record.UnitOfMeasureName
+                                                    <div>{{ record.code }}::{{ record.description
                                                         }}</div>
                                                 </div>
                                             </ng-template>
@@ -633,7 +633,7 @@
 
                                 </ng-template>
                                 <ng-template pTemplate="output">
-                                    {{ subItem.currencyCode }}
+                                    {{ subItem.currencyCode?subItem.currencyCode:"SAR" }}
                                 </ng-template>
                             </p-cellEditor>
                         </td>
@@ -737,14 +737,14 @@
 
                             <ng-container *ngIf="!selectedServiceNumberRecordSubItem">
                                 <p-dropdown [options]="recordsUnitOfMeasure" [(ngModel)]="selectedUnitOfMeasureSubItem"
-                                    [ngModelOptions]="{standalone: true}" optionValue="UnitOfMeasureLongName"
+                                    [ngModelOptions]="{standalone: true}" optionValue="code"
                                     optionLabel="UnitOfMeasureLongName" [filter]="true"
-                                    [filterFields]="['UnitOfMeasureLongName','UnitOfMeasureName']" [showClear]="true"
+                                    [filterFields]="['code','description']" [showClear]="true"
                                     placeholder="Select UnitOfMeasure" [required]="true" [appendTo]="'body'"
                                     [virtualScroll]="true" [virtualScrollItemSize]="40">
                                     <ng-template let-record pTemplate="item">
                                         <div class="flex align-items-center gap-2">
-                                            <div>{{ record.UnitOfMeasureLongName }}::{{ record.UnitOfMeasureName }}
+                                            <div>{{ record.code }}::{{ record.description }}
                                             </div>
                                         </div>
                                     </ng-template>
@@ -892,14 +892,14 @@
 
                 <ng-container *ngIf="!selectedServiceNumberRecord">
                     <p-dropdown [options]="recordsUnitOfMeasure" [(ngModel)]="selectedUnitOfMeasure"
-                        [ngModelOptions]="{standalone: true}" optionValue="UnitOfMeasureLongName"
-                        optionLabel="UnitOfMeasureLongName" [filter]="true"
-                        [filterFields]="['UnitOfMeasureLongName','UnitOfMeasureName']" [showClear]="true"
+                        [ngModelOptions]="{standalone: true}" optionValue="code"
+                        optionLabel="code" [filter]="true"
+                        [filterFields]="['code','description']" [showClear]="true"
                         placeholder="Select UnitOfMeasure" [required]="true" [appendTo]="'body'" [virtualScroll]="true"
                         [virtualScrollItemSize]="40">
                         <ng-template let-record pTemplate="item">
                             <div class="flex align-items-center gap-2">
-                                <div>{{ record.UnitOfMeasureLongName }}::{{ record.UnitOfMeasureName }}</div>
+                                <div>{{ record.code }}::{{ record.description }}</div>
                             </div>
                         </ng-template>
                     </p-dropdown>
