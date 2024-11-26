@@ -671,17 +671,83 @@ export class InvoiceComponent {
               Object.entries(newRecord).filter(([_, value]) => {
                 return value !== '' && value !== 0 && value !== undefined && value !== null;
               })
-            );
+            ) as SubItem;
             console.log(filteredSubItem);
 
-            const success = await this._InvoiceService.addSubItemToMainItem(mainItem.invoiceMainItemCode, filteredSubItem as SubItem, this.documentNumber);
+            const success = await this._InvoiceService.addSubItemToMainItem(mainItem.invoiceMainItemCode, filteredSubItem, this.documentNumber);
             if (success) {
               this.savedInMemory = true;
               console.log(this.mainItemsRecords);
 
               const mainItemIndex = this.mainItemsRecords.findIndex(item => item.invoiceMainItemCode === mainItem.invoiceMainItemCode);
               console.log(mainItemIndex);
+              this.cdr.detectChanges();
               if (mainItemIndex > -1) {
+
+
+                const subItemsArray = Array.from(Object.values(this.mainItemsRecords[mainItemIndex].subItems).slice(0, this.mainItemsRecords[mainItemIndex].subItems.length));
+                console.log('Converted Array:', subItemsArray);
+                console.log('Array Length:', subItemsArray.length);
+
+                console.log(this.mainItemsRecords[mainItemIndex]?.subItems?.length);
+                console.log(this.mainItemsRecords[mainItemIndex].subItems);
+                console.log(this.mainItemsRecords[mainItemIndex].subItems.values);
+                console.log(this.mainItemsRecords[mainItemIndex].subItems.length);
+                // console.log(this.mainItemsRecords[mainItemIndex].subItems);
+
+                var size = Object.keys(this.mainItemsRecords[mainItemIndex].subItems).length;
+                console.log(size);
+
+
+
+                if (this.mainItemsRecords[mainItemIndex]?.subItems?.length > 0) {
+                  const rawSubItems = this.mainItemsRecords[mainItemIndex].subItems;
+                  rawSubItems.forEach(subItem => {
+                    console.log('SubItem:', subItem);
+                  });
+                } else {
+                  console.log('No subitems found for this MainItem.');
+                }
+
+
+
+                const subItemsCloned = JSON.parse(JSON.stringify(this.mainItemsRecords[mainItemIndex].subItems));
+                console.log('Deep Cloned SubItems:', subItemsCloned);
+
+                const subItemsToArray = Object.values(subItemsCloned);
+                console.log('Final SubItems Array:', subItemsToArray, 'Length:', subItemsToArray.length);
+
+
+                // let copy = [];
+                let copy = Array.isArray(this.mainItemsRecords[mainItemIndex].subItems)
+                  ? this.mainItemsRecords[mainItemIndex].subItems
+                  : Object.values(this.mainItemsRecords[mainItemIndex].subItems);
+
+                console.log('SubItems after conversion:', copy);
+                console.log('SubItems length after conversion:', copy.length);
+
+                console.log('SubItems hasOwnProperty "length":', this.mainItemsRecords[mainItemIndex].subItems.hasOwnProperty('length'));
+
+                // delete copy.length; // Remove any invalid length property
+                copy = Array.from(copy); // Convert to a proper array
+                console.log('Fixed Array:', copy, 'Length:', copy.length);
+
+                //  copy = this.mainItemsRecords[mainItemIndex].subItems;
+                //  console.log('SubItems before condition:', copy);
+                //  console.log('SubItems before condition length:', copy.length);
+                if (this.mainItemsRecords[mainItemIndex]?.subItems?.length > 0) {
+                  copy = this.mainItemsRecords[mainItemIndex].subItems;
+                  console.log('SubItems:', copy);
+                  console.log('Length:', copy.length);
+                } else {
+                  console.log('SubItems are not ready or empty.');
+                }
+
+                // Ensure subItems array exists
+                if (!this.mainItemsRecords[mainItemIndex].subItems) {
+                  console.error('SubItems array is undefined. Initializing...');
+                  this.mainItemsRecords[mainItemIndex].subItems = [];
+                }
 
 
 
@@ -689,21 +755,31 @@ export class InvoiceComponent {
                 console.log('SubItems before find:', this.mainItemsRecords[mainItemIndex].subItems);
 
                 const filteredCode = filteredSubItem['invoiceSubItemCode'];
-                console.log('filteredSubItem invoiceSubItemCode:', filteredCode);
-
-              
-
+                console.log('Filtered SubItem Code:', filteredCode, typeof filteredCode);
+                this.mainItemsRecords[mainItemIndex].subItems.forEach(subItem => {
+                  console.log(
+                    'Type of subItem.invoiceSubItemCode:', typeof subItem.invoiceSubItemCode, subItem.invoiceSubItemCode
+                  );
+                });
 
                 console.log(mainItemIndex);
                 // Check if subitem already exists by comparing invoiceSubItemCode
-                // const existingSubItem = this.mainItemsRecords[mainItemIndex].subItems.find(
-                //   subItem => subItem.invoiceSubItemCode === filteredSubItem['invoiceSubItemCode']
-                //   //String(subItem.invoiceSubItemCode) === String(filteredSubItem['invoiceSubItemCode'])
-                // );
-                // console.log(existingSubItem);
 
+
+                let match = null;
+
+
+                this.mainItemsRecords[mainItemIndex].subItems.forEach(subItem => {
+                  console.log('Comparing:', subItem.invoiceSubItemCode, 'with', filteredCode);
+                  // if (Number(subItem.invoiceSubItemCode) === Number(filteredSubItem['invoiceSubItemCode'])) {
+                  //   match = subItem;
+                  // }
+                });
+                console.log('Match Found:', match);
+             // Check if subitem already exists by comparing invoiceSubItemCode
                 const existingSubItem = this.mainItemsRecords[mainItemIndex].subItems.find(
-                  subItem => String(subItem.invoiceSubItemCode) === String(filteredCode)
+                  subItem => String(subItem.invoiceSubItemCode).trim() === String(filteredSubItem['invoiceSubItemCode']).trim()
+                  //String(subItem.invoiceSubItemCode) === String(filteredSubItem['invoiceSubItemCode'])
                 );
 
                 console.log('Existing SubItem:', existingSubItem);
@@ -711,7 +787,8 @@ export class InvoiceComponent {
                 if (!existingSubItem) {
                   this.mainItemsRecords[mainItemIndex].subItems.push(filteredSubItem as SubItem);
                   console.log(this.mainItemsRecords);
-                } else {
+                }
+                // else {
                   console.log('Duplicate subitem detected; skipping addition.');
                   console.log(this.mainItemsRecords);
                   ///......
@@ -757,7 +834,7 @@ export class InvoiceComponent {
                   });
                   ///......
                 }
-              }
+             // }
               this.resetNewSubItem();
               this.selectedUnitOfMeasureSubItem = "";
               this.selectedCurrencySubItem = "";
@@ -829,7 +906,8 @@ export class InvoiceComponent {
                   this.mainItemsRecords[mainItemIndex].subItems.push(filteredSubItem as SubItem);
                   console.log(this.mainItemsRecords);
 
-                } else {
+                } 
+                //else {
                   console.log('Duplicate subitem detected; skipping addition.');
                   console.log(this.mainItemsRecords);
                   ///......
@@ -874,7 +952,7 @@ export class InvoiceComponent {
                     },
                   });
                   ///......
-                }
+                //}
               }
               this.resetNewSubItem();
               this.selectedUnitOfMeasureSubItem = "";
@@ -955,7 +1033,8 @@ export class InvoiceComponent {
                   this.mainItemsRecords[mainItemIndex].subItems.push(filteredSubItem as SubItem);
                   console.log(this.mainItemsRecords);
 
-                } else {
+                } 
+                //else {
                   console.log('Duplicate subitem detected; skipping addition.');
                   console.log(this.mainItemsRecords);
                   ///......
@@ -1001,7 +1080,7 @@ export class InvoiceComponent {
                     },
                   });
                   ///......
-                }
+               // }
               }
               this.resetNewSubItem();
               this.selectedCurrencySubItem = "";
@@ -1079,7 +1158,8 @@ export class InvoiceComponent {
                   this.mainItemsRecords[mainItemIndex].subItems.push(filteredSubItem as SubItem);
                   console.log(this.mainItemsRecords);
 
-                } else {
+                } 
+                //else {
                   console.log('Duplicate subitem detected; skipping addition.');
                   console.log(this.mainItemsRecords);
                   ///......
@@ -1124,7 +1204,7 @@ export class InvoiceComponent {
                     },
                   });
                   ///......
-                }
+                //}
               }
               this.resetNewSubItem();
               this.selectedCurrencySubItem = "";
@@ -1153,39 +1233,12 @@ export class InvoiceComponent {
       accept: () => {
         console.log(this.mainItemsRecords);
 
-        // const unsavedItems = this.mainItemsRecords.filter(item => !item.isPersisted);
 
-        // console.log(unsavedItems);
-
-
-        // const saveRequests = this.mainItemsRecords.map((item, index) => {
-        //   // Create request body for each main item
-        //   const bodyRequest = {
-        //     // totalHeader: this.totalValue,
-        //     refrenceId: this.documentNumber,
-        //     quantity: item.quantity,
-        //     amountPerUnit: item.amountPerUnit,
-        //     serviceNumberCode: item.serviceNumberCode,
-        //     unitOfMeasurementCode: item.unitOfMeasurementCode,
-        //     currencyCode: item.currencyCode,
-        //     formulaCode: item.formulaCode,
-        //     description: item.description,
-        //     total: item.total,
-        //     profitMargin: item.profitMargin,
-        //     totalWithProfit: item.totalWithProfit,
-        //   };
-
-        //   // Set dynamic parameters for URL based on the index or item properties if needed
-        //   const url = `/mainitems?salesQuotation=${this.documentNumber}&salesQuotationItem=${this.itemNumber}&pricingProcedureStep=20&pricingProcedureCounter=1&customerNumber=${this.customerId}`;
-
-        //   // Post each main item to the database
-        //   return this._ApiService.post<MainItem>(url, bodyRequest).toPromise();
-        // });
 
         const saveRequests = this.mainItemsRecords.map((item) => ({
           refrenceId: this.documentNumber,
           subItems: (item.subItems ?? []).map(subItem =>
-            this.removeProperties(subItem, ['invoiceMainItemCode', 'invoiceSubItemCode'])
+            this.removeProperties(subItem, ['invoiceMainItemCode', 'invoiceSubItemCode','selected'])
           ),
           quantity: item.quantity,
           amountPerUnit: item.amountPerUnit,
@@ -1199,11 +1252,8 @@ export class InvoiceComponent {
           totalWithProfit: item.totalWithProfit,
         }));
         console.log(saveRequests);
-
-
         // Set dynamic parameters for URL
         const url = `/mainitems?salesQuotation=${this.documentNumber}&salesQuotationItem=${this.itemNumber}&pricingProcedureStep=20&pricingProcedureCounter=1&customerNumber=${this.customerId}`;
-
         // Send the array of bodyRequest objects to the server in a single POST request
         this._ApiService.post<MainItem[]>(url, saveRequests).subscribe({
           next: (res) => {
@@ -1236,54 +1286,7 @@ export class InvoiceComponent {
           }
 
         })
-        // .toPromise()
-        //   .then((responses) => {
-        //     console.log('All main items saved successfully:', responses);
-        //     this.mainItemsRecords = responses?responses:[];
-        //     const lastRecord = responses[responses.length - 1];
-        //    // this.savedDBApp =true;
-        //     this.totalValue = 0;
-        //     this.totalValue = lastRecord.totalHeader;
-        //    // this.ngOnInit();
-
-        //     // Optionally, update the saved records as persisted
-        //     //  unsavedItems.forEach(item => item.isPersisted = true);
-
-        //     this.messageService.add({
-        //       severity: 'success',
-        //       summary: 'Success',
-        //       detail: 'The Document has been saved successfully',
-        //       life: 3000
-        //     });
-        //   })
-        //   .catch((error) => {
-        //     console.error('Error saving main items:', error);
-        //     this.messageService.add({
-        //       severity: 'error',
-        //       summary: 'Error',
-        //       detail: 'Error saving The Document',
-        //       life: 3000
-        //     });
-        //   });
-        // }
-        // });
       }, reject: () => {
-        // delete the added records and get the last object of mainItemsRecords and post its total header to the cloud:
-
-        // this._ApiService.deleteFromApp<MainItem>(`mainitems`).subscribe({
-        //   next: (res) => {
-        //     console.log('mainitem deleted with temporary:', res);
-        //     this.totalValue = 0;
-        //     this.savedDBApp = false;
-        //     this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected Saving the Document', life: 3000 });
-
-        //   }, error: (err) => {
-        //     console.log(err);
-        //   },
-        //   complete: () => {
-        //     this.ngOnInit();
-        //   }
-        // });
       }
     });
   }
