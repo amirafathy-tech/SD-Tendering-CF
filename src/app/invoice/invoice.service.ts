@@ -19,8 +19,6 @@ export class InvoiceService {
     return this.documentNumber;
   }
 
-
-
   private mainItems: MainItem[] = [];
 
   // private mergeMainItems(): void {
@@ -47,31 +45,62 @@ export class InvoiceService {
   //   }
   // }
 
-  async mergeMainItems(documentNumber:number): Promise<void> {
+  // async mergeMainItems(documentNumber:number): Promise<void> {
+  //   try {
+  //     // Fetch database items
+  //     console.log(documentNumber);
+  //     if ( documentNumber !== 0) {
+  //       console.log(documentNumber);
+  //     const response = await this.apiService.get<MainItem[]>(`mainitems/referenceid?referenceId=${documentNumber}`).toPromise();
+  //     const databaseItems = response || [];
+  //     //const databaseItemsWithFlag = databaseItems.map(item => ({ ...item, isPersisted: true }));
+      
+  //     // Merge items
+  //     const allItems = [
+  //       ...this.mainItems, 
+  //       ...databaseItems.filter(dbItem => 
+  //         !this.mainItems.some(memItem => memItem.invoiceMainItemCode === dbItem.invoiceMainItemCode))
+  //     ];
+      
+  //     this.mainItems = allItems;
+  //     console.log("Merged MainItems:", this.mainItems);
+  //   }
+
+  //   } catch (error) {
+  //     console.error("Failed to merge main items:", error);
+  //   }
+  // }
+
+  async mergeMainItems(documentNumber: number): Promise<void> {
     try {
       // Fetch database items
       console.log(documentNumber);
-      if ( documentNumber !== 0) {
+      if (documentNumber !== 0) {
         console.log(documentNumber);
-      const response = await this.apiService.get<MainItem[]>(`mainitems/referenceid?referenceId=${documentNumber}`).toPromise();
-      const databaseItems = response || [];
-      const databaseItemsWithFlag = databaseItems.map(item => ({ ...item, isPersisted: true }));
-      
-      // Merge items
-      const allItems = [
-        ...this.mainItems, 
-        ...databaseItemsWithFlag.filter(dbItem => 
-          !this.mainItems.some(memItem => memItem.invoiceMainItemCode === dbItem.invoiceMainItemCode))
-      ];
-      
-      this.mainItems = allItems;
-      console.log("Merged MainItems:", this.mainItems);
-    }
-
+        const response = await this.apiService.get<MainItem[]>(`mainitems/referenceid?referenceId=${documentNumber}`).toPromise();
+        const databaseItems = response || [];
+  
+        // Merge items
+        const allItems = [
+          ...this.mainItems,
+          ...databaseItems.filter(dbItem => 
+            !this.mainItems.some(memItem => memItem.invoiceMainItemCode === dbItem.invoiceMainItemCode))
+        ];
+  
+        // Ensure subItems arrays are independent for each item
+        this.mainItems = allItems.map(item => ({
+          ...item, // Clone the main item itself
+          subItems: [...item.subItems] // Clone subItems array to avoid reference sharing
+        }));
+  
+        console.log("Merged MainItems:", this.mainItems);
+      }
+  
     } catch (error) {
       console.error("Failed to merge main items:", error);
     }
   }
+  
   
   addMainItem(item: MainItem) {
     item.invoiceMainItemCode = Date.now();
@@ -113,7 +142,9 @@ async addSubItemToMainItem(mainItemId: number, subItem: SubItem,documentNumber:n
   //...................................
  
    getMainItems(documentNumber:number): MainItem[] {
-    this.mergeMainItems(documentNumber);  // Ensure merge happens before returning
+   // this.mergeMainItems(documentNumber);  // Ensure merge happens before returning
+    console.log(this.mainItems);
+    
     return this.mainItems;
   }
 

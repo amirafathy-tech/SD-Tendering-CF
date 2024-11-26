@@ -3,7 +3,7 @@ export class SubItem {
 
     Type:string='';
 
-    invoiceSubItemCode?: number=0;
+    invoiceSubItemCode: number=0;
 
     invoiceMainItemCode?: number;
 
