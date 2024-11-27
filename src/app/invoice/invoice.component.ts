@@ -173,7 +173,7 @@ export class InvoiceComponent {
   // Initial calculation of totalValue (call this when initializing the component)
   calculateTotalValue(): void {
     console.log(this.mainItemsRecords);
-    
+
     this.totalValue = this.mainItemsRecords.reduce((sum, item) => sum + (item.totalWithProfit || 0), 0);
   }
 
@@ -809,10 +809,14 @@ export class InvoiceComponent {
                 );
 
                 // Recalculate the main item's total, amountPerUnitWithProfit, and totalWithProfit
-                const recalculateBodyRequest = {
+                const recalculateBodyRequest: any = {
                   quantity: this.mainItemsRecords[mainItemIndex].quantity,
                   amountPerUnit: totalOfSubItems,
                 };
+                // Conditionally add profitMargin if it has a non-zero value
+                if (this.mainItemsRecords[mainItemIndex].profitMargin && this.mainItemsRecords[mainItemIndex].profitMargin !== 0) {
+                  recalculateBodyRequest.profitMargin = this.mainItemsRecords[mainItemIndex].profitMargin;
+                }
 
                 this._ApiService.post<any>(`/total`, recalculateBodyRequest).subscribe({
                   next: (recalculateRes) => {
@@ -820,7 +824,7 @@ export class InvoiceComponent {
 
                     this.mainItemsRecords[mainItemIndex] = {
                       ...this.mainItemsRecords[mainItemIndex],
-                      total: recalculateRes.totalWithProfit,
+                      total: recalculateRes.total,
                       amountPerUnitWithProfit: recalculateRes.amountPerUnitWithProfit,
                       totalWithProfit: recalculateRes.totalWithProfit,
                     };
@@ -928,10 +932,14 @@ export class InvoiceComponent {
                 );
 
                 // Recalculate the main item's total, amountPerUnitWithProfit, and totalWithProfit
-                const recalculateBodyRequest = {
+                const recalculateBodyRequest:any = {
                   quantity: this.mainItemsRecords[mainItemIndex].quantity,
                   amountPerUnit: totalOfSubItems,
                 };
+                 // Conditionally add profitMargin if it has a non-zero value
+                 if (this.mainItemsRecords[mainItemIndex].profitMargin && this.mainItemsRecords[mainItemIndex].profitMargin !== 0) {
+                  recalculateBodyRequest.profitMargin = this.mainItemsRecords[mainItemIndex].profitMargin;
+                }
 
                 this._ApiService.post<any>(`/total`, recalculateBodyRequest).subscribe({
                   next: (recalculateRes) => {
@@ -939,7 +947,7 @@ export class InvoiceComponent {
 
                     this.mainItemsRecords[mainItemIndex] = {
                       ...this.mainItemsRecords[mainItemIndex],
-                      total: recalculateRes.totalWithProfit,
+                      total: recalculateRes.total,
                       amountPerUnitWithProfit: recalculateRes.amountPerUnitWithProfit,
                       totalWithProfit: recalculateRes.totalWithProfit,
                     };
@@ -1055,10 +1063,14 @@ export class InvoiceComponent {
                 );
 
                 // Recalculate the main item's total, amountPerUnitWithProfit, and totalWithProfit
-                const recalculateBodyRequest = {
+                const recalculateBodyRequest:any = {
                   quantity: this.mainItemsRecords[mainItemIndex].quantity,
                   amountPerUnit: totalOfSubItems,
                 };
+                 // Conditionally add profitMargin if it has a non-zero value
+                 if (this.mainItemsRecords[mainItemIndex].profitMargin && this.mainItemsRecords[mainItemIndex].profitMargin !== 0) {
+                  recalculateBodyRequest.profitMargin = this.mainItemsRecords[mainItemIndex].profitMargin;
+                }
 
                 this._ApiService.post<any>(`/total`, recalculateBodyRequest).subscribe({
                   next: (recalculateRes) => {
@@ -1066,7 +1078,7 @@ export class InvoiceComponent {
 
                     this.mainItemsRecords[mainItemIndex] = {
                       ...this.mainItemsRecords[mainItemIndex],
-                      total: recalculateRes.totalWithProfit,
+                      total: recalculateRes.total,
                       amountPerUnitWithProfit: recalculateRes.amountPerUnitWithProfit,
                       totalWithProfit: recalculateRes.totalWithProfit,
                     };
@@ -1180,10 +1192,15 @@ export class InvoiceComponent {
                 );
 
                 // Recalculate the main item's total, amountPerUnitWithProfit, and totalWithProfit
-                const recalculateBodyRequest = {
+                const recalculateBodyRequest:any = {
                   quantity: this.mainItemsRecords[mainItemIndex].quantity,
                   amountPerUnit: totalOfSubItems,
                 };
+
+                 // Conditionally add profitMargin if it has a non-zero value
+                 if (this.mainItemsRecords[mainItemIndex].profitMargin && this.mainItemsRecords[mainItemIndex].profitMargin !== 0) {
+                  recalculateBodyRequest.profitMargin = this.mainItemsRecords[mainItemIndex].profitMargin;
+                }
 
                 this._ApiService.post<any>(`/total`, recalculateBodyRequest).subscribe({
                   next: (recalculateRes) => {
@@ -1191,7 +1208,7 @@ export class InvoiceComponent {
 
                     this.mainItemsRecords[mainItemIndex] = {
                       ...this.mainItemsRecords[mainItemIndex],
-                      total: recalculateRes.totalWithProfit,
+                      total: recalculateRes.total,
                       amountPerUnitWithProfit: recalculateRes.amountPerUnitWithProfit,
                       totalWithProfit: recalculateRes.totalWithProfit,
                     };
@@ -2075,7 +2092,6 @@ export class InvoiceComponent {
   }
   //end new...  
 
-
   //old...
   // onSubItemEditSave(index: number, record: SubItem, mainItem: MainItem) {
   //   console.log(mainItem);
@@ -2581,7 +2597,7 @@ export class InvoiceComponent {
             return !isSelected;
           });
 
-          this.mainItemsRecords = [...this.mainItemsRecords]; 
+          this.mainItemsRecords = [...this.mainItemsRecords];
 
           // for (const record of this.selectedMainItems) {
           //   console.log(record);
