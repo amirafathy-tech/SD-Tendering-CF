@@ -48,5 +48,7 @@ export class MainItem {
     
     doNotPrint?:boolean;
     amountPerUnitWithProfit?: number;
+
+    isUpdated?: boolean; // New flag for memory-updated items
     
 }

@@ -80,12 +80,20 @@ export class InvoiceService {
         const response = await this.apiService.get<MainItem[]>(`mainitems/referenceid?referenceId=${documentNumber}`).toPromise();
         const databaseItems = response || [];
   
-        // Merge items
-        const allItems = [
-          ...this.mainItems,
-          ...databaseItems.filter(dbItem => 
-            !this.mainItems.some(memItem => memItem.invoiceMainItemCode === dbItem.invoiceMainItemCode))
-        ];
+        // // Merge items
+        // const allItems = [
+        //   ...this.mainItems,
+        //   ...databaseItems.filter(dbItem => 
+        //     !this.mainItems.some(memItem => memItem.invoiceMainItemCode === dbItem.invoiceMainItemCode))
+        // ];
+
+         // Merge database items with in-memory items
+      const allItems = [
+        ...this.mainItems.filter(memItem => memItem.isUpdated), // Keep updated memory items
+        ...databaseItems.filter(dbItem => 
+          !this.mainItems.some(memItem => memItem.invoiceMainItemCode === dbItem.invoiceMainItemCode)
+        ),
+      ];
   
         // Ensure subItems arrays are independent for each item
         this.mainItems = allItems.map(item => ({
@@ -104,6 +112,7 @@ export class InvoiceService {
   
   addMainItem(item: MainItem) {
     item.invoiceMainItemCode = Date.now();
+    item.isUpdated = true; // Mark as updated
     this.mainItems.push(item);
     console.log(this.mainItems);
   }
@@ -114,7 +123,15 @@ async addSubItemToMainItem(mainItemId: number, subItem: SubItem,documentNumber:n
   try {
     console.log("Calling mergeMainItems...");
     // First, ensure the main items are merged before proceeding
-    await this.mergeMainItems(documentNumber);  // This will wait until mergeMainItems is complete
+
+    // Merge items
+    //  this.mainItems = [
+    //       ...this.mainItems,
+    //       ...all.filter(dbItem => 
+    //         !this.mainItems.some(memItem => memItem.invoiceMainItemCode === dbItem.invoiceMainItemCode))
+    //     ];
+
+    //await this.mergeMainItems(documentNumber);  // This will wait until mergeMainItems is complete
 
     // Now find the MainItem that matches the provided ID
     let mainItem = this.mainItems.find(item => item.invoiceMainItemCode === mainItemId);
@@ -126,6 +143,9 @@ async addSubItemToMainItem(mainItemId: number, subItem: SubItem,documentNumber:n
       // Add the subItem to the found MainItem
       mainItem.subItems.push(subItem);
       console.log(`SubItem added to MainItem with ID: ${mainItemId}`, mainItem);
+      mainItem.isUpdated = true;
+      console.log(mainItem);
+      
       
       return true;  // Indicate success
     } else {
@@ -145,7 +165,8 @@ async addSubItemToMainItem(mainItemId: number, subItem: SubItem,documentNumber:n
    // this.mergeMainItems(documentNumber);  // Ensure merge happens before returning
     console.log(this.mainItems);
     
-    return this.mainItems;
+    // return this.mainItems;
+    return [...this.mainItems];
   }
 
 

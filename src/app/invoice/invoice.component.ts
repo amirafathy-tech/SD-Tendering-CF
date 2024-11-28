@@ -333,7 +333,11 @@ export class InvoiceComponent {
           ) as MainItem;
           console.log('Filtered Record:', filteredRecord);
 
-          this._InvoiceService.addMainItem(filteredRecord);
+          //this._InvoiceService.addMainItem(filteredRecord);
+          this.addMainItem(filteredRecord);
+          this.mainItemsRecords = [
+            ...this.mainItemsRecords
+          ];
 
           //this.totalValue += filteredRecord.totalWithProfit;
           console.log(this.totalValue);
@@ -341,16 +345,14 @@ export class InvoiceComponent {
           this.savedInMemory = true;
           // this.cdr.detectChanges();
 
-          const newMainItems = this._InvoiceService.getMainItems(this.documentNumber);
+          // const newMainItems = this._InvoiceService.getMainItems(this.documentNumber);
 
-          console.log(newMainItems);
-
-
-          // Combine the current mainItemsRecords with the new list, ensuring no duplicates
-          this.mainItemsRecords = [
-            ...this.mainItemsRecords.filter(item => !newMainItems.some(newItem => newItem.invoiceMainItemCode === item.invoiceMainItemCode)), // Remove existing items
-            ...newMainItems
-          ];
+          // console.log(newMainItems);
+          // // Combine the current mainItemsRecords with the new list, ensuring no duplicates
+          // this.mainItemsRecords = [
+          //   ...this.mainItemsRecords.filter(item => !newMainItems.some(newItem => newItem.invoiceMainItemCode === item.invoiceMainItemCode)), // Remove existing items
+          //   ...newMainItems
+          // ];
 
           this.updateTotalValueAfterAction();
 
@@ -421,21 +423,21 @@ export class InvoiceComponent {
           ) as MainItem;
           console.log(filteredRecord);
 
-          this._InvoiceService.addMainItem(filteredRecord);
-
-          //this.totalValue += filteredRecord.totalWithProfit;
-          console.log(this.totalValue);
-
-          this.savedInMemory = true;
-          // this.cdr.detectChanges();
-
-          const newMainItems = this._InvoiceService.getMainItems(this.documentNumber);
-
-          // Combine the current mainItemsRecords with the new list, ensuring no duplicates
+          this.addMainItem(filteredRecord);
           this.mainItemsRecords = [
-            ...this.mainItemsRecords.filter(item => !newMainItems.some(newItem => newItem.invoiceMainItemCode === item.invoiceMainItemCode)), // Remove existing items
-            ...newMainItems
+            ...this.mainItemsRecords
           ];
+
+         // this._InvoiceService.addMainItem(filteredRecord);
+          this.savedInMemory = true;
+
+          // const newMainItems = this._InvoiceService.getMainItems(this.documentNumber);
+
+          // // Combine the current mainItemsRecords with the new list, ensuring no duplicates
+          // this.mainItemsRecords = [
+          //   ...this.mainItemsRecords.filter(item => !newMainItems.some(newItem => newItem.invoiceMainItemCode === item.invoiceMainItemCode)), // Remove existing items
+          //   ...newMainItems
+          // ];
 
           this.updateTotalValueAfterAction();
 
@@ -515,7 +517,13 @@ export class InvoiceComponent {
           ) as MainItem;
           console.log(filteredRecord);
 
-          this._InvoiceService.addMainItem(filteredRecord);
+          this.addMainItem(filteredRecord);
+          this.mainItemsRecords = [
+            ...this.mainItemsRecords
+          ];
+
+
+         // this._InvoiceService.addMainItem(filteredRecord);
 
           //  this.totalValue += filteredRecord.totalWithProfit;
           console.log(this.totalValue);
@@ -523,13 +531,13 @@ export class InvoiceComponent {
           this.savedInMemory = true;
           // this.cdr.detectChanges();
 
-          const newMainItems = this._InvoiceService.getMainItems(this.documentNumber);
+         // const newMainItems = this._InvoiceService.getMainItems(this.documentNumber);
 
-          // Combine the current mainItemsRecords with the new list, ensuring no duplicates
-          this.mainItemsRecords = [
-            ...this.mainItemsRecords.filter(item => !newMainItems.some(newItem => newItem.invoiceMainItemCode === item.invoiceMainItemCode)), // Remove existing items
-            ...newMainItems
-          ];
+          // // Combine the current mainItemsRecords with the new list, ensuring no duplicates
+          // this.mainItemsRecords = [
+          //   ...this.mainItemsRecords.filter(item => !newMainItems.some(newItem => newItem.invoiceMainItemCode === item.invoiceMainItemCode)), // Remove existing items
+          //   ...newMainItems
+          // ];
 
           this.updateTotalValueAfterAction();
 
@@ -602,7 +610,13 @@ export class InvoiceComponent {
           ) as MainItem;
           console.log(filteredRecord);
 
-          this._InvoiceService.addMainItem(filteredRecord);
+          this.addMainItem(filteredRecord);
+          this.mainItemsRecords = [
+            ...this.mainItemsRecords
+          ];
+
+
+          //this._InvoiceService.addMainItem(filteredRecord);
 
           // this.totalValue += filteredRecord.totalWithProfit;
           console.log(this.totalValue);
@@ -610,13 +624,13 @@ export class InvoiceComponent {
           this.savedInMemory = true;
           // this.cdr.detectChanges();
 
-          const newMainItems = this._InvoiceService.getMainItems(this.documentNumber);
+          //const newMainItems = this._InvoiceService.getMainItems(this.documentNumber);
 
-          // Combine the current mainItemsRecords with the new list, ensuring no duplicates
-          this.mainItemsRecords = [
-            ...this.mainItemsRecords.filter(item => !newMainItems.some(newItem => newItem.invoiceMainItemCode === item.invoiceMainItemCode)), // Remove existing items
-            ...newMainItems
-          ];
+          // // Combine the current mainItemsRecords with the new list, ensuring no duplicates
+          // this.mainItemsRecords = [
+          //   ...this.mainItemsRecords.filter(item => !newMainItems.some(newItem => newItem.invoiceMainItemCode === item.invoiceMainItemCode)), // Remove existing items
+          //   ...newMainItems
+          // ];
 
           this.updateTotalValueAfterAction();
 
@@ -679,7 +693,9 @@ export class InvoiceComponent {
             ) as SubItem;
             console.log(filteredSubItem);
 
-            const success = await this._InvoiceService.addSubItemToMainItem(mainItem.invoiceMainItemCode, filteredSubItem, this.documentNumber);
+            console.log(this.mainItemsRecords);
+            const success =  this.addSubItemToMainItem(mainItem.invoiceMainItemCode, filteredSubItem, this.documentNumber);
+           // const success = await this._InvoiceService.addSubItemToMainItem(mainItem.invoiceMainItemCode, filteredSubItem, this.documentNumber);
             if (success) {
               this.savedInMemory = true;
               console.log(this.mainItemsRecords);
@@ -688,99 +704,97 @@ export class InvoiceComponent {
               console.log(mainItemIndex);
               this.cdr.detectChanges();
               if (mainItemIndex > -1) {
+                console.log(mainItemIndex);
 
+                // const subItemsArray = Array.from(Object.values(this.mainItemsRecords[mainItemIndex].subItems).slice(0, this.mainItemsRecords[mainItemIndex].subItems.length));
+                // console.log('Converted Array:', subItemsArray);
+                // console.log('Array Length:', subItemsArray.length);
 
-                const subItemsArray = Array.from(Object.values(this.mainItemsRecords[mainItemIndex].subItems).slice(0, this.mainItemsRecords[mainItemIndex].subItems.length));
-                console.log('Converted Array:', subItemsArray);
-                console.log('Array Length:', subItemsArray.length);
-
-                console.log(this.mainItemsRecords[mainItemIndex]?.subItems?.length);
-                console.log(this.mainItemsRecords[mainItemIndex].subItems);
-                console.log(this.mainItemsRecords[mainItemIndex].subItems.values);
-                console.log(this.mainItemsRecords[mainItemIndex].subItems.length);
+                // console.log(this.mainItemsRecords[mainItemIndex]?.subItems?.length);
                 // console.log(this.mainItemsRecords[mainItemIndex].subItems);
+                // console.log(this.mainItemsRecords[mainItemIndex].subItems.values);
+                // console.log(this.mainItemsRecords[mainItemIndex].subItems.length);
+                // // console.log(this.mainItemsRecords[mainItemIndex].subItems);
 
-                var size = Object.keys(this.mainItemsRecords[mainItemIndex].subItems).length;
-                console.log(size);
-
-
-
-                if (this.mainItemsRecords[mainItemIndex]?.subItems?.length > 0) {
-                  const rawSubItems = this.mainItemsRecords[mainItemIndex].subItems;
-                  rawSubItems.forEach(subItem => {
-                    console.log('SubItem:', subItem);
-                  });
-                } else {
-                  console.log('No subitems found for this MainItem.');
-                }
+                // var size = Object.keys(this.mainItemsRecords[mainItemIndex].subItems).length;
+                // console.log(size);
 
 
 
-                const subItemsCloned = JSON.parse(JSON.stringify(this.mainItemsRecords[mainItemIndex].subItems));
-                console.log('Deep Cloned SubItems:', subItemsCloned);
+                // if (this.mainItemsRecords[mainItemIndex]?.subItems?.length > 0) {
+                //   const rawSubItems = this.mainItemsRecords[mainItemIndex].subItems;
+                //   rawSubItems.forEach(subItem => {
+                //     console.log('SubItem:', subItem);
+                //   });
+                // } else {
+                //   console.log('No subitems found for this MainItem.');
+                // }
 
-                const subItemsToArray = Object.values(subItemsCloned);
-                console.log('Final SubItems Array:', subItemsToArray, 'Length:', subItemsToArray.length);
+
+
+                // const subItemsCloned = JSON.parse(JSON.stringify(this.mainItemsRecords[mainItemIndex].subItems));
+                // console.log('Deep Cloned SubItems:', subItemsCloned);
+
+                // const subItemsToArray = Object.values(subItemsCloned);
+                // console.log('Final SubItems Array:', subItemsToArray, 'Length:', subItemsToArray.length);
 
 
                 // let copy = [];
-                let copy = Array.isArray(this.mainItemsRecords[mainItemIndex].subItems)
-                  ? this.mainItemsRecords[mainItemIndex].subItems
-                  : Object.values(this.mainItemsRecords[mainItemIndex].subItems);
+                // let copy = Array.isArray(this.mainItemsRecords[mainItemIndex].subItems)
+                //   ? this.mainItemsRecords[mainItemIndex].subItems
+                //   : Object.values(this.mainItemsRecords[mainItemIndex].subItems);
 
-                console.log('SubItems after conversion:', copy);
-                console.log('SubItems length after conversion:', copy.length);
+                // console.log('SubItems after conversion:', copy);
+                // console.log('SubItems length after conversion:', copy.length);
 
-                console.log('SubItems hasOwnProperty "length":', this.mainItemsRecords[mainItemIndex].subItems.hasOwnProperty('length'));
+                // console.log('SubItems hasOwnProperty "length":', this.mainItemsRecords[mainItemIndex].subItems.hasOwnProperty('length'));
 
-                // delete copy.length; // Remove any invalid length property
-                copy = Array.from(copy); // Convert to a proper array
-                console.log('Fixed Array:', copy, 'Length:', copy.length);
+                // // delete copy.length; // Remove any invalid length property
+                // copy = Array.from(copy); // Convert to a proper array
+                // console.log('Fixed Array:', copy, 'Length:', copy.length);
 
-                //  copy = this.mainItemsRecords[mainItemIndex].subItems;
-                //  console.log('SubItems before condition:', copy);
-                //  console.log('SubItems before condition length:', copy.length);
-                if (this.mainItemsRecords[mainItemIndex]?.subItems?.length > 0) {
-                  copy = this.mainItemsRecords[mainItemIndex].subItems;
-                  console.log('SubItems:', copy);
-                  console.log('Length:', copy.length);
-                } else {
-                  console.log('SubItems are not ready or empty.');
-                }
+                // if (this.mainItemsRecords[mainItemIndex]?.subItems?.length > 0) {
+                //   copy = this.mainItemsRecords[mainItemIndex].subItems;
+                //   console.log('SubItems:', copy);
+                //   console.log('Length:', copy.length);
+                // } else {
+                //   console.log('SubItems are not ready or empty.');
+                // }
 
                 // Ensure subItems array exists
-                if (!this.mainItemsRecords[mainItemIndex].subItems) {
-                  console.error('SubItems array is undefined. Initializing...');
-                  this.mainItemsRecords[mainItemIndex].subItems = [];
-                }
+                // if (!this.mainItemsRecords[mainItemIndex].subItems) {
+                //   console.error('SubItems array is undefined. Initializing...');
+                //   this.mainItemsRecords[mainItemIndex].subItems = [];
+                // }
 
 
 
-                console.log('MainItem:', this.mainItemsRecords[mainItemIndex]);
-                console.log('SubItems before find:', this.mainItemsRecords[mainItemIndex].subItems);
+                // console.log('MainItem:', this.mainItemsRecords[mainItemIndex]);
+                // console.log('SubItems before find:', this.mainItemsRecords[mainItemIndex].subItems);
 
-                const filteredCode = filteredSubItem['invoiceSubItemCode'];
-                console.log('Filtered SubItem Code:', filteredCode, typeof filteredCode);
-                this.mainItemsRecords[mainItemIndex].subItems.forEach(subItem => {
-                  console.log(
-                    'Type of subItem.invoiceSubItemCode:', typeof subItem.invoiceSubItemCode, subItem.invoiceSubItemCode
-                  );
-                });
+                // const filteredCode = filteredSubItem['invoiceSubItemCode'];
+                // console.log('Filtered SubItem Code:', filteredCode, typeof filteredCode);
+                // this.mainItemsRecords[mainItemIndex].subItems.forEach(subItem => {
+                //   console.log(
+                //     'Type of subItem.invoiceSubItemCode:', typeof subItem.invoiceSubItemCode, subItem.invoiceSubItemCode
+                //   );
+                // });
 
-                console.log(mainItemIndex);
+                
                 // Check if subitem already exists by comparing invoiceSubItemCode
 
 
-                let match = null;
+                // let match = null;
 
 
-                this.mainItemsRecords[mainItemIndex].subItems.forEach(subItem => {
-                  console.log('Comparing:', subItem.invoiceSubItemCode, 'with', filteredCode);
-                  // if (Number(subItem.invoiceSubItemCode) === Number(filteredSubItem['invoiceSubItemCode'])) {
-                  //   match = subItem;
-                  // }
-                });
-                console.log('Match Found:', match);
+                // this.mainItemsRecords[mainItemIndex].subItems.forEach(subItem => {
+                //   console.log('Comparing:', subItem.invoiceSubItemCode, 'with', filteredCode);
+                //   // if (Number(subItem.invoiceSubItemCode) === Number(filteredSubItem['invoiceSubItemCode'])) {
+                //   //   match = subItem;
+                //   // }
+                // });
+                // console.log('Match Found:', match);
+
                 // Check if subitem already exists by comparing invoiceSubItemCode
                 const existingSubItem = this.mainItemsRecords[mainItemIndex].subItems.find(
                   subItem => String(subItem.invoiceSubItemCode).trim() === String(filteredSubItem['invoiceSubItemCode']).trim()
@@ -899,7 +913,8 @@ export class InvoiceComponent {
             );
             console.log(filteredSubItem);
 
-            const success = await this._InvoiceService.addSubItemToMainItem(mainItem.invoiceMainItemCode, filteredSubItem as SubItem, this.documentNumber);
+            const success =  this.addSubItemToMainItem(mainItem.invoiceMainItemCode, filteredSubItem as SubItem, this.documentNumber);
+           // const success = await this._InvoiceService.addSubItemToMainItem(mainItem.invoiceMainItemCode, filteredSubItem as SubItem, this.documentNumber);
             if (success) {
 
               this.savedInMemory = true;
@@ -1030,7 +1045,8 @@ export class InvoiceComponent {
             );
             console.log(filteredSubItem);
 
-            const success = await this._InvoiceService.addSubItemToMainItem(mainItem.invoiceMainItemCode, filteredSubItem as SubItem, this.documentNumber);
+            const success =  this.addSubItemToMainItem(mainItem.invoiceMainItemCode, filteredSubItem as SubItem, this.documentNumber);
+           // const success = await this._InvoiceService.addSubItemToMainItem(mainItem.invoiceMainItemCode, filteredSubItem as SubItem, this.documentNumber);
             if (success) {
 
               this.savedInMemory = true;
@@ -1159,7 +1175,9 @@ export class InvoiceComponent {
             );
             console.log(filteredSubItem);
 
-            const success = await this._InvoiceService.addSubItemToMainItem(mainItem.invoiceMainItemCode, filteredSubItem as SubItem, this.documentNumber);
+
+            const success =  this.addSubItemToMainItem(mainItem.invoiceMainItemCode, filteredSubItem as SubItem, this.documentNumber);
+           // const success = await this._InvoiceService.addSubItemToMainItem(mainItem.invoiceMainItemCode, filteredSubItem as SubItem, this.documentNumber);
             if (success) {
 
               this.savedInMemory = true;
@@ -3364,6 +3382,57 @@ export class InvoiceComponent {
     this.showPopupUpdate = false;
     this.showPopup = false;
   }
+
+// Memory Operations:
+
+  addMainItem(item: MainItem) {
+    item.invoiceMainItemCode = Date.now();
+    item.isUpdated = true; // Mark as updated
+    this.mainItemsRecords.push(item);
+    console.log(this.mainItemsRecords);
+  }
+
+    // Add a SubItem to a specific MainItem by ID
+ addSubItemToMainItem(mainItemId: number, subItem: SubItem,documentNumber:number): boolean {
+  try {
+    console.log("Calling mergeMainItems...");
+    // First, ensure the main items are merged before proceeding
+
+    // Merge items
+    //  this.mainItemsRecords = [
+    //       ...this.mainItemsRecords,
+    //       ...all.filter(dbItem => 
+    //         !this.mainItems.some(memItem => memItem.invoiceMainItemCode === dbItem.invoiceMainItemCode))
+    //     ];
+
+    //await this.mergeMainItems(documentNumber);  // This will wait until mergeMainItems is complete
+
+    // Now find the MainItem that matches the provided ID
+    let mainItem = this.mainItemsRecords.find(item => item.invoiceMainItemCode === mainItemId);
+    
+    if (mainItem) {
+      // Assign the invoiceMainItemCode to the subItem
+      subItem.invoiceMainItemCode = mainItemId;
+      
+      // Add the subItem to the found MainItem
+      mainItem.subItems.push(subItem);
+      console.log(`SubItem added to MainItem with ID: ${mainItemId}`, mainItem);
+      mainItem.isUpdated = true;
+      console.log(mainItem);
+      
+      
+      return true;  // Indicate success
+    } else {
+      console.error(`MainItem with ID: ${mainItemId} not found.`);
+      return false;  // Indicate failure if MainItem is not found
+    }
+  } catch (error) {
+    console.error("Error while adding SubItem:", error);
+    return false;  // Indicate failure if mergeMainItems or other code fails
+  }
+}
+
+
 }
 
 
