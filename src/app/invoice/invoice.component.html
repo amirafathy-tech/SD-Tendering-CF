@@ -1,12 +1,9 @@
 <div class="card ">
     <p-toast />
     <p-toolbar>
-
         <div class="p-toolbar-group-start">
-            <!-- <h6>1.0 Exacavation</h6> -->
-             <h5>{{selectedServiceNumberRecord?.description}}</h5>
+             <h5>{{itemText}}</h5>
         </div>
-
         <div class="p-toolbar-group-end">
             <!-- <button pButton pRipple icon="pi pi-copy" class="p-button-rounded m-2"></button> -->
             <button pButton size="small" (click)="saveDocument()" severity="danger" class="m-2">Save Document</button>
@@ -15,14 +12,12 @@
             <button pButton icon="pi pi-print" size="small" class="m-2 "></button>
             <button pButton label="Export" size="small" (click)="exportExcel()" icon="pi pi-download"
                 class="m-2"></button>
-            <button pButton label="Import" size="small" (click)="exportExcel()" icon="pi pi-upload"
-                class="m-2"></button>
+            <!-- <button pButton label="Import" size="small" (click)="exportExcel()" icon="pi pi-upload"
+                class="m-2"></button> -->
         </div>
     </p-toolbar>
-
     <div class=" text-center">
         <div class="row justify-content-center fs-6 fw-bold ">
-            <!-- border-danger-subtle -->
             <div class="col-2 border ">
                 Total Value:
             </div>
@@ -46,41 +41,18 @@
         <div class="flex flex-wrap justify-content-between gap-2">
             <div class="border border-primary rounded">
                 <div fd-form-item>
-
                     <fd-input-group type="search" glyph="search" glyphAriaLabel="Search" placeholder="Search..."
                         [button]="true" [disabled]="false" [(ngModel)]="searchKey">
                     </fd-input-group>
                 </div>
             </div>
-            <!-- <div>
-                <span class="p-input-icon-left">
-                    <input pInputText type="text" placeholder="Search...."  [(ngModel)]="searchKey"
-                        class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary " />
-                </span>
-            </div> -->
-
             <div>
                 <div class="p-inputgroup">
                     <input type="number" min="0" pInputNumber [(ngModel)]="profitMarginValue"
                         placeholder="Profit Margin" />
                     <button type="button" (click)="updateProfitMargin(profitMarginValue)" pButton
                         label="Apply ProfitMargin"></button>
-
                 </div>
-                <!-- <div fd-form-item>
-                    <fd-input-group type="number" placement="after" [(ngModel)]="profitMarginValue"
-                        addOnText="Apply ProfitMargin" placeholder="Profit Margin" min="0"
-                        (click)="updateProfitMargin(profitMarginValue)" [button]="true" [showFocus]="true"
-                        style="padding-inline: 4px;">
-                    </fd-input-group>
-                </div> -->
-
-                <!-- <div class="p-inputgroup ml-3">
-                    <input type="number" [min]="0" pInputNumber placeholder="Profit Margin"
-                        [(ngModel)]="profitMarginValue" />
-                    <button type="button" pButton class="btn btn-outline-primary"
-                        (click)="updateProfitMargin(profitMarginValue)">Apply Profit Margin</button>
-                </div> -->
             </div>
             <div>
                 <button pButton size="small" icon="pi pi-trash" (click)="deleteRecord()" severity="danger"
@@ -89,8 +61,6 @@
                 class="m-2"></button>
                 <button pButton size="small" icon="pi pi-minus"  (click)="collapseAll()" 
                 class="m-2"></button>
-                <!-- <p-button class=" btn btn-sm" label="Expand All" icon="pi pi-plus" (onClick)="expandAll()" />
-                <p-button class="btn btn-sm" label="Collapse All" icon="pi pi-minus" (onClick)="collapseAll()" /> -->
             </div>
         </div>
     </ng-template>
@@ -451,18 +421,19 @@
                 </ng-template>
 
                 <ng-template pTemplate="body" let-subItem let-editing="editing" let-ri="rowIndex">
-
                     <tr [pEditableRow]="subItem">
-
                         <td style="min-width: 10rem;"></td>
                         <td style="min-width: 10rem;"></td>
                         <td style="min-width: 10rem;"></td>
                         <td style="min-width: 10rem;"></td>
                         <td style="min-width: 10rem;">
                             {{ ri + 1 }}
-                            <input style="min-width: 1rem;" value="{{subItem.selected}}" type="checkbox"
+                            <!-- <input style="min-width: 1rem;" value="{{subItem.selected}}" type="checkbox"
                                 [(ngModel)]="subItem.selected" (change)="onSubItemSelection($event,subItem)"
-                                [checked]="subItem.selected">
+                                [checked]="subItem.selected"> -->
+
+                                <p-checkbox [value]="subItem" [(ngModel)]="subItem.selected"
+                    (onChange)="onSubItemSelection($event, subItem)"></p-checkbox>
                         </td>
                         <td style="min-width: 9.5rem;">
                             <p-cellEditor>
@@ -592,17 +563,6 @@
                         </td>
                         <td style="min-width: 9.5rem;">
                             <button class="mb-2" (click)="openPopupUpdate()">Enter Parameters</button>
-                            <!-- <ng-container *ngIf="showPopupUpdate && updatedFormulaRecordSubItem ">
-                                <div class="popup">
-                                    <h3>Enter Parameters</h3>
-                                    <div *ngFor="let parameterId of updatedFormulaRecordSubItem.parameterIds">
-                                        <label class="form-label">{{ parameterId }}:</label>
-                                        <input pInputNumber class="rounded-input" class="form-input" type="number" [min]="0"
-                                            [(ngModel)]="parameterValuesUpdate[parameterId]">
-                                    </div>
-                                    <button class="form-button" (click)="saveParameters()">Save</button>
-                                </div>
-                            </ng-container> -->
                         </td>
                         <td style="min-width: 9.5rem;">
                             <p-cellEditor>
@@ -673,19 +633,11 @@
                 </ng-template>
                 <ng-template pTemplate="footer" class="m-3">
                     <tr style="border: 1px solid rgb(5, 57, 130);">
-                        <td style="min-width: 10.2rem;">
-
-                        </td>
-                        <td style="min-width: 10.2rem;">
-
-                        </td>
                         <td style="min-width: 10.2rem;"></td>
-
-                        <td style="min-width: 10.2rem;">
-
-                        </td>
-                        <td style="min-width: 10.2rem;">
-                        </td>
+                        <td style="min-width: 10.2rem;"></td>
+                        <td style="min-width: 10.2rem;"></td>
+                        <td style="min-width: 10.2rem;"></td>
+                        <td style="min-width: 10.2rem;"></td>
                         <td style="min-width: 10.2rem;">
                             <p-dropdown [options]="recordsServiceNumber" [(ngModel)]="selectedServiceNumberSubItem"
                                 [ngModelOptions]="{standalone: true}" optionValue="serviceNumberCode"
@@ -712,7 +664,6 @@
                                     tooltipPosition="top" [autoHide]="false">
                             </ng-container>
                             <ng-container *ngIf="!shortTextChangeAllowedSubItem && selectedServiceNumberRecordSubItem">
-
                                 <div class="" [pTooltip]="selectedServiceNumberRecordSubItem.description"
                                     tooltipPosition="top" [autoHide]="false">
                                     {{ selectedServiceNumberRecordSubItem.description | truncateWords }}
@@ -734,7 +685,6 @@
                                 <!-- {{selectedServiceNumberRecordSubItem.baseUnitOfMeasurement}} -->
                                 {{selectedServiceNumberRecordSubItem.unitOfMeasurementCode}}
                             </ng-container>
-
                             <ng-container *ngIf="!selectedServiceNumberRecordSubItem">
                                 <p-dropdown [options]="recordsUnitOfMeasure" [(ngModel)]="selectedUnitOfMeasureSubItem"
                                     [ngModelOptions]="{standalone: true}" optionValue="code"
@@ -805,12 +755,9 @@
                                 {{ (newSubItem.quantity ?? 0) * (newSubItem.amountPerUnit ?? 0) | number:'1.2-2' }}
                             </ng-container>
                         </td>
-                        <td style="min-width: 15.2rem;">
-                        </td>
-                        <td style="min-width: 15.2rem;">
-                        </td>
-                        <td style="min-width: 15.2rem;">
-                        </td>
+                        <td style="min-width: 15.2rem;"></td>
+                        <td style="min-width: 15.2rem;"></td>
+                        <td style="min-width: 15.2rem;"></td>
                         <td style="min-width: 10.2rem;">
                             <button pButton type="button" icon="pi pi-plus" class="ui-button-info"
                                 style=" border-radius: 8px; " label="Add SubItem"
@@ -826,22 +773,14 @@
     <ng-template pTemplate="footer" class="mt-5">
         <tr style="border: 1px solid rgb(5, 57, 130);">
             <td style="min-width: 10rem;">
-
             </td>
             <td style="min-width: 10rem;">
-
             </td>
             <td style="min-width: 10rem;">
-
             </td>
             <td style="min-width: 10rem;">
-
             </td>
             <td style="min-width: 10rem;">
-                <!-- <p-radioButton name="type" value="S" [(ngModel)]="recordType" inputId="type" />
-                        <label for="type" class="ml-2">
-                            S
-                        </label> -->
             </td>
             <td style="min-width: 10rem;">
                 <p-dropdown [options]="recordsServiceNumber" [(ngModel)]="selectedServiceNumber"
@@ -867,13 +806,11 @@
                         pTooltip="{{ newMainItem.description }}" tooltipPosition="top" [autoHide]="false">
                 </ng-container>
                 <ng-container *ngIf="!shortTextChangeAllowed && selectedServiceNumberRecord">
-                    <!-- {{ selectedServiceNumberRecord.description }} -->
                     <div class="text-ellipsis" [pTooltip]="selectedServiceNumberRecord.description"
                         tooltipPosition="top" [autoHide]="false">
                         {{ selectedServiceNumberRecord.description | truncateWords }}
                     </div>
                 </ng-container>
-                <!-- <input pInputText name="description" type="text" [(ngModel)]="newMainItem.description"> -->
             </td>
             <td style="min-width: 10rem;">
                 <ng-container *ngIf=" selectedFormula && selectedFormulaRecord && resultAfterTest">
@@ -920,24 +857,11 @@
             </td>
             <td style="min-width: 10rem;">
                 <button class="mb-2" (click)="openPopup()">Enter Parameters</button>
-                <!-- <ng-container *ngIf="showPopup && selectedFormulaRecord ">
-                    <div class="popup">
-                        <h3>Enter Parameters</h3>
-                        <div *ngFor="let parameterId of selectedFormulaRecord.parameterIds">
-
-                            <label class="form-label">{{ parameterId }}:</label>
-                            <input  class="form-input " pInputNumber type="number" [min]="0"
-                                [(ngModel)]="parameterValues[parameterId]">
-                        </div>
-                        <button class="form-button" (click)="saveParameters()">Save</button>
-                    </div>
-                </ng-container> -->
             </td>
             <td style="min-width: 10rem;">
                 <input pInputNumber class="rounded-input" name="amountPerUnit" type="number" [min]="0"
                     [(ngModel)]="newMainItem.amountPerUnit">
             </td>
-            <!-- update into currency fields -->
             <td style="min-width: 10rem;">
                 <p-dropdown [options]="recordsCurrency" [(ngModel)]="selectedCurrency"
                     [ngModelOptions]="{standalone: true}" optionValue="code" optionLabel="code" [filter]="true"
@@ -957,7 +881,6 @@
                 <ng-container *ngIf="!selectedFormulaRecord">
                     {{ (newMainItem.quantity ?? 0) * (newMainItem.amountPerUnit ?? 0) | number:'1.2-2' }}
                 </ng-container>
-                <!-- <input pInputNumber name="total" type="number" [min]="0" [(ngModel)]="newMainItem.total"> -->
             </td>
             <td style="min-width: 10rem;">
                 <input pInputNumber class="rounded-input" name="profitMargin" type="number" [min]="0"
@@ -968,8 +891,6 @@
                 ? 0
                 : ((newMainItem.amountPerUnit ?? 0) * ((newMainItem.profitMargin ?? 0)/100))+
                 (newMainItem.amountPerUnit ?? 0) }}
-                <!-- <input pInputNumber name="amountPerUnitWithProfit" type="number" [min]="0"
-                        [(ngModel)]="newMainItem.amountPerUnitWithProfit"> -->
             </td>
             <td style="min-width: 10rem;">
                 <ng-container *ngIf="selectedFormulaRecord && resultAfterTest">
@@ -985,9 +906,6 @@
                     ?? 0)/100) )+ ( (newMainItem.quantity ?? 0) * (newMainItem.amountPerUnit ?? 0) )}}
 
                 </ng-container>
-
-                <!-- <input pInputNumber name="totalWithProfit" type="number" [min]="0"
-                        [(ngModel)]="newMainItem.totalWithProfit"> -->
             </td>
             <td style="min-width: 10rem;">
                 <button pButton type="button" icon="pi pi-plus" class="ui-button-info" style=" border-radius: 8px; "

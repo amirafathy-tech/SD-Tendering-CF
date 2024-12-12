@@ -50,5 +50,7 @@ export class MainItem {
     amountPerUnitWithProfit?: number;
 
     isUpdated?: boolean; // New flag for memory-updated items
+
+    salesQuotationItemText?:string;
     
 }
