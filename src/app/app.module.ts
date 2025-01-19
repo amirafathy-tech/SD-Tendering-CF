@@ -7,6 +7,9 @@ import { FundamentalNgxCoreModule } from '@fundamental-ngx/core';
 import { InputGroupModule } from '@fundamental-ngx/core/input-group';
 
 
+
+import { BadgeModule } from 'primeng/badge';
+
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule } from '@angular/common';
@@ -34,6 +37,8 @@ import { TreeTableModule } from 'primeng/treetable';
 import { TooltipModule } from 'primeng/tooltip';
 import { InputTextModule } from 'primeng/inputtext';
 import { RadioButtonModule } from 'primeng/radiobutton';
+
+import { FileUploadModule } from 'primeng/fileupload';
 
 
 import { AppRoutingModule } from './app-routing.module';
@@ -73,7 +78,7 @@ import { CloudDataComponent } from './cloud-data/cloud-data.component';
     HttpClientModule,
     CommonModule,
     AuthModule,
-
+    BadgeModule,
     ButtonModule,
     TableModule,
     DropdownModule,
@@ -94,6 +99,7 @@ import { CloudDataComponent } from './cloud-data/cloud-data.component';
     TreeTableModule,
     TooltipModule,
     InputTextModule,
+    FileUploadModule,
 
     NgHttpLoaderModule.forRoot(),
   ],

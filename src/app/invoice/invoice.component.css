@@ -201,3 +201,7 @@ span.fd-input-group__addon.fd-input-group__addon--button {
     text-overflow: ellipsis;
     flex: 1;
 }
+.badge{
+  top:0;
+  left:10px;
+}

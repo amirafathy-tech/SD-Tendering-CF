@@ -11,11 +11,17 @@ import { CloudDataComponent } from './cloud-data/cloud-data.component';
 
 const routes: Routes = [
  { path: '', component: HomePageComponent },
-  // { path: '', redirectTo: '/home', pathMatch: 'full' }, 
+  { path: '', redirectTo: '/home', pathMatch: 'full' }, 
   { path: 'home', component: HomePageComponent },
   { path: 'login', component: AuthComponent },
   { path: 'tendering',canActivate:[AuthGuard],  component: InvoiceComponent },
   { path: 'tendering-data',canActivate:[AuthGuard], component: CloudDataComponent },
+  //! Without Security:
+  //  { path: '', component: CloudDataComponent },
+  //   { path: 'tendering',  component: InvoiceComponent },
+  // { path: 'tendering-data', component: CloudDataComponent },
+
+
 ];
 
 @NgModule({
