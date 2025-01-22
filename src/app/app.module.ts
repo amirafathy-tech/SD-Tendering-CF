@@ -105,11 +105,11 @@ import { CloudDataComponent } from './cloud-data/cloud-data.component';
   ],
   providers: [
     provideClientHydration(),
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: AuthInterceptorService,
-      multi: true
-    }
+    // {
+    //   provide: HTTP_INTERCEPTORS,
+    //   useClass: AuthInterceptorService,
+    //   multi: true
+    // }
   ],
   bootstrap: [AppComponent]
 })
